@@ -1,4 +1,7 @@
 // Firebase Configuration for LDAH Website
+// Note: These credentials are safe to expose in client-side code
+// Firebase security is enforced through Firestore security rules
+
 const firebaseConfig = {
   apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
   authDomain: "ldah-932d5.firebaseapp.com",
@@ -26,143 +29,36 @@ const collections = {
   settings: db.collection('settings')
 };
 
-// CMS Content Structure
-const contentStructure = {
-  hero: {
-    title: "Empowering Families, Transforming Lives",
-    subtitle: "Supporting children and youth with disabilities across Hawai'i and the Pacific Islands through advocacy, education, and community partnerships.",
-    image: "https://www.ldahawaii.org/wp-content/uploads/2023/10/Leadership-in-Disabilities-Achievement-of-Hawaii-5.jpg",
-    buttons: [
-      { text: "Our Services", link: "#services", style: "primary" },
-      { text: "Get Involved", link: "volunteer.html", style: "secondary" }
-    ]
-  },
-  services: {
-    title: "Comprehensive Support Services",
-    description: "We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.",
-    items: [
-      {
-        icon: "📚",
-        title: "Parent Training & Information",
-        description: "Comprehensive training and resources to help parents navigate special education systems and advocate for their children.",
-        link: "services/parent-training.html"
-      },
-      {
-        icon: "🎓",
-        title: "School Readiness Project",
-        description: "Early intervention programs helping children with disabilities prepare for successful school experiences.",
-        link: "services/school-readiness.html"
-      },
-      {
-        icon: "⚖️",
-        title: "Special Education Advocacy",
-        description: "Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.",
-        link: "services/advocacy.html"
-      },
-      {
-        icon: "🇺🇸",
-        title: "Military Family Support",
-        description: "Specialized assistance for military families navigating relocations and IEP transitions across installations.",
-        link: "services/military-families.html"
-      },
-      {
-        icon: "🏝️",
-        title: "Pacific Islands Outreach",
-        description: "Extending support to families across American Samoa, CNMI, FSM, Guam, Marshall Islands, and Palau.",
-        link: "services/pacific-islands.html"
-      },
-      {
-        icon: "🤝",
-        title: "Community Partnerships",
-        description: "Collaborating with schools, agencies, and organizations to build inclusive communities for all children.",
-        link: "services/partnerships.html"
-      }
-    ]
-  },
-  stats: [
-    {
-      icon: "👨‍👩‍👧‍👦",
-      number: "15,000+",
-      label: "Families Served",
-      order: 1
-    },
-    {
-      icon: "📅",
-      number: "200+",
-      label: "Annual Events",
-      order: 2
-    },
-    {
-      icon: "🏫",
-      number: "50+",
-      label: "Years of Service",
-      order: 3
-    },
-    {
-      icon: "🌴",
-      number: "7",
-      label: "Pacific Islands",
-      order: 4
-    }
-  ],
-  cta: {
-    title: "Ready to Make a Difference?",
-    description: "Join our community of volunteers, supporters, and advocates working to create opportunities for children with disabilities.",
-    buttons: [
-      { text: "Become a Volunteer", link: "volunteer.html", style: "primary" },
-      { text: "Support Our Mission", link: "#donate", style: "secondary" }
-    ]
-  }
-};
-
-// Initialize default content in Firestore (run once)
-async function initializeContent() {
-  try {
-    // Check if content already exists
-    const heroDoc = await collections.content.doc('hero').get();
-    
-    if (!heroDoc.exists) {
-      console.log('Initializing default content...');
-      
-      // Hero content
-      await collections.content.doc('hero').set(contentStructure.hero);
-      
-      // Services content
-      await collections.content.doc('services').set(contentStructure.services);
-      
-      // Stats
-      for (const stat of contentStructure.stats) {
-        await collections.stats.add(stat);
-      }
-      
-      // CTA content
-      await collections.content.doc('cta').set(contentStructure.cta);
-      
-      console.log('Default content initialized successfully!');
-    }
-  } catch (error) {
-    console.error('Error initializing content:', error);
-  }
-}
-
 // Content fetching functions
 async function getHeroContent() {
   try {
     const doc = await collections.content.doc('hero').get();
-    return doc.exists ? doc.data() : contentStructure.hero;
+    if (doc.exists) return doc.data();
+    
+    return {
+      title: "Empowering Families, Transforming Lives",
+      subtitle: "Supporting children and youth with disabilities across Hawai'i and the Pacific Islands through advocacy, education, and community partnerships.",
+      image: "https://www.ldahawaii.org/wp-content/uploads/2023/10/Leadership-in-Disabilities-Achievement-of-Hawaii-5.jpg"
+    };
   } catch (error) {
     console.error('Error fetching hero content:', error);
-    return contentStructure.hero;
+    return null;
   }
 }
 
 async function getServicesContent() {
   try {
     const doc = await collections.content.doc('services').get();
-    return doc.exists ? doc.data() : contentStructure.services;
+    if (doc.exists) return doc.data();
+    
+    return {
+      title: "Comprehensive Support Services",
+      description: "We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.",
+      items: []
+    };
   } catch (error) {
     console.error('Error fetching services content:', error);
-    return contentStructure.services;
+    return null;
   }
 }
 
@@ -172,17 +68,16 @@ async function getStats() {
     if (!snapshot.empty) {
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
-    return contentStructure.stats;
+    return [];
   } catch (error) {
     console.error('Error fetching stats:', error);
-    return contentStructure.stats;
+    return [];
   }
 }
 
 async function getEvents(limit = 6) {
   try {
     const snapshot = await collections.events
-      .where('status', '==', 'published')
       .orderBy('date', 'asc')
       .limit(limit)
       .get();
@@ -200,10 +95,15 @@ async function getEvents(limit = 6) {
 async function getCTAContent() {
   try {
     const doc = await collections.content.doc('cta').get();
-    return doc.exists ? doc.data() : contentStructure.cta;
+    if (doc.exists) return doc.data();
+    
+    return {
+      title: "Ready to Make a Difference?",
+      description: "Join our community of volunteers, supporters, and advocates working to create opportunities for children with disabilities."
+    };
   } catch (error) {
     console.error('Error fetching CTA content:', error);
-    return contentStructure.cta;
+    return null;
   }
 }
 
@@ -248,21 +148,14 @@ async function uploadImage(file, path) {
   }
 }
 
-// Export for use in other scripts
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    db,
-    auth,
-    storage,
-    collections,
-    getHeroContent,
-    getServicesContent,
-    getStats,
-    getEvents,
-    getCTAContent,
-    updateContent,
-    updateStat,
-    uploadImage,
-    initializeContent
-  };
+// Initialize default content (run once)
+async function initializeContent() {
+  try {
+    const heroDoc = await collections.content.doc('hero').get();
+    if (!heroDoc.exists) {
+      console.log('Run initialization from CMS panel');
+    }
+  } catch (error) {
+    console.error('Error checking content:', error);
+  }
 }
