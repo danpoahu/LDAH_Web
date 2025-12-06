@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LDAH">
+  <meta name="theme-color" content="#004E7C">
+  <title>LDAH - Events</title>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-32PRRS0W85"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-32PRRS0W85');
+  </script>
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  
+  <!-- Swiper for Carousel -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  
+  <style>
+    :root {
+      --primary-blue: #004E7C;
+      --light-blue: #0066a1;
+      --accent-teal: #4DD0E1;
+      --bg-light: #f8f9fa;
+      --text-dark: #1a1a1a;
+      --text-light: #666;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #FAF8F0 0%, #FFFFFF 50%, #F0FAFF 100%);
+      color: var(--text-dark);
+      padding-top: 80px;
+    }
+    
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 8px rgba(0, 78, 124, 0.1);
+      z-index: 1000;
+      padding: 1rem 2rem;
+    }
+    
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+    }
+    
+    .logo-img {
+      width: 50px;
+      height: 50px;
+    }
+    
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+    }
+    
+    .back-btn {
+      padding: 0.5rem 1.5rem;
+      background: var(--primary-blue);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .back-btn:hover {
+      background: var(--light-blue);
+      transform: translateY(-2px);
+    }
+    
+    /* Main Content */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .page-title {
+      font-size: 2.5rem;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+    }
+    
+    .page-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-light);
+    }
+    
+    /* Section Headers */
+    .section {
+      margin-bottom: 4rem;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .section-icon {
+      font-size: 2rem;
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+      color: var(--primary-blue);
+      font-weight: 700;
+    }
+    
+    .section-count {
+      background: var(--accent-teal);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    
+    /* Carousel Styles */
+    .swiper {
+      width: 100%;
+      padding-bottom: 3rem;
+    }
+    
+    .swiper-slide {
+      height: auto;
+    }
+    
+    /* Event Cards */
+    .event-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 78, 124, 0.1);
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .event-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 32px rgba(0, 78, 124, 0.2);
+    }
+    
+    .event-image {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+    }
+    
+    .event-content {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .event-date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(77, 208, 225, 0.1);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+      margin-bottom: 1rem;
+      width: fit-content;
+    }
+    
+    .event-title {
+      font-size: 1.3rem;
+      color: var(--primary-blue);
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    
+    .event-description {
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+    
+    .event-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+    
+    .event-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    .event-meta-item svg {
+      color: var(--primary-blue);
+    }
+    
+    .event-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    
+    .status-upcoming {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    .status-past {
+      background: #fce4ec;
+      color: #c2185b;
+    }
+    
+    /* Swiper Navigation */
+    .swiper-button-next,
+    .swiper-button-prev {
+      background: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 78, 124, 0.15);
+    }
+    
+    .swiper-button-next:after,
+    .swiper-button-prev:after {
+      font-size: 1.2rem;
+      color: var(--primary-blue);
+      font-weight: 900;
+    }
+    
+    .swiper-pagination-bullet {
+      background: var(--primary-blue);
+      opacity: 0.3;
+      width: 12px;
+      height: 12px;
+    }
+    
+    .swiper-pagination-bullet-active {
+      opacity: 1;
+      background: var(--accent-teal);
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(0, 78, 124, 0.1);
+    }
+    
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    
+    .empty-title {
+      font-size: 1.5rem;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    
+    .empty-text {
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+    
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 78, 124, 0.1);
+      border-top: 4px solid var(--primary-blue);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 2rem;
+      }
+      
+      .section-title {
+        font-size: 1.5rem;
+      }
+      
+      .swiper-button-next,
+      .swiper-button-prev {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-content">
+      <a href="index.html" class="logo-container">
+        <img src="assets/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+        <span class="logo-text">LDAH Events</span>
+      </a>
+      <a href="index.html" class="back-btn">← Back to Home</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">📅 Events & Workshops</h1>
+      <p class="page-subtitle">Join us for training, workshops, and community events</p>
+    </div>
+
+    <!-- Current Events Section -->
+    <div class="section" id="currentEventsSection">
+      <div class="section-header">
+        <span class="section-icon">🎯</span>
+        <h2 class="section-title">Upcoming Events</h2>
+        <span class="section-count" id="currentCount">0</span>
+      </div>
+      
+      <div id="currentEventsCarousel">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading upcoming events...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Past Events Section -->
+    <div class="section" id="pastEventsSection">
+      <div class="section-header">
+        <span class="section-icon">📚</span>
+        <h2 class="section-title">Past Events</h2>
+        <span class="section-count" id="pastCount">0</span>
+      </div>
+      
+      <div id="pastEventsCarousel">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading past events...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Config -->
+  <script src="js/firebase-config.js"></script>
+  
+  <!-- Events Page Logic -->
+  <script>
+    (function() {
+      'use strict';
+
+      let currentSwiper = null;
+      let pastSwiper = null;
+
+      // Initialize when ready
+      document.addEventListener('DOMContentLoaded', function() {
+        loadEvents();
+      });
+
+      async function loadEvents() {
+        try {
+          const now = new Date();
+          
+          // Fetch ALL events (no filtering in query)
+          const allEventsSnapshot = await db.collection('events').get();
+          
+          const allEvents = allEventsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          
+          // Filter current events (between startDate and moveToPastDate)
+          const upcomingEvents = allEvents.filter(event => {
+            if (!event.startDate || !event.moveToPastDate) return false;
+            const startDate = new Date(event.startDate);
+            const moveToPastDate = new Date(event.moveToPastDate);
+            return now >= startDate && now < moveToPastDate;
+          }).sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+          
+          // Filter past events (between moveToPastDate and removeDate)
+          const pastEvents = allEvents.filter(event => {
+            if (!event.moveToPastDate || !event.removeDate) return false;
+            const moveToPastDate = new Date(event.moveToPastDate);
+            const removeDate = new Date(event.removeDate);
+            return now >= moveToPastDate && now < removeDate;
+          }).sort((a, b) => new Date(b.moveToPastDate) - new Date(a.moveToPastDate));
+          
+          // Render events
+          renderCurrentEvents(upcomingEvents);
+          renderPastEvents(pastEvents);
+          
+        } catch (error) {
+          console.error('Error loading events:', error);
+          showError('currentEventsCarousel', 'Unable to load upcoming events');
+          showError('pastEventsCarousel', 'Unable to load past events');
+        }
+      }
+
+      function renderCurrentEvents(events) {
+        const container = document.getElementById('currentEventsCarousel');
+        const countBadge = document.getElementById('currentCount');
+        
+        countBadge.textContent = events.length;
+        
+        if (events.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📅</div>
+              <h3 class="empty-title">No Upcoming Events</h3>
+              <p class="empty-text">Check back soon for new workshops and training sessions!</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="swiper current-events-swiper">
+            <div class="swiper-wrapper">
+              ${events.map(event => createEventCard(event, 'upcoming')).join('')}
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+          </div>
+        `;
+        
+        // Initialize Swiper
+        currentSwiper = new Swiper('.current-events-swiper', {
+          slidesPerView: 1,
+          spaceBetween: 20,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+          breakpoints: {
+            640: {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            1024: {
+              slidesPerView: 3,
+              spaceBetween: 30,
+            },
+          },
+        });
+      }
+
+      function renderPastEvents(events) {
+        const container = document.getElementById('pastEventsCarousel');
+        const countBadge = document.getElementById('pastCount');
+        
+        countBadge.textContent = events.length;
+        
+        if (events.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📚</div>
+              <h3 class="empty-title">No Past Events</h3>
+              <p class="empty-text">Past events will appear here after they've concluded.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="swiper past-events-swiper">
+            <div class="swiper-wrapper">
+              ${events.map(event => createEventCard(event, 'past')).join('')}
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+          </div>
+        `;
+        
+        // Initialize Swiper
+        pastSwiper = new Swiper('.past-events-swiper', {
+          slidesPerView: 1,
+          spaceBetween: 20,
+          pagination: {
+            el: '.past-events-swiper .swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.past-events-swiper .swiper-button-next',
+            prevEl: '.past-events-swiper .swiper-button-prev',
+          },
+          breakpoints: {
+            640: {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            1024: {
+              slidesPerView: 3,
+              spaceBetween: 30,
+            },
+          },
+        });
+      }
+
+      function createEventCard(event, type) {
+        const eventDate = event.startDate ? new Date(event.startDate) : new Date();
+        const formattedDate = formatEventDate(eventDate);
+        const timeString = formatEventTime(eventDate);
+        
+        return `
+          <div class="swiper-slide">
+            <div class="event-card">
+              ${event.imageUrl ? 
+                `<img src="${event.imageUrl}" alt="${event.title}" class="event-image">` :
+                `<div class="event-image"></div>`
+              }
+              <div class="event-content">
+                <div class="event-date-badge">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  ${formattedDate}
+                </div>
+                
+                <h3 class="event-title">${event.title}</h3>
+                
+                ${event.description ? 
+                  `<p class="event-description">${truncateText(event.description, 120)}</p>` : 
+                  ''
+                }
+                
+                <div class="event-meta">
+                  ${timeString ? 
+                    `<div class="event-meta-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      ${timeString}
+                    </div>` : 
+                    ''
+                  }
+                  
+                  ${event.location ? 
+                    `<div class="event-meta-item">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                      ${event.location}
+                    </div>` : 
+                    ''
+                  }
+                  
+                  <span class="event-status status-${type}">
+                    ${type === 'upcoming' ? '🎯 Upcoming' : '✅ Completed'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function formatEventDate(date) {
+        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+      }
+
+      function formatEventTime(date) {
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        
+        if (hours === 0 && minutes === 0) {
+          return ''; // All-day event
+        }
+        
+        const options = { hour: 'numeric', minute: '2-digit', hour12: true };
+        return date.toLocaleTimeString('en-US', options);
+      }
+
+      function truncateText(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength).trim() + '...';
+      }
+
+      function showError(containerId, message) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <h3 class="empty-title">Oops!</h3>
+            <p class="empty-text">${message}</p>
+          </div>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>

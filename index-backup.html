@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Leadership in Disabilities & Achievement of Hawai'i - Empowering families and children with disabilities through education, advocacy, and support.">
+  <meta name="keywords" content="LDAH, Hawaii, disabilities, special education, IEP, parent training, advocacy">
+  <title>LDAH - Leadership in Disabilities & Achievement of Hawai'i</title>
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-32PRRS0W85"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-32PRRS0W85');
+  </script>
+  
+  <style>
+    :root {
+      --primary-blue: #004E7C;
+      --light-blue: #0066a1;
+      --accent-teal: #4DD0E1;
+      --warm-sand: #D4B896;
+      --text-dark: #1a1a1a;
+      --text-light: #666;
+      --bg-light: #f8f9fa;
+      --white: #ffffff;
+      --gradient-1: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
+      --gradient-2: linear-gradient(135deg, #4DD0E1 0%, #0066a1 100%);
+      --shadow-sm: 0 2px 8px rgba(0, 78, 124, 0.1);
+      --shadow-md: 0 4px 16px rgba(0, 78, 124, 0.15);
+      --shadow-lg: 0 8px 32px rgba(0, 78, 124, 0.2);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    /* Navigation */
+    .nav-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-wrapper.scrolled {
+      box-shadow: var(--shadow-md);
+    }
+    
+    nav {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+    }
+    
+    .logo-img {
+      width: 60px;
+      height: 60px;
+      transition: transform 0.3s ease;
+    }
+    
+    .logo-container:hover .logo-img {
+      transform: scale(1.05);
+    }
+    
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .logo-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      line-height: 1.2;
+    }
+    
+    .logo-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    
+    .nav-links a:after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-1);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--primary-blue);
+    }
+    
+    .nav-links a:hover:after {
+      width: 100%;
+    }
+    
+    .cta-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--gradient-1);
+      color: white;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .mobile-menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    
+    .mobile-menu-toggle svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--primary-blue);
+    }
+    
+    /* Hero Section */
+    .hero {
+      margin-top: 88px;
+      min-height: 90vh;
+      background: var(--gradient-1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.1;
+      background-image: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    }
+    
+    .hero-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    
+    .hero-text h1 {
+      font-size: 3.5rem;
+      color: white;
+      margin-bottom: 1.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    
+    .hero-text .highlight {
+      color: var(--accent-teal);
+    }
+    
+    .hero-text p {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn-primary {
+      padding: 1rem 2rem;
+      background: white;
+      color: var(--primary-blue);
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .btn-secondary {
+      padding: 1rem 2rem;
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .btn-secondary:hover {
+      background: white;
+      color: var(--primary-blue);
+    }
+    
+    .hero-visual {
+      position: relative;
+    }
+    
+    .hero-image {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    /* Stats Section */
+    .stats-section {
+      background: var(--bg-light);
+      padding: 4rem 2rem;
+    }
+    
+    .stats-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .stat-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      font-size: 1rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    
+    /* Services Section */
+    .services-section {
+      padding: 6rem 2rem;
+      background: white;
+    }
+    
+    .section-header {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+    }
+    
+    .section-tag {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: rgba(77, 208, 225, 0.1);
+      color: var(--primary-blue);
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      color: var(--primary-blue);
+      margin-bottom: 1rem;
+    }
+    
+    .section-description {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      line-height: 1.8;
+    }
+    
+    .services-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .service-card {
+      background: var(--bg-light);
+      border-radius: 20px;
+      padding: 2.5rem;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .service-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent-teal);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .service-icon {
+      width: 70px;
+      height: 70px;
+      background: var(--gradient-2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .service-title {
+      font-size: 1.5rem;
+      color: var(--primary-blue);
+      margin-bottom: 1rem;
+    }
+    
+    .service-description {
+      color: var(--text-light);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    
+    .service-link {
+      color: var(--primary-blue);
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: gap 0.3s ease;
+    }
+    
+    .service-link:hover {
+      gap: 1rem;
+    }
+    
+    /* Events Section */
+    .events-section {
+      padding: 6rem 2rem;
+      background: var(--bg-light);
+    }
+    
+    .events-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .event-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+    
+    .event-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .event-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .event-content {
+      padding: 1.5rem;
+    }
+    
+    .event-date {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: rgba(77, 208, 225, 0.1);
+      color: var(--primary-blue);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .event-title {
+      font-size: 1.3rem;
+      color: var(--primary-blue);
+      margin-bottom: 0.75rem;
+    }
+    
+    .event-description {
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    
+    .event-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+    
+    .event-location {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    /* CTA Banner */
+    .cta-banner {
+      background: var(--gradient-1);
+      padding: 6rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cta-banner:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/></svg>');
+      opacity: 0.5;
+    }
+    
+    .cta-content {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cta-content h2 {
+      font-size: 2.5rem;
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+    
+    .cta-content p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--text-dark);
+      color: white;
+      padding: 4rem 2rem 2rem;
+    }
+    
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    
+    .footer-section h3 {
+      color: var(--accent-teal);
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+    }
+    
+    .footer-section p,
+    .footer-section a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      line-height: 2;
+      display: block;
+    }
+    
+    .footer-section a:hover {
+      color: var(--accent-teal);
+    }
+    
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    /* Loading State */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 3rem;
+    }
+    
+    .loading.active {
+      display: block;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 78, 124, 0.1);
+      border-top: 4px solid var(--primary-blue);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      
+      .hero-text h1 {
+        font-size: 2.5rem;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .mobile-menu-toggle {
+        display: block;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-text h1 {
+        font-size: 2rem;
+      }
+      
+      .hero-text p {
+        font-size: 1rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .services-grid,
+      .events-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <div class="nav-wrapper" id="navbar">
+    <nav>
+      <a href="index.html" class="logo-container">
+        <img src="assets/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+        <div class="logo-text">
+          <div class="logo-title">LDAH</div>
+          <div class="logo-subtitle">Leadership in Disabilities & Achievement</div>
+        </div>
+      </a>
+      
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">Who We Are</a></li>
+        <li><a href="#services">What We Do</a></li>
+        <li><a href="#events">Events</a></li>
+        <li><a href="volunteer.html">Volunteer</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="#donate" class="cta-button">Donate</a></li>
+      </ul>
+      
+      <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-content" id="heroContent">
+      <div class="hero-text">
+        <h1 class="editable" data-section="hero" data-field="title">
+          Empowering Families, <span class="highlight">Transforming Lives</span>
+        </h1>
+        <p class="editable" data-section="hero" data-field="subtitle">
+          Supporting children and youth with disabilities across Hawai'i and the Pacific Islands through advocacy, education, and community partnerships.
+        </p>
+        <div class="hero-buttons">
+          <a href="#services" class="btn-primary">Our Services</a>
+          <a href="volunteer.html" class="btn-secondary">Get Involved</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="https://www.ldahawaii.org/wp-content/uploads/2023/10/Leadership-in-Disabilities-Achievement-of-Hawaii-5.jpg" alt="LDAH Community" class="hero-image editable-image" data-section="hero" data-field="image">
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section" id="stats">
+    <div class="stats-container" id="statsContainer">
+      <!-- Stats will be loaded dynamically -->
+      <div class="loading active">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services-section" id="services">
+    <div class="section-header">
+      <span class="section-tag">What We Do</span>
+      <h2 class="section-title editable" data-section="services" data-field="title">
+        Comprehensive Support Services
+      </h2>
+      <p class="section-description editable" data-section="services" data-field="description">
+        We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.
+      </p>
+    </div>
+    
+    <div class="services-grid" id="servicesGrid">
+      <!-- Services will be loaded dynamically -->
+      <div class="loading active">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events Section -->
+  <section class="events-section" id="events">
+    <div class="events-container">
+      <div class="section-header">
+        <span class="section-tag">What's Happening</span>
+        <h2 class="section-title">Upcoming Events</h2>
+        <p class="section-description">Join us for workshops, training sessions, and community events.</p>
+      </div>
+      
+      <div class="events-grid" id="eventsGrid">
+        <!-- Events will be loaded dynamically from Firebase -->
+        <div class="loading active">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner">
+    <div class="cta-content">
+      <h2 class="editable" data-section="cta" data-field="title">
+        Ready to Make a Difference?
+      </h2>
+      <p class="editable" data-section="cta" data-field="description">
+        Join our community of volunteers, supporters, and advocates working to create opportunities for children with disabilities.
+      </p>
+      <div class="hero-buttons">
+        <a href="volunteer.html" class="btn-primary">Become a Volunteer</a>
+        <a href="#donate" class="btn-secondary">Support Our Mission</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About LDAH</h3>
+        <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="#about">Who We Are</a>
+        <a href="#services">What We Do</a>
+        <a href="#events">Events</a>
+        <a href="volunteer.html">Volunteer</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Honolulu Office</h3>
+        <p>245 North Kukui Street, Suite 205<br>
+        Honolulu, HI 96817<br>
+        (808) 532-5364<br>
+        <a href="/cdn-cgi/l/email-protection#afc3cbcec7efc3cbcec7ced8cec6c681c0ddc8"><span class="__cf_email__" data-cfemail="8ce0e8ede4cce0e8ede4edfbede5e5a2e3feeb">[email&#160;protected]</span></a></p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Connect With Us</h3>
+        <a href="https://www.facebook.com/groups/2659334410969387" target="_blank">Parent Talk Cafe</a>
+        <a href="install.html">Install Our App</a>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
+      <p>Developed by <a href="https://dpconsulting.com" style="color: var(--accent-teal);">DP Consulting</a></p>
+    </div>
+  </footer>
+
+  <!-- Firebase Con
