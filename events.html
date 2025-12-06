@@ -432,38 +432,64 @@
 
       async function loadEvents() {
         try {
+          console.log('🔍 Starting to load events...');
           const now = new Date();
+          console.log('📅 Current date:', now);
           
           // Fetch ALL events (no filtering in query)
           const allEventsSnapshot = await db.collection('events').get();
+          console.log('📊 Total events in database:', allEventsSnapshot.size);
           
-          const allEvents = allEventsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }));
+          const allEvents = allEventsSnapshot.docs.map(doc => {
+            const data = doc.data();
+            console.log('📋 Event:', doc.id, {
+              title: data.title,
+              startDate: data.startDate,
+              moveToPastDate: data.moveToPastDate,
+              removeDate: data.removeDate
+            });
+            return {
+              id: doc.id,
+              ...data
+            };
+          });
           
           // Filter current events (between startDate and moveToPastDate)
           const upcomingEvents = allEvents.filter(event => {
-            if (!event.startDate || !event.moveToPastDate) return false;
+            if (!event.startDate || !event.moveToPastDate) {
+              console.log('⚠️ Event missing dates:', event.title || event.id);
+              return false;
+            }
             const startDate = new Date(event.startDate);
             const moveToPastDate = new Date(event.moveToPastDate);
-            return now >= startDate && now < moveToPastDate;
+            const isCurrent = now >= startDate && now < moveToPastDate;
+            console.log('🎯 Event:', event.title, 'isCurrent:', isCurrent, {
+              now: now.toISOString(),
+              start: startDate.toISOString(),
+              moveToPast: moveToPastDate.toISOString()
+            });
+            return isCurrent;
           }).sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+          
+          console.log('✅ Current events found:', upcomingEvents.length);
           
           // Filter past events (between moveToPastDate and removeDate)
           const pastEvents = allEvents.filter(event => {
             if (!event.moveToPastDate || !event.removeDate) return false;
             const moveToPastDate = new Date(event.moveToPastDate);
             const removeDate = new Date(event.removeDate);
-            return now >= moveToPastDate && now < removeDate;
+            const isPast = now >= moveToPastDate && now < removeDate;
+            return isPast;
           }).sort((a, b) => new Date(b.moveToPastDate) - new Date(a.moveToPastDate));
+          
+          console.log('📚 Past events found:', pastEvents.length);
           
           // Render events
           renderCurrentEvents(upcomingEvents);
           renderPastEvents(pastEvents);
           
         } catch (error) {
-          console.error('Error loading events:', error);
+          console.error('❌ Error loading events:', error);
           showError('currentEventsCarousel', 'Unable to load upcoming events');
           showError('pastEventsCarousel', 'Unable to load past events');
         }
