@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LDAH CMS - Content Management</title>
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary-blue: #004E7C;
+      --light-blue: #0066a1;
+      --accent-teal: #4DD0E1;
+      --bg-light: #f8f9fa;
+      --text-dark: #1a1a1a;
+      --text-light: #666;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+    }
+    
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
+    }
+    
+    .login-box {
+      background: white;
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 400px;
+      width: 90%;
+    }
+    
+    .login-box h1 {
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    
+    .login-box p {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,78,124,0.3);
+    }
+    
+    .error-message {
+      background: #fee;
+      color: #c00;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    
+    #cmsPanel {
+      display: none;
+    }
+    
+    .cms-header {
+      background: white;
+      padding: 1.5rem 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .cms-header h1 {
+      color: var(--primary-blue);
+      font-size: 1.5rem;
+    }
+    
+    .cms-header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .btn-logout {
+      padding: 0.5rem 1rem;
+      background: var(--text-light);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .cms-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    
+    .cms-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #ddd;
+    }
+    
+    .tab {
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-light);
+      transition: all 0.3s;
+    }
+    
+    .tab.active {
+      color: var(--primary-blue);
+      border-bottom-color: var(--primary-blue);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .content-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+    
+    .content-section h2 {
+      color: var(--primary-blue);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    
+    .field-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .field-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    
+    .field-group input,
+    .field-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    
+    .field-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .image-upload {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .image-preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid #ddd;
+    }
+    
+    .btn-upload {
+      padding: 0.75rem 1.5rem;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .btn-save {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,78,124,0.3);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .stat-editor {
+      padding: 1.5rem;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+    }
+    
+    .services-list {
+      display: grid;
+      gap: 1rem;
+    }
+    
+    .service-item {
+      padding: 1.5rem;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+    }
+    
+    .service-item h3 {
+      color: var(--primary-blue);
+      margin-bottom: 1rem;
+    }
+    
+    .btn-add {
+      padding: 0.75rem 1.5rem;
+      background: var(--accent-teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    
+    .preview-button {
+      padding: 0.75rem 1.5rem;
+      background: white;
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="loginScreen">
+    <div class="login-box">
+      <h1>LDAH CMS</h1>
+      <p>Content Management System</p>
+      
+      <div class="error-message" id="loginError"></div>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CMS Panel -->
+  <div id="cmsPanel">
+    <div class="cms-header">
+      <h1>📝 LDAH Content Management</h1>
+      <div class="user-info">
+        <span id="userEmail"></span>
+        <a href="index.html" class="preview-button" target="_blank">Preview Site</a>
+        <button class="btn-logout" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+    
+    <div class="cms-container">
+      <!-- Tabs -->
+      <div class="cms-tabs">
+        <button class="tab active" data-tab="hero">Hero Section</button>
+        <button class="tab" data-tab="stats">Statistics</button>
+        <button class="tab" data-tab="services">Services</button>
+        <button class="tab" data-tab="cta">Call to Action</button>
+        <button class="tab" data-tab="events">Events</button>
+      </div>
+      
+      <!-- Hero Tab -->
+      <div class="tab-content active" id="hero-tab">
+        <div class="content-section">
+          <h2>Hero Section Content</h2>
+          <div class="success-message" id="heroSuccess">Content saved successfully!</div>
+          
+          <div class="field-group">
+            <label>Main Title</label>
+            <input type="text" id="heroTitle" placeholder="Enter hero title">
+          </div>
+          
+          <div class="field-group">
+            <label>Subtitle</label>
+            <textarea id="heroSubtitle" placeholder="Enter hero subtitle"></textarea>
+          </div>
+          
+          <div class="field-group">
+            <label>Hero Image</label>
+            <div class="image-upload">
+              <img id="heroImagePreview" class="image-preview" src="" alt="Hero">
+              <div>
+                <input type="file" id="heroImageInput" accept="image/*" style="display: none;">
+                <button type="button" class="btn-upload" onclick="document.getElementById('heroImageInput').click()">
+                  Choose Image
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn-save" onclick="saveHeroContent()">Save Changes</button>
+        </div>
+      </div>
+      
+      <!-- Stats Tab -->
+      <div class="tab-content" id="stats-tab">
+        <div class="content-section">
+          <h2>Website Statistics</h2>
+          <div class="success-message" id="statsSuccess">Statistics saved successfully!</div>
+          
+          <div class="stats-grid" id="statsEditor">
+            <!-- Stats will be loaded here -->
+          </div>
+          
+          <button class="btn-save" onclick="saveStats()">Save All Statistics</button>
+        </div>
+      </div>
+      
+      <!-- Services Tab -->
+      <div class="tab-content" id="services-tab">
+        <div class="content-section">
+          <h2>Services Section</h2>
+          <div class="success-message" id="servicesSuccess">Services saved successfully!</div>
+          
+          <div class="field-group">
+            <label>Section Title</label>
+            <input type="text" id="servicesTitle" placeholder="Enter services section title">
+          </div>
+          
+          <div class="field-group">
+            <label>Section Description</label>
+            <textarea id="servicesDescription" placeholder="Enter section description"></textarea>
+          </div>
+          
+          <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Service Items</h3>
+          <button class="btn-add" onclick="addServiceItem()">+ Add New Service</button>
+          
+          <div class="services-list" id="servicesList">
+            <!-- Services will be loaded here -->
+          </div>
+          
+          <button class="btn-save" onclick="saveServices()">Save All Services</button>
+        </div>
+      </div>
+      
+      <!-- CTA Tab -->
+      <div class="tab-content" id="cta-tab">
+        <div class="content-section">
+          <h2>Call to Action Section</h2>
+          <div class="success-message" id="ctaSuccess">CTA saved successfully!</div>
+          
+          <div class="field-group">
+            <label>CTA Title</label>
+            <input type="text" id="ctaTitle" placeholder="Enter CTA title">
+          </div>
+          
+          <div class="field-group">
+            <label>CTA Description</label>
+            <textarea id="ctaDescription" placeholder="Enter CTA description"></textarea>
+          </div>
+          
+          <button class="btn-save" onclick="saveCTA()">Save Changes</button>
+        </div>
+      </div>
+      
+      <!-- Events Tab -->
+      <div class="tab-content" id="events-tab">
+        <div class="content-section">
+          <h2>Manage Events</h2>
+          <p style="color: var(--text-light); margin-bottom: 1rem;">
+            Events are managed through the LDAH mobile app admin panel and automatically sync to the website.
+          </p>
+          <a href="events.html" class="preview-button">View Events Page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Config -->
+  <script src="js/firebase-config.js"></script>
+  
+  <!-- CMS Logic -->
+  <script src="js/cms.js"></script>
+</body>
+</html>
