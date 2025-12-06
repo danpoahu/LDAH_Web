@@ -434,52 +434,86 @@
         try {
           console.log('🔍 Starting to load events...');
           const now = new Date();
-          console.log('📅 Current date:', now);
           
           // Fetch ALL events (no filtering in query)
           const allEventsSnapshot = await db.collection('events').get();
-          console.log('📊 Total events in database:', allEventsSnapshot.size);
+          console.log('📊 Total documents in events collection:', allEventsSnapshot.size);
           
-          const allEvents = allEventsSnapshot.docs.map(doc => {
-            const data = doc.data();
-            console.log('📋 Event:', doc.id, {
-              title: data.title,
-              startDate: data.startDate,
-              moveToPastDate: data.moveToPastDate,
-              removeDate: data.removeDate
-            });
-            return {
-              id: doc.id,
-              ...data
-            };
+          const allEvents = [];
+          
+          // Process each document with error handling
+          allEventsSnapshot.docs.forEach(doc => {
+            try {
+              const data = doc.data();
+              
+              // Skip documents without required fields
+              if (!data.title) {
+                console.warn('⚠️ Skipping document without title:', doc.id);
+                return;
+              }
+              
+              // Skip documents with invalid IDs (corrupted)
+              if (doc.id.length > 30) {
+                console.warn('⚠️ Skipping corrupted document:', doc.id.substring(0, 20) + '...');
+                return;
+              }
+              
+              allEvents.push({
+                id: doc.id,
+                ...data
+              });
+              
+              console.log('✅ Loaded event:', data.title);
+            } catch (err) {
+              console.error('❌ Error processing document:', doc.id, err);
+              // Skip this document and continue
+            }
           });
+          
+          console.log('📋 Valid events loaded:', allEvents.length);
           
           // Filter current events (between startDate and moveToPastDate)
           const upcomingEvents = allEvents.filter(event => {
-            if (!event.startDate || !event.moveToPastDate) {
-              console.log('⚠️ Event missing dates:', event.title || event.id);
+            try {
+              if (!event.startDate || !event.moveToPastDate) {
+                console.log('⏭️ Skipping event without dates:', event.title);
+                return false;
+              }
+              const startDate = new Date(event.startDate);
+              const moveToPastDate = new Date(event.moveToPastDate);
+              
+              // Check if dates are valid
+              if (isNaN(startDate.getTime()) || isNaN(moveToPastDate.getTime())) {
+                console.log('⚠️ Invalid dates for:', event.title);
+                return false;
+              }
+              
+              const isCurrent = now >= startDate && now < moveToPastDate;
+              return isCurrent;
+            } catch (err) {
+              console.error('❌ Error filtering event:', event.title, err);
               return false;
             }
-            const startDate = new Date(event.startDate);
-            const moveToPastDate = new Date(event.moveToPastDate);
-            const isCurrent = now >= startDate && now < moveToPastDate;
-            console.log('🎯 Event:', event.title, 'isCurrent:', isCurrent, {
-              now: now.toISOString(),
-              start: startDate.toISOString(),
-              moveToPast: moveToPastDate.toISOString()
-            });
-            return isCurrent;
           }).sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
           
-          console.log('✅ Current events found:', upcomingEvents.length);
+          console.log('🎯 Current events found:', upcomingEvents.length);
           
           // Filter past events (between moveToPastDate and removeDate)
           const pastEvents = allEvents.filter(event => {
-            if (!event.moveToPastDate || !event.removeDate) return false;
-            const moveToPastDate = new Date(event.moveToPastDate);
-            const removeDate = new Date(event.removeDate);
-            const isPast = now >= moveToPastDate && now < removeDate;
-            return isPast;
+            try {
+              if (!event.moveToPastDate || !event.removeDate) return false;
+              const moveToPastDate = new Date(event.moveToPastDate);
+              const removeDate = new Date(event.removeDate);
+              
+              if (isNaN(moveToPastDate.getTime()) || isNaN(removeDate.getTime())) {
+                return false;
+              }
+              
+              const isPast = now >= moveToPastDate && now < removeDate;
+              return isPast;
+            } catch (err) {
+              return false;
+            }
           }).sort((a, b) => new Date(b.moveToPastDate) - new Date(a.moveToPastDate));
           
           console.log('📚 Past events found:', pastEvents.length);
