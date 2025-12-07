@@ -474,6 +474,9 @@
           
           console.log('📋 Valid events loaded:', allEvents.length);
           
+          // Make events accessible globally for signup modal
+          window.allEventsData = allEvents;
+          
           // Filter current events (between startDate and moveToPastDate)
           const upcomingEvents = allEvents.filter(event => {
             try {
@@ -642,6 +645,7 @@
         const eventDate = event.eventDate ? new Date(event.eventDate + 'T00:00:00') : new Date();
         const formattedDate = formatEventDate(eventDate);
         const isPDF = event.imageUrl && event.imageUrl.toLowerCase().includes('.pdf');
+        const hasSignupDates = event.signupDates && event.signupDates.length > 0;
         
         return `
           <div class="swiper-slide">
@@ -686,6 +690,30 @@
                     ${type === 'upcoming' ? '🎯 Upcoming' : '✅ Completed'}
                   </span>
                 </div>
+                
+                ${type === 'upcoming' && hasSignupDates ? 
+                  `<button 
+                    onclick="openSignupModal('${event.id}')"
+                    style="
+                      width: 100%;
+                      margin-top: 12px;
+                      padding: 12px;
+                      background: linear-gradient(135deg, #004E7C, #0066a1);
+                      color: white;
+                      border: none;
+                      border-radius: 12px;
+                      font-weight: 600;
+                      font-size: 14px;
+                      cursor: pointer;
+                      transition: transform 0.2s;
+                    "
+                    onmouseover="this.style.transform='translateY(-2px)'"
+                    onmouseout="this.style.transform='translateY(0)'"
+                  >
+                    📝 Sign Up for This Event
+                  </button>` : 
+                  ''
+                }
               </div>
             </div>
           </div>
@@ -724,7 +752,296 @@
           </div>
         `;
       }
+      
+      // Make allEvents accessible globally for signup
+      window.allEventsData = [];
     })();
+    
+    // Signup Modal Functions
+    let signupFormData = {
+      name: '',
+      email: '',
+      phone: '',
+      preferredContact: '',
+      selectedDates: [],
+      customAnswers: []
+    };
+    
+    function openSignupModal(eventId) {
+      const event = window.allEventsData.find(e => e.id === eventId);
+      if (!event) return;
+      
+      // Reset form
+      signupFormData = {
+        name: '',
+        email: '',
+        phone: '',
+        preferredContact: '',
+        selectedDates: [],
+        customAnswers: event.customQuestions ? event.customQuestions.map(() => '') : []
+      };
+      
+      // Build modal HTML
+      const modalHTML = `
+        <div id="signupModal" style="
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          z-index: 10000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          overflow-y: auto;
+        " onclick="closeSignupModal(event)">
+          <div style="
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 3px solid #004E7C;
+          " onclick="event.stopPropagation()">
+            <button onclick="closeSignupModal()" style="
+              position: absolute;
+              top: 16px;
+              right: 16px;
+              background: transparent;
+              border: none;
+              color: #004E7C;
+              cursor: pointer;
+              font-size: 24px;
+              padding: 8px;
+            ">✕</button>
+            
+            <div id="signupFormContent">
+              <h2 style="color: #004E7C; font-size: 24px; font-weight: bold; margin-bottom: 8px; padding-right: 40px;">
+                Sign Up for ${event.title}
+              </h2>
+              <p style="color: #666; font-size: 14px; margin-bottom: 24px;">
+                * Indicates required question
+              </p>
+              
+              <form id="signupForm" onsubmit="submitSignup(event, '${eventId}')">
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                    Full Name *
+                  </label>
+                  <input type="text" required id="signupName" placeholder="Your answer" style="
+                    width: 100%;
+                    padding: 12px;
+                    border: 1px solid #D1D5DB;
+                    border-radius: 8px;
+                    font-size: 14px;
+                  ">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                    Email Address *
+                  </label>
+                  <input type="email" required id="signupEmail" placeholder="Your answer" style="
+                    width: 100%;
+                    padding: 12px;
+                    border: 1px solid #D1D5DB;
+                    border-radius: 8px;
+                    font-size: 14px;
+                  ">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                    Phone Number (best to text or call) *
+                  </label>
+                  <input type="tel" required id="signupPhone" placeholder="(808) 555-1234" style="
+                    width: 100%;
+                    padding: 12px;
+                    border: 1px solid #D1D5DB;
+                    border-radius: 8px;
+                    font-size: 14px;
+                  ">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                    Preferred Method of Contact *
+                  </label>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    ${['Email', 'Phone call', 'Text'].map(method => `
+                      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="preferredContact" value="${method}" required style="width: 18px; height: 18px; cursor: pointer;">
+                        <span style="font-size: 14px; color: #374151;">${method}</span>
+                      </label>
+                    `).join('')}
+                  </div>
+                </div>
+                
+                ${event.signupDates && event.signupDates.length > 0 ? `
+                  <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                      Select the Dates you are Available to Volunteer *
+                    </label>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      ${event.signupDates.map((date, idx) => `
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                          <input type="checkbox" class="signup-date-checkbox" value="${date}" style="width: 18px; height: 18px; cursor: pointer;">
+                          <span style="font-size: 14px; color: #374151;">${date}</span>
+                        </label>
+                      `).join('')}
+                    </div>
+                    <p id="dateError" style="color: #DC2626; font-size: 12px; margin-top: 4px; display: none;">
+                      Please select at least one date
+                    </p>
+                  </div>
+                ` : ''}
+                
+                ${event.customQuestions && event.customQuestions.length > 0 ? 
+                  event.customQuestions.map((question, idx) => `
+                    <div style="margin-bottom: 20px;">
+                      <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                        ${question}
+                      </label>
+                      <textarea 
+                        class="custom-answer"
+                        data-index="${idx}"
+                        placeholder="Your answer"
+                        rows="3"
+                        style="
+                          width: 100%;
+                          padding: 12px;
+                          border: 1px solid #D1D5DB;
+                          border-radius: 8px;
+                          font-size: 14px;
+                          font-family: inherit;
+                          resize: vertical;
+                        "
+                      ></textarea>
+                    </div>
+                  `).join('') 
+                : ''}
+                
+                <button type="submit" style="
+                  width: 100%;
+                  padding: 16px;
+                  background: linear-gradient(135deg, #004E7C, #0066a1);
+                  color: white;
+                  border: none;
+                  border-radius: 12px;
+                  font-weight: bold;
+                  font-size: 16px;
+                  cursor: pointer;
+                  transition: transform 0.2s;
+                "
+                onmouseover="this.style.transform='translateY(-2px)'"
+                onmouseout="this.style.transform='translateY(0)'">
+                  Submit Signup
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+    
+    function closeSignupModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      const modal = document.getElementById('signupModal');
+      if (modal) modal.remove();
+    }
+    
+    async function submitSignup(event, eventId) {
+      event.preventDefault();
+      
+      const eventData = window.allEventsData.find(e => e.id === eventId);
+      if (!eventData) return;
+      
+      // Get form values
+      const formData = {
+        name: document.getElementById('signupName').value,
+        email: document.getElementById('signupEmail').value,
+        phone: document.getElementById('signupPhone').value,
+        preferredContact: document.querySelector('input[name="preferredContact"]:checked').value,
+        selectedDates: [],
+        customAnswers: []
+      };
+      
+      // Get selected dates
+      const dateCheckboxes = document.querySelectorAll('.signup-date-checkbox:checked');
+      formData.selectedDates = Array.from(dateCheckboxes).map(cb => cb.value);
+      
+      if (eventData.signupDates && eventData.signupDates.length > 0 && formData.selectedDates.length === 0) {
+        document.getElementById('dateError').style.display = 'block';
+        return;
+      }
+      
+      // Get custom answers
+      const customAnswers = document.querySelectorAll('.custom-answer');
+      formData.customAnswers = Array.from(customAnswers).map(ta => ta.value);
+      
+      // Show loading
+      document.getElementById('signupFormContent').innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+          <div style="font-size: 48px; margin-bottom: 16px;">⏳</div>
+          <p style="color: #004E7C; font-weight: 600;">Submitting...</p>
+        </div>
+      `;
+      
+      try {
+        await db.collection('events').doc(eventId).collection('signups').add({
+          ...formData,
+          status: 'pending',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          eventTitle: eventData.title
+        });
+        
+        // Track analytics
+        try {
+          await db.collection('analytics').add({
+            eventType: 'event_signup',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            page: window.location.pathname,
+            eventId: eventId,
+            eventTitle: eventData.title
+          });
+          
+          if (typeof gtag !== 'undefined') {
+            gtag('event', 'event_signup', {
+              event_category: 'engagement',
+              event_label: eventData.title
+            });
+          }
+        } catch (analyticsError) {
+          console.error('Analytics error:', analyticsError);
+        }
+        
+        // Show success
+        document.getElementById('signupFormContent').innerHTML = `
+          <div style="text-align: center; padding: 40px;">
+            <div style="font-size: 64px; margin-bottom: 20px;">✅</div>
+            <h2 style="color: #004E7C; font-size: 24px; font-weight: bold; margin-bottom: 12px;">
+              Thank You!
+            </h2>
+            <p style="color: #666; font-size: 16px;">
+              Your signup has been received. We'll contact you soon!
+            </p>
+          </div>
+        `;
+        
+        setTimeout(() => closeSignupModal(), 2000);
+      } catch (error) {
+        console.error('Error submitting signup:', error);
+        alert('There was an error submitting your signup. Please try again.');
+        closeSignupModal();
+      }
+    }
   </script>
 </body>
 </html>
