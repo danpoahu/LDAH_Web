@@ -1,11 +1,12 @@
 // Firebase Configuration for LDAH Website
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
+  authDomain: "ldah-932d5.firebaseapp.com",
+  projectId: "ldah-932d5",
+  storageBucket: "ldah-932d5.firebasestorage.app",
+  messagingSenderId: "662130454003",
+  appId: "1:662130454003:web:437576d5a5811ecd8df686",
+  measurementId: "G-32PRRS0W85"
 };
 
 // Initialize Firebase
