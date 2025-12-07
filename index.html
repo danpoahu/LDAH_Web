@@ -580,7 +580,7 @@
         <p>245 North Kukui Street, Suite 205<br>
         Honolulu, HI 96817<br>
         (808) 532-5364<br>
-        <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a></p>
+        <a href="/cdn-cgi/l/email-protection#553931343d153931343d3422343c3c7b3a2732"><span class="__cf_email__" data-cfemail="e38f87828ba38f87828b8294828a8acd8c9184">[email&#160;protected]</span></a></p>
       </div>
       
       <div class="footer-section">
@@ -596,7 +596,7 @@
     </div>
   </footer>
   
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   
   <script>
@@ -657,7 +657,7 @@
               return `
                 <div class="event-card" onclick="window.location.href='events.html'">
                   ${event.imageUrl ? 
-                    `<img src="${event.imageUrl}" alt="${event.title}" class="event-card-image">` :
+                    `<img src="${event.imageUrl}" alt="${event.title}" class="event-card-image" style="height: auto; max-height: none;">` :
                     `<div class="event-card-image"></div>`
                   }
                   <div class="event-card-content">
@@ -672,15 +672,6 @@
                         ${event.location}
                       </div>` : ''
                     }
-                    ${timeString ? 
-                      `<div class="event-card-meta">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        ${timeString}
-                      </div>` : ''
-                    }
                     <div class="event-status">🎯 Upcoming</div>
                   </div>
                 </div>
@@ -691,14 +682,4 @@
       } catch (error) {
         console.error('Error loading events:', error);
         container.innerHTML = `
-          <div style="text-align: center; padding: 3rem;">
-            <p style="color: var(--text-light);">Unable to load events</p>
-          </div>
-        `;
-      }
-    }
-    
-    document.addEventListener('DOMContentLoaded', loadCurrentEvents);
-  </script>
-</body>
-</html>
+          <div style="text-align: cent
