@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LDAH - Leadership in Disabilities & Achievement of Hawai'i</title>
   
+  <!-- Firebase in HEAD like events.html -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,11 +25,7 @@
       --bg-light: #f8f9fa;
     }
     
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -38,320 +40,137 @@
       line-height: 1.2;
     }
     
-    /* Navigation */
     nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       box-shadow: 0 2px 8px rgba(0, 78, 124, 0.1);
     }
     
     .nav-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      max-width: 1400px; margin: 0 auto; padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
     }
     
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      text-decoration: none;
-    }
-    
-    .logo-img {
-      width: 60px;
-      height: 60px;
-    }
-    
-    .logo-text {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--primary-blue);
-    }
-    
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      align-items: center;
-    }
-    
-    .nav-links a {
-      text-decoration: none;
-      color: var(--text-dark);
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-    
-    .nav-links a:hover {
-      color: var(--primary-blue);
-    }
-    
+    .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+    .logo-img { width: 60px; height: 60px; }
+    .logo-text { font-size: 1.2rem; font-weight: 700; color: var(--primary-blue); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 500; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--primary-blue); }
     .cta-button {
       padding: 0.75rem 1.5rem;
       background: linear-gradient(135deg, #004E7C, #0066a1);
-      color: white;
-      border-radius: 50px;
-      font-weight: 600;
-      text-decoration: none;
+      color: white; border-radius: 50px; font-weight: 600; text-decoration: none;
     }
     
-    /* Hero */
     .hero {
-      margin-top: 88px;
-      min-height: 90vh;
+      margin-top: 88px; min-height: 90vh;
       background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
-      display: flex;
-      align-items: center;
-      color: white;
-      padding: 4rem 2rem;
+      display: flex; align-items: center; color: white; padding: 4rem 2rem;
     }
-    
-    .hero-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    
-    .hero h1 {
-      font-size: 3.5rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .hero .highlight {
-      color: var(--accent-teal);
-    }
-    
-    .hero p {
-      font-size: 1.25rem;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-    }
-    
-    .hero-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    
+    .hero-content { max-width: 1400px; margin: 0 auto; text-align: center; }
+    .hero h1 { font-size: 3.5rem; margin-bottom: 1.5rem; }
+    .hero .highlight { color: var(--accent-teal); }
+    .hero p { font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9; }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
     .btn-primary {
-      padding: 1rem 2rem;
-      background: white;
-      color: var(--primary-blue);
-      border-radius: 50px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s;
+      padding: 1rem 2rem; background: white; color: var(--primary-blue);
+      border-radius: 50px; font-weight: 600; text-decoration: none; transition: all 0.3s;
     }
-    
-    .btn-primary:hover {
-      transform: translateY(-3px);
-    }
-    
+    .btn-primary:hover { transform: translateY(-3px); }
     .btn-secondary {
-      padding: 1rem 2rem;
-      background: transparent;
-      color: white;
-      border: 2px solid white;
-      border-radius: 50px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s;
+      padding: 1rem 2rem; background: transparent; color: white;
+      border: 2px solid white; border-radius: 50px; font-weight: 600;
+      text-decoration: none; transition: all 0.3s;
     }
+    .btn-secondary:hover { background: white; color: var(--primary-blue); }
     
-    .btn-secondary:hover {
-      background: white;
-      color: var(--primary-blue);
-    }
-    
-    /* Stats */
-    .stats-section {
-      background: var(--bg-light);
-      padding: 4rem 2rem;
-    }
-    
+    .stats-section { background: var(--bg-light); padding: 4rem 2rem; }
     .stats-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
+      max-width: 1400px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;
     }
-    
     .stat-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 16px;
-      text-align: center;
+      background: white; padding: 2rem; border-radius: 16px; text-align: center;
       box-shadow: 0 4px 16px rgba(0, 78, 124, 0.1);
     }
+    .stat-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .stat-number { font-size: 3rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 0.5rem; }
+    .stat-label { font-size: 1rem; color: var(--text-light); font-weight: 500; }
     
-    .stat-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-    
-    .stat-number {
-      font-size: 3rem;
-      font-weight: 800;
-      color: var(--primary-blue);
-      margin-bottom: 0.5rem;
-    }
-    
-    .stat-label {
-      font-size: 1rem;
-      color: var(--text-light);
-      font-weight: 500;
-    }
-    
-    /* Services */
-    .services-section {
-      padding: 6rem 2rem;
-      background: white;
-    }
-    
-    .section-header {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto 4rem;
-    }
-    
-    .section-title {
-      font-size: 2.5rem;
-      color: var(--primary-blue);
-      margin-bottom: 1rem;
-    }
-    
-    .section-description {
-      font-size: 1.1rem;
-      color: var(--text-light);
-    }
-    
+    .services-section { padding: 6rem 2rem; background: white; }
+    .section-header { text-align: center; max-width: 800px; margin: 0 auto 4rem; }
+    .section-title { font-size: 2.5rem; color: var(--primary-blue); margin-bottom: 1rem; }
+    .section-description { font-size: 1.1rem; color: var(--text-light); }
     .services-grid {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
+      max-width: 1400px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;
     }
-    
     .service-card {
-      background: var(--bg-light);
-      border-radius: 20px;
-      padding: 2.5rem;
-      transition: all 0.3s;
+      background: var(--bg-light); border-radius: 20px; padding: 2.5rem; transition: all 0.3s;
     }
+    .service-card:hover { transform: translateY(-8px); box-shadow: 0 8px 32px rgba(0, 78, 124, 0.2); }
+    .service-icon { font-size: 3rem; margin-bottom: 1.5rem; }
+    .service-title { font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 1rem; }
+    .service-description { color: var(--text-light); line-height: 1.8; }
     
-    .service-card:hover {
+    .event-card {
+      background: white; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 78, 124, 0.12);
+      transition: all 0.3s ease; cursor: pointer;
+      max-width: 380px; width: 100%;
+    }
+    .event-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 8px 32px rgba(0, 78, 124, 0.2);
+      box-shadow: 0 12px 40px rgba(0, 78, 124, 0.25);
     }
     
-    .service-icon {
-      font-size: 3rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .service-title {
-      font-size: 1.5rem;
-      color: var(--primary-blue);
-      margin-bottom: 1rem;
-    }
-    
-    .service-description {
-      color: var(--text-light);
-      line-height: 1.8;
-    }
-    
-    /* CTA */
     .cta-banner {
       background: linear-gradient(135deg, #004E7C, #0066a1);
-      padding: 6rem 2rem;
-      text-align: center;
-      color: white;
+      padding: 6rem 2rem; text-align: center; color: white;
     }
+    .cta-content h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+    .cta-content p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9; }
     
-    .cta-content h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .cta-content p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-    }
-    
-    /* Footer */
     footer {
-      background: var(--text-dark);
-      color: white;
-      padding: 4rem 2rem 2rem;
+      background: var(--text-dark); color: white; padding: 4rem 2rem 2rem;
     }
-    
     .footer-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 3rem;
-      margin-bottom: 3rem;
+      max-width: 1400px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem; margin-bottom: 3rem;
     }
-    
-    .footer-section h3 {
-      color: var(--accent-teal);
-      margin-bottom: 1.5rem;
-    }
-    
+    .footer-section h3 { color: var(--accent-teal); margin-bottom: 1.5rem; }
     .footer-section a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      display: block;
-      margin-bottom: 0.5rem;
+      color: rgba(255, 255, 255, 0.8); text-decoration: none;
+      display: block; margin-bottom: 0.5rem;
     }
-    
-    .footer-section a:hover {
-      color: var(--accent-teal);
-    }
-    
+    .footer-section a:hover { color: var(--accent-teal); }
     .footer-bottom {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding-top: 2rem;
+      max-width: 1400px; margin: 0 auto; padding-top: 2rem;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-      color: rgba(255, 255, 255, 0.6);
+      text-align: center; color: rgba(255, 255, 255, 0.6);
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2rem;
-      }
-      
-      .nav-links {
-        display: none;
-      }
+      .hero h1 { font-size: 2rem; }
+      .nav-links { display: none; }
     }
   </style>
 </head>
 <body>
-  <!-- Navigation -->
   <nav>
     <div class="nav-content">
       <a href="index.html" class="logo-container">
         <img src="assets/logo_transparent.png" alt="LDAH Logo" class="logo-img">
         <span class="logo-text">LDAH</span>
       </a>
-      
       <ul class="nav-links">
         <li><a href="#services">What We Do</a></li>
         <li><a href="events.html">Events</a></li>
@@ -362,7 +181,6 @@
     </div>
   </nav>
 
-  <!-- Hero -->
   <section class="hero">
     <div class="hero-content">
       <h1>Empowering Families, <span class="highlight">Transforming Lives</span></h1>
@@ -374,79 +192,30 @@
     </div>
   </section>
 
-  <!-- Stats -->
   <section class="stats-section">
     <div class="stats-container">
-      <div class="stat-card">
-        <div class="stat-icon">👨‍👩‍👧‍👦</div>
-        <div class="stat-number">15,000+</div>
-        <div class="stat-label">Families Served</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">📅</div>
-        <div class="stat-number">200+</div>
-        <div class="stat-label">Annual Events</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🏫</div>
-        <div class="stat-number">50+</div>
-        <div class="stat-label">Years of Service</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🌴</div>
-        <div class="stat-number">7</div>
-        <div class="stat-label">Pacific Islands</div>
-      </div>
+      <div class="stat-card"><div class="stat-icon">👨‍👩‍👧‍👦</div><div class="stat-number">15,000+</div><div class="stat-label">Families Served</div></div>
+      <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-number">200+</div><div class="stat-label">Annual Events</div></div>
+      <div class="stat-card"><div class="stat-icon">🏫</div><div class="stat-number">50+</div><div class="stat-label">Years of Service</div></div>
+      <div class="stat-card"><div class="stat-icon">🌴</div><div class="stat-number">7</div><div class="stat-label">Pacific Islands</div></div>
     </div>
   </section>
 
-  <!-- Services -->
   <section class="services-section" id="services">
     <div class="section-header">
       <h2 class="section-title">Comprehensive Support Services</h2>
       <p class="section-description">We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.</p>
     </div>
-    
     <div class="services-grid">
-      <div class="service-card">
-        <div class="service-icon">📚</div>
-        <h3 class="service-title">Parent Training & Information</h3>
-        <p class="service-description">Comprehensive training and resources to help parents navigate special education systems and advocate for their children.</p>
-      </div>
-      
-      <div class="service-card">
-        <div class="service-icon">🎓</div>
-        <h3 class="service-title">School Readiness Project</h3>
-        <p class="service-description">Early intervention programs helping children with disabilities prepare for successful school experiences.</p>
-      </div>
-      
-      <div class="service-card">
-        <div class="service-icon">⚖️</div>
-        <h3 class="service-title">Special Education Advocacy</h3>
-        <p class="service-description">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p>
-      </div>
-      
-      <div class="service-card">
-        <div class="service-icon">🇺🇸</div>
-        <h3 class="service-title">Military Family Support</h3>
-        <p class="service-description">Specialized assistance for military families navigating relocations and IEP transitions across installations.</p>
-      </div>
-      
-      <div class="service-card">
-        <div class="service-icon">🏝️</div>
-        <h3 class="service-title">Pacific Islands Outreach</h3>
-        <p class="service-description">Extending support to families across American Samoa, CNMI, FSM, Guam, Marshall Islands, and Palau.</p>
-      </div>
-      
-      <div class="service-card">
-        <div class="service-icon">🤝</div>
-        <h3 class="service-title">Community Partnerships</h3>
-        <p class="service-description">Collaborating with schools, agencies, and organizations to build inclusive communities for all children.</p>
-      </div>
+      <div class="service-card"><div class="service-icon">📚</div><h3 class="service-title">Parent Training & Information</h3><p class="service-description">Comprehensive training and resources to help parents navigate special education systems and advocate for their children.</p></div>
+      <div class="service-card"><div class="service-icon">🎓</div><h3 class="service-title">School Readiness Project</h3><p class="service-description">Early intervention programs helping children with disabilities prepare for successful school experiences.</p></div>
+      <div class="service-card"><div class="service-icon">⚖️</div><h3 class="service-title">Special Education Advocacy</h3><p class="service-description">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p></div>
+      <div class="service-card"><div class="service-icon">🇺🇸</div><h3 class="service-title">Military Family Support</h3><p class="service-description">Specialized assistance for military families navigating relocations and IEP transitions across installations.</p></div>
+      <div class="service-card"><div class="service-icon">🏝️</div><h3 class="service-title">Pacific Islands Outreach</h3><p class="service-description">Extending support to families across American Samoa, CNMI, FSM, Guam, Marshall Islands, and Palau.</p></div>
+      <div class="service-card"><div class="service-icon">🤝</div><h3 class="service-title">Community Partnerships</h3><p class="service-description">Collaborating with schools, agencies, and organizations to build inclusive communities for all children.</p></div>
     </div>
   </section>
 
-  <!-- Current Events Section -->
   <section style="padding: 6rem 2rem; background: white;">
     <div style="max-width: 1400px; margin: 0 auto;">
       <div class="section-header">
@@ -454,21 +223,18 @@
         <h2 class="section-title">Upcoming Events</h2>
         <p class="section-description">Join us for workshops, training sessions, and community events</p>
       </div>
-      
       <div id="currentEventsGrid">
         <div style="text-align: center; padding: 3rem;">
           <div style="display: inline-block; border: 4px solid rgba(0, 78, 124, 0.1); border-top-color: var(--primary-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
           <p style="margin-top: 1rem; color: var(--text-light);">Loading events...</p>
         </div>
       </div>
-      
       <div style="text-align: center; margin-top: 2rem;">
-        <a href="events.html" class="btn-primary" style="display: inline-block; padding: 1rem 2.5rem; background: var(--primary-blue); color: white; text-decoration: none; border-radius: 50px; font-weight: 600; transition: all 0.3s;">View All Events →</a>
+        <a href="events.html" class="btn-primary" style="display: inline-block; padding: 1rem 2.5rem; background: var(--primary-blue); color: white; text-decoration: none; border-radius: 50px; font-weight: 600;">View All Events →</a>
       </div>
     </div>
   </section>
 
-  <!-- CTA Banner -->
   <section class="cta-banner">
     <div class="cta-content">
       <h2>Ready to Make a Difference?</h2>
@@ -480,14 +246,12 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer>
     <div class="footer-content">
       <div class="footer-section">
         <h3>About LDAH</h3>
         <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
       </div>
-      
       <div class="footer-section">
         <h3>Quick Links</h3>
         <a href="#services">What We Do</a>
@@ -495,34 +259,23 @@
         <a href="volunteer.html">Volunteer</a>
         <a href="contact.html">Contact Us</a>
       </div>
-      
       <div class="footer-section">
         <h3>Honolulu Office</h3>
-        <p>245 North Kukui Street, Suite 205<br>
-        Honolulu, HI 96817<br>
-        (808) 532-5364<br>
-        <a href="/cdn-cgi/l/email-protection#432f27222b032f27222b2234222a2a6d2c3124"><span class="__cf_email__" data-cfemail="69050d080129050d0801081e08000047061b0e">[email&#160;protected]</span></a></p>
+        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a></p>
       </div>
-      
       <div class="footer-section">
         <h3>Connect With Us</h3>
         <a href="https://www.facebook.com/groups/2659334410969387" target="_blank">Parent Talk Cafe</a>
         <a href="install.html">Install Our App</a>
       </div>
     </div>
-    
     <div class="footer-bottom">
       <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
       <p>Developed by <a href="https://dpconsulting.com" style="color: var(--accent-teal);">DP Consulting</a></p>
     </div>
   </footer>
   
-  <!-- Firebase Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  
   <script>
-    // Initialize Firebase
     firebase.initializeApp({
       apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
       authDomain: "ldah-932d5.firebaseapp.com",
@@ -531,98 +284,36 @@
       messagingSenderId: "662130454003",
       appId: "1:662130454003:web:437576d5a5811ecd8df686"
     });
-    
     const db = firebase.firestore();
-    
-    // Load current events
     async function loadCurrentEvents() {
       const container = document.getElementById('currentEventsGrid');
-      
       try {
-        console.log('🔍 Loading events from Firebase...');
+        console.log('🔍 Loading events...');
         const now = new Date();
-        console.log('⏰ Current time:', now.toISOString());
         const snapshot = await db.collection('events').get();
-        console.log('📊 Total documents fetched:', snapshot.docs.length);
-        
-        snapshot.docs.forEach(doc => {
-          const data = doc.data();
-          console.log('📄 Document:', doc.id);
-          console.log('  - startDate:', data.startDate);
-          console.log('  - eventDate:', data.eventDate);
-          console.log('  - moveToPastDate:', data.moveToPastDate);
-          console.log('  - title:', data.title);
-        });
-        
-        const currentEvents = snapshot.docs
-          .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter(event => {
-            if (!event.startDate || !event.moveToPastDate) {
-              console.log('⏭️ Skipping (no dates):', event.title);
-              return false;
-            }
-            // Parse dates as local Hawaii time
-            const startDate = new Date(event.startDate + 'T00:00:00');
-            const moveToPastDate = new Date(event.moveToPastDate + 'T00:00:00');
-            const isCurrent = now >= startDate && now < moveToPastDate;
-            console.log(`  ${event.title}: startDate=${startDate.toDateString()}, moveToPast=${moveToPastDate.toDateString()}, isCurrent=${isCurrent}`);
-            return isCurrent;
-          })
-          .sort((a, b) => new Date(a.eventDate + 'T00:00:00') - new Date(b.eventDate + 'T00:00:00'))
-          .slice(0, 3);
-        
-        console.log('🎯 Current events found:', currentEvents.length);
-        
+        console.log('📊 Total:', snapshot.docs.length);
+        const currentEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(event => {
+          if (!event.startDate || !event.moveToPastDate) return false;
+          const startDate = new Date(event.startDate + 'T00:00:00');
+          const moveToPastDate = new Date(event.moveToPastDate + 'T00:00:00');
+          return now >= startDate && now < moveToPastDate;
+        }).sort((a, b) => new Date(a.eventDate + 'T00:00:00') - new Date(b.eventDate + 'T00:00:00')).slice(0, 3);
+        console.log('🎯 Current:', currentEvents.length);
         if (currentEvents.length === 0) {
-          container.innerHTML = `
-            <div style="text-align: center; padding: 3rem; background: var(--bg-light); border-radius: 20px;">
-              <div style="font-size: 4rem; margin-bottom: 1rem;">📅</div>
-              <h3 style="color: var(--primary-blue); font-size: 1.5rem; margin-bottom: 0.5rem;">No Upcoming Events</h3>
-              <p style="color: var(--text-light); font-size: 1.1rem;">Check back soon for new workshops and training sessions!</p>
-            </div>
-          `;
+          container.innerHTML = '<div style="text-align: center; padding: 3rem; background: var(--bg-light); border-radius: 20px;"><div style="font-size: 4rem; margin-bottom: 1rem;">📅</div><h3 style="color: var(--primary-blue); font-size: 1.5rem; margin-bottom: 0.5rem;">No Upcoming Events</h3><p style="color: var(--text-light); font-size: 1.1rem;">Check back soon for new workshops and training sessions!</p></div>';
           return;
         }
-        
-        container.innerHTML = `
-          <div class="events-grid" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
-            ${currentEvents.map(event => {
-              const eventDate = new Date(event.eventDate + 'T00:00:00');
-              const formattedDate = eventDate.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-              });
-              
-              return `
-                <div class="event-card" onclick="window.location.href='events.html'" style="background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 78, 124, 0.12); transition: all 0.3s ease; cursor: pointer; max-width: 380px; width: 100%;">
-                  ${event.imageUrl ? 
-                    `<img src="${event.imageUrl}" alt="${event.title}" style="width:100%; height:auto; display:block;">` :
-                    `<div style="width: 100%; height: 220px; background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);"></div>`
-                  }
-                  <div style="padding: 2rem;">
-                    <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(77, 208, 225, 0.1); border-radius: 20px; font-size: 0.9rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 1rem;">
-                      📅 ${formattedDate}
-                    </div>
-                    <h3 style="font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 1rem; font-weight: 700; line-height: 1.3;">${event.title}</h3>
-                    ${event.location ? 
-                      `<div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-light); font-size: 0.95rem; margin-bottom: 0.75rem;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                          <circle cx="12" cy="10" r="3"/>
-                        </svg>
-                        ${event.location}
-                      </div>` : ''
-                    }
-                    <div style="display: inline-block; padding: 0.35rem 1rem; background: linear-gradient(135deg, #4ade80, #22c55e); color: white; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-top: 1rem;">🎯 Upcoming</div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `;
+        container.innerHTML = '<div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">' + currentEvents.map(event => {
+          const eventDate = new Date(event.eventDate + 'T00:00:00');
+          const formattedDate = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          return '<div class="event-card" onclick="window.location.href=\'events.html\'">' + (event.imageUrl ? '<img src="' + event.imageUrl + '" alt="' + event.title + '" style="width:100%; height:auto; display:block;">' : '<div style="width: 100%; height: 220px; background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);"></div>') + '<div style="padding: 2rem;"><div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(77, 208, 225, 0.1); border-radius: 20px; font-size: 0.9rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 1rem;">📅 ' + formattedDate + '</div><h3 style="font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 1rem; font-weight: 700; line-height: 1.3;">' + event.title + '</h3>' + (event.location ? '<div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-light); font-size: 0.95rem; margin-bottom: 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' + event.location + '</div>' : '') + '<div style="display: inline-block; padding: 0.35rem 1rem; background: linear-gradient(135deg, #4ade80, #22c55e); color: white; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-top: 1rem;">🎯 Upcoming</div></div></div>';
+        }).join('') + '</div>';
       } catch (error) {
-        console.error('❌ Error loading events:', error);
-        container.innerHTML = `
-          <div style="text-align: center; padding: 3rem;">
-            <p style="color: va
+        console.error('❌ Error:', error);
+        container.innerHTML = '<div style="text-align: center; padding: 3rem;"><p style="color: var(--text-light);">Unable to load events</p></div>';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadCurrentEvents);
+  </script>
+</body>
+</html>

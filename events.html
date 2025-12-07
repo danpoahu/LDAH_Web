@@ -491,6 +491,7 @@
               }
               
               const isCurrent = now >= startDate && now < moveToPastDate;
+              console.log(`  📅 ${event.title}: startDate=${startDate.toDateString()}, moveToPast=${moveToPastDate.toDateString()}, isCurrent=${isCurrent}`);
               return isCurrent;
             } catch (err) {
               console.error('❌ Error filtering event:', event.title, err);
