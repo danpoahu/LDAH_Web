@@ -474,23 +474,23 @@
           
           console.log('📋 Valid events loaded:', allEvents.length);
           
-          // Filter current events (between eventDate and moveToPastDate)
+          // Filter current events (between startDate and moveToPastDate)
           const upcomingEvents = allEvents.filter(event => {
             try {
-              if (!event.eventDate || !event.moveToPastDate) {
+              if (!event.startDate || !event.moveToPastDate) {
                 console.log('⏭️ Skipping event without dates:', event.title);
                 return false;
               }
-              const eventDate = new Date(event.eventDate + 'T00:00:00');
+              const startDate = new Date(event.startDate + 'T00:00:00');
               const moveToPastDate = new Date(event.moveToPastDate + 'T00:00:00');
               
               // Check if dates are valid
-              if (isNaN(eventDate.getTime()) || isNaN(moveToPastDate.getTime())) {
+              if (isNaN(startDate.getTime()) || isNaN(moveToPastDate.getTime())) {
                 console.log('⚠️ Invalid dates for:', event.title);
                 return false;
               }
               
-              const isCurrent = now >= eventDate && now < moveToPastDate;
+              const isCurrent = now >= startDate && now < moveToPastDate;
               return isCurrent;
             } catch (err) {
               console.error('❌ Error filtering event:', event.title, err);

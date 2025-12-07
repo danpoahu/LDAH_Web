@@ -501,7 +501,7 @@
         <p>245 North Kukui Street, Suite 205<br>
         Honolulu, HI 96817<br>
         (808) 532-5364<br>
-        <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a></p>
+        <a href="/cdn-cgi/l/email-protection#432f27222b032f27222b2234222a2a6d2c3124"><span class="__cf_email__" data-cfemail="69050d080129050d0801081e08000047061b0e">[email&#160;protected]</span></a></p>
       </div>
       
       <div class="footer-section">
@@ -518,7 +518,7 @@
   </footer>
   
   <!-- Firebase Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   
   <script>
@@ -548,6 +548,7 @@
         snapshot.docs.forEach(doc => {
           const data = doc.data();
           console.log('📄 Document:', doc.id);
+          console.log('  - startDate:', data.startDate);
           console.log('  - eventDate:', data.eventDate);
           console.log('  - moveToPastDate:', data.moveToPastDate);
           console.log('  - title:', data.title);
@@ -556,15 +557,15 @@
         const currentEvents = snapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
           .filter(event => {
-            if (!event.eventDate || !event.moveToPastDate) {
+            if (!event.startDate || !event.moveToPastDate) {
               console.log('⏭️ Skipping (no dates):', event.title);
               return false;
             }
-            // Parse dates as local Hawaii time, not UTC
-            const eventDate = new Date(event.eventDate + 'T00:00:00');
+            // Parse dates as local Hawaii time
+            const startDate = new Date(event.startDate + 'T00:00:00');
             const moveToPastDate = new Date(event.moveToPastDate + 'T00:00:00');
-            const isCurrent = now >= eventDate && now < moveToPastDate;
-            console.log(`  ${event.title}: eventDate=${eventDate.toDateString()}, moveToPast=${moveToPastDate.toDateString()}, isCurrent=${isCurrent}`);
+            const isCurrent = now >= startDate && now < moveToPastDate;
+            console.log(`  ${event.title}: startDate=${startDate.toDateString()}, moveToPast=${moveToPastDate.toDateString()}, isCurrent=${isCurrent}`);
             return isCurrent;
           })
           .sort((a, b) => new Date(a.eventDate + 'T00:00:00') - new Date(b.eventDate + 'T00:00:00'))
@@ -624,14 +625,4 @@
         console.error('❌ Error loading events:', error);
         container.innerHTML = `
           <div style="text-align: center; padding: 3rem;">
-            <p style="color: var(--text-light);">Unable to load events. Please try again later.</p>
-          </div>
-        `;
-      }
-    }
-    
-    // Run when page loads
-    document.addEventListener('DOMContentLoaded', loadCurrentEvents);
-  </script>
-</body>
-</html>
+            <p style="color: va
