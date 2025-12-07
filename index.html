@@ -635,7 +635,7 @@
     </div>
   </footer>
   
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   
   <script>
@@ -654,19 +654,37 @@
       const container = document.getElementById('currentEventsGrid');
       
       try {
+        console.log('🔍 Loading events from Firebase...');
         const now = new Date();
+        console.log('⏰ Current time:', now.toISOString());
         const snapshot = await db.collection('events').get();
+        console.log('📊 Total documents fetched:', snapshot.docs.length);
+        
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          console.log('📄 Document:', doc.id);
+          console.log('  - eventDate:', data.eventDate);
+          console.log('  - moveToPastDate:', data.moveToPastDate);
+          console.log('  - title:', data.title);
+        });
         
         const currentEvents = snapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
           .filter(event => {
-            if (!event.eventDate || !event.moveToPastDate) return false;
+            if (!event.eventDate || !event.moveToPastDate) {
+              console.log('⏭️ Skipping (no dates):', event.title);
+              return false;
+            }
             const eventDate = new Date(event.eventDate);
             const moveToPastDate = new Date(event.moveToPastDate);
-            return now >= eventDate && now < moveToPastDate;
+            const isCurrent = now >= eventDate && now < moveToPastDate;
+            console.log(`  ✓ ${event.title}: eventDate=${eventDate.toDateString()}, isCurrent=${isCurrent}`);
+            return isCurrent;
           })
           .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
           .slice(0, 3);
+        
+        console.log('🎯 Current events found:', currentEvents.length);
         
         if (currentEvents.length === 0) {
           container.innerHTML = `
