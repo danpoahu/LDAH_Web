@@ -27,8 +27,20 @@
   <link rel="apple-touch-icon" sizes="192x192" href="https://danpoahu.github.io/LDAH/icon-192.png">
   <link rel="apple-touch-icon" sizes="512x512" href="https://danpoahu.github.io/LDAH/icon-512.png">
   
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <style>
+    :root {
+      --primary-blue: #004E7C;
+      --light-blue: #0066a1;
+      --accent-teal: #4DD0E1;
+      --text-dark: #1a1a1a;
+      --text-light: #666;
+      --bg-light: #f8f9fa;
+    }
+    
     * {
       margin: 0;
       padding: 0;
@@ -36,338 +48,412 @@
     }
     
     html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
     
     body {
-      margin: 0;
-      padding: 0;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      background: url('https://danpoahu.github.io/LDAH/background.png') no-repeat center center fixed;
-      background-size: cover;
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background: white;
     }
-    .office-card {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 16px;
-      border: 2px solid #004E7C;
+    
+    h1, h2, h3 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
-      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(0, 78, 124, 0.1);
     }
+    
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+    }
+    
+    .logo-img {
+      width: 60px;
+      height: 60px;
+    }
+    
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    
+    .nav-links a:hover {
+      color: var(--primary-blue);
+    }
+    
+    .cta-button {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    
+    .page-header {
+      margin-top: 88px;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
+      color: white;
+      text-align: center;
+    }
+    
+    .page-header h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .page-header p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+    
+    .office-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .office-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 4px 16px rgba(0, 78, 124, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 2px solid var(--bg-light);
+    }
+    
     .office-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      transform: translateY(-8px);
+      box-shadow: 0 8px 32px rgba(0, 78, 124, 0.2);
+    }
+    
+    .office-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .office-title {
+      font-size: 1.5rem;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+    }
+    
+    .office-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+    
+    .contact-info {
+      margin-bottom: 1rem;
+    }
+    
+    .contact-label {
+      font-weight: 600;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+    }
+    
+    .contact-value {
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    .contact-value a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .contact-value a:hover {
+      color: var(--light-blue);
+      text-decoration: underline;
+    }
+    
+    .btn-directions {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      margin-top: 1rem;
+    }
+    
+    .btn-directions:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 78, 124, 0.3);
+    }
+    
+    .message-card {
+      background: var(--bg-light);
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+    }
+    
+    .message-card h2 {
+      color: var(--primary-blue);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .message-card p {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+    
+    footer {
+      background: var(--text-dark);
+      color: white;
+      padding: 3rem 2rem 2rem;
+    }
+    
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-section h3 {
+      color: var(--accent-teal);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    
+    .footer-section p,
+    .footer-section a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+    
+    .footer-section a:hover {
+      color: var(--accent-teal);
+    }
+    
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
     }
   </style>
 </head>
 <body>
-  <div class="min-h-screen p-2">
-    <div class="max-w-2xl mx-auto">
-      <!-- Logo Section with Hamburger Menu -->
-      <div class="text-center mb-2 mt-2 relative">
-        <!-- Hamburger Menu Icon -->
-        <button 
-          onclick="toggleMenu()"
-          style="
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            color: #004E7C;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            display: inline-block;
-            background: none;
-            border: none;
-            padding: 4px;
-          "
-          onmouseover="this.style.opacity='0.7'"
-          onmouseout="this.style.opacity='1'"
-        >
-          <svg id="menuIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-          <svg id="closeIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+  <nav>
+    <div class="nav-content">
+      <a href="index.html" class="logo-container">
+        <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+        <span class="logo-text">LDAH</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#services">What We Do</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="volunteer.html">Volunteer</a></li>
+        <li><a href="contact.html" class="cta-button">Contact Us</a></li>
+      </ul>
+    </div>
+  </nav>
 
-        <!-- Dropdown Menu -->
-        <div id="dropdownMenu" style="
-          position: absolute;
-          top: 40px;
-          right: 8px;
-          background-color: rgba(255, 255, 255, 0.98);
-          border-radius: 10px;
-          border: 2px solid #004E7C;
-          backdrop-filter: blur(10px);
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-          z-index: 1000;
-          min-width: 140px;
-          font-size: 13px;
-          display: none;
-        ">
-          <a href="index.html" style="
-            display: block;
-            padding: 8px 14px;
-            color: #004E7C;
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(0, 78, 124, 0.1);
-            transition: background 0.2s;
-          "
-          onmouseover="this.style.backgroundColor='rgba(0, 78, 124, 0.1)'"
-          onmouseout="this.style.backgroundColor='transparent'"
-          >
-            🏠 Home
-          </a>
-          <a href="events.html" style="
-            display: block;
-            padding: 8px 14px;
-            color: #004E7C;
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(0, 78, 124, 0.1);
-            transition: background 0.2s;
-          "
-          onmouseover="this.style.backgroundColor='rgba(0, 78, 124, 0.1)'"
-          onmouseout="this.style.backgroundColor='transparent'"
-          >
-            📅 Events
-          </a>
-          <a href="faq.html" style="
-            display: block;
-            padding: 8px 14px;
-            color: #004E7C;
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(0, 78, 124, 0.1);
-            transition: background 0.2s;
-          "
-          onmouseover="this.style.backgroundColor='rgba(0, 78, 124, 0.1)'"
-          onmouseout="this.style.backgroundColor='transparent'"
-          >
-            ❓ Quick Help
-          </a>
-          <a href="volunteer.html" style="
-            display: block;
-            padding: 8px 14px;
-            color: #004E7C;
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(0, 78, 124, 0.1);
-            transition: background 0.2s;
-          "
-          onmouseover="this.style.backgroundColor='rgba(0, 78, 124, 0.1)'"
-          onmouseout="this.style.backgroundColor='transparent'"
-          >
-            🤝 Volunteer
-          </a>
-          <a href="contact.html" style="
-            display: block;
-            padding: 8px 14px;
-            color: #004E7C;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.2s;
-            border-radius: 0 0 8px 8px;
-          "
-          onmouseover="this.style.backgroundColor='rgba(0, 78, 124, 0.1)'"
-          onmouseout="this.style.backgroundColor='transparent'"
-          >
-            📞 Contact Us
-          </a>
-        </div>
+  <div class="page-header">
+    <h1>Contact Us</h1>
+    <p>We're here to help your family navigate special education and disability services</p>
+  </div>
 
-        <div class="mb-2 flex justify-center">
-          <a href="index.html" style="padding: 16px; display: inline-block; cursor: pointer;">
-            <img 
-              src="https://danpoahu.github.io/LDAH/logo_transparent.png" 
-              alt="LDAH Logo"
-              style="width: 180px; height: 180px; display: block;"
-            />
-          </a>
+  <div class="container">
+    <div class="office-grid">
+      <!-- Honolulu Office -->
+      <div class="office-card">
+        <div style="text-align: center;">
+          <div class="office-icon">🏢</div>
+          <h2 class="office-title">Honolulu Office</h2>
+          <p class="office-subtitle">Main Office</p>
         </div>
         
-        <h3 class="text-lg font-bold text-[#004E7C] mb-1">
-          Contact Us
-        </h3>
-        <p class="text-gray-600 text-xs mb-2">
-          We're here to help your family
-        </p>
-      </div>
-
-      <!-- Back Button -->
-      <div class="mb-3">
-        <a href="index.html" style="
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background-color: rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          padding: 8px 16px;
-          cursor: pointer;
-          transition: transform 0.2s;
-          border: 2px solid #004E7C;
-          text-decoration: none;
-          color: #004E7C;
-          font-weight: bold;
-          backdrop-filter: blur(10px);
-          font-size: 14px;
-        " onmouseover="this.style.transform='translateX(-2px)';" onmouseout="this.style.transform='translateX(0)';">
-          <span>←</span>
-          <span>Back to Home</span>
-        </a>
-      </div>
-
-      <!-- Honolulu Office Card -->
-      <div class="office-card">
-        <div class="text-center mb-3">
-          <div class="text-4xl mb-2">🏢</div>
-          <h2 class="text-xl font-bold text-[#004E7C] mb-1">Honolulu Office</h2>
-          <p class="text-xs text-gray-600 italic">Main Office</p>
-        </div>
-        
-        <div class="space-y-3">
-          <div class="text-center">
-            <p class="text-sm font-semibold text-gray-700 mb-1">Phone</p>
-            <p class="text-gray-700 text-sm mb-1">
-              <a href="tel:8085325364" class="text-[#004E7C] hover:underline">(808) 532-5364</a>
-            </p>
-            <p class="text-gray-700 text-sm">
-              <strong>Toll Free:</strong> <a href="tel:18005339684" class="text-[#004E7C] hover:underline">1-800-533-9684</a>
-            </p>
-          </div>
-
-          <div class="text-center">
-            <p class="text-sm font-semibold text-gray-700 mb-1">Email</p>
-            <p class="text-gray-700 text-sm">
-              <a href="/cdn-cgi/l/email-protection#127e76737a527e76737a7365737b7b3c7d6075" class="text-[#004E7C] hover:underline"><span class="__cf_email__" data-cfemail="c6aaa2a7ae86aaa2a7aea7b1a7afafe8a9b4a1">[email&#160;protected]</span></a>
-            </p>
-          </div>
-
-          <div class="text-center">
-            <p class="text-sm font-semibold text-gray-700 mb-2">Address</p>
-            <p class="text-gray-700 text-sm leading-relaxed">
-              Harry and Jeanette Weinberg<br>
-              Kukui Center<br>
-              245 North Kukui Street<br>
-              Suite 205<br>
-              Honolulu, HI 96817
-            </p>
-          </div>
-
-          <div class="text-center pt-2">
-            <a 
-              href="https://www.google.com/maps/search/?api=1&query=245+North+Kukui+Street+Suite+205+Honolulu+HI+96817"
-              target="_blank"
-              class="inline-block px-6 py-2 bg-[#004E7C] text-white rounded-lg font-semibold hover:bg-[#003a5c] transition-colors text-sm"
-            >
-              📍 Get Directions
-            </a>
+        <div class="contact-info">
+          <div class="contact-label">Phone</div>
+          <div class="contact-value">
+            <a href="tel:8085325364">(808) 532-5364</a><br>
+            <strong>Toll Free:</strong> <a href="tel:18005339684">1-800-533-9684</a>
           </div>
         </div>
-      </div>
 
-      <!-- Ma'ili Office Card -->
-      <div class="office-card">
-        <div class="text-center mb-3">
-          <div class="text-4xl mb-2">🏫</div>
-          <h2 class="text-xl font-bold text-[#004E7C] mb-1">Ma'ili Office</h2>
-          <p class="text-xs text-gray-600 italic">School Readiness Project</p>
-        </div>
-        
-        <div class="space-y-3">
-          <div class="text-center">
-            <p class="text-sm font-semibold text-gray-700 mb-1">Phone & Fax</p>
-            <p class="text-gray-700 text-sm mb-1">
-              <strong>Phone:</strong> <a href="tel:8086965361" class="text-[#004E7C] hover:underline">(808) 696-5361</a>
-            </p>
-            <p class="text-gray-700 text-sm">
-              <strong>Fax:</strong> (808) 696-5371
-            </p>
-          </div>
-
-          <div class="text-center">
-            <p class="text-sm font-semibold text-gray-700 mb-1">Hours</p>
-            <p class="text-gray-700 text-sm">
-              Monday to Friday<br>
-              8:00 AM – 5:00 PM
-            </p>
-          </div>
-
-          <div class="text-center">
-            <p class="text-sm font-semibold text-gray-700 mb-2">Address</p>
-            <p class="text-gray-700 text-sm leading-relaxed">
-              Community Learning Center<br>
-              Kauhale Building<br>
-              87-790 Kulauku St.<br>
-              Suite A116<br>
-              Wai'anae, HI 96792
-            </p>
-          </div>
-
-          <div class="text-center pt-2">
-            <a 
-              href="https://www.google.com/maps/search/?api=1&query=87-790+Kulauku+St+Suite+A116+Waianae+HI+96792"
-              target="_blank"
-              class="inline-block px-6 py-2 bg-[#004E7C] text-white rounded-lg font-semibold hover:bg-[#003a5c] transition-colors text-sm"
-            >
-              📍 Get Directions
-            </a>
+        <div class="contact-info">
+          <div class="contact-label">Email</div>
+          <div class="contact-value">
+            <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a>
           </div>
         </div>
-      </div>
 
-      <!-- General Contact Card -->
-      <div class="office-card">
-        <h2 class="text-lg font-bold text-[#004E7C] mb-3 text-center">Send Us a Message</h2>
-        <p class="text-gray-700 text-sm text-center mb-4 leading-relaxed">
-          Have a question or need assistance? We're here to help! Contact us by phone, email, or visit one of our offices.
-        </p>
-        <div class="text-center">
-          <a href="/cdn-cgi/l/email-protection#82eee6e3eac2eee6e3eae3f5e3ebebacedf0e5bdf1f7e0e8e7e1f6bfd3f7e7f1f6ebedeca2e4f0edefa2d5e7e0f1ebf6e7" class="inline-block px-6 py-3 bg-[#004E7C] text-white rounded-lg font-semibold hover:bg-[#003a5c] transition-colors">
-            ✉️ Email Us
+        <div class="contact-info">
+          <div class="contact-label">Address</div>
+          <div class="contact-value">
+            Harry and Jeanette Weinberg Kukui Center<br>
+            245 North Kukui Street, Suite 205<br>
+            Honolulu, HI 96817
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <a 
+            href="https://www.google.com/maps/search/?api=1&query=245+North+Kukui+Street+Suite+205+Honolulu+HI+96817"
+            target="_blank"
+            class="btn-directions"
+          >
+            📍 Get Directions
           </a>
         </div>
       </div>
 
+      <!-- Ma'ili Office -->
+      <div class="office-card">
+        <div style="text-align: center;">
+          <div class="office-icon">🏫</div>
+          <h2 class="office-title">Ma'ili Office</h2>
+          <p class="office-subtitle">School Readiness Project</p>
+        </div>
+        
+        <div class="contact-info">
+          <div class="contact-label">Phone & Fax</div>
+          <div class="contact-value">
+            <strong>Phone:</strong> <a href="tel:8086965361">(808) 696-5361</a><br>
+            <strong>Fax:</strong> (808) 696-5371
+          </div>
+        </div>
+
+        <div class="contact-info">
+          <div class="contact-label">Hours</div>
+          <div class="contact-value">
+            Monday to Friday<br>
+            8:00 AM – 5:00 PM
+          </div>
+        </div>
+
+        <div class="contact-info">
+          <div class="contact-label">Address</div>
+          <div class="contact-value">
+            Community Learning Center<br>
+            Kauhale Building<br>
+            87-790 Kulauku St., Suite A116<br>
+            Wai'anae, HI 96792
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <a 
+            href="https://www.google.com/maps/search/?api=1&query=87-790+Kulauku+St+Suite+A116+Waianae+HI+96792"
+            target="_blank"
+            class="btn-directions"
+          >
+            📍 Get Directions
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Card -->
+    <div class="message-card">
+      <h2>Send Us a Message</h2>
+      <p>
+        Have a question or need assistance? We're here to help! Contact us by phone, email, or visit one of our offices.
+      </p>
+      <a href="mailto:ldah@ldahawaii.org" class="btn-directions" style="display: inline-block;">
+        ✉️ Email Us
+      </a>
     </div>
   </div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    function toggleMenu() {
-      const menu = document.getElementById('dropdownMenu');
-      const menuIcon = document.getElementById('menuIcon');
-      const closeIcon = document.getElementById('closeIcon');
-      
-      if (menu.style.display === 'none' || menu.style.display === '') {
-        menu.style.display = 'block';
-        menuIcon.style.display = 'none';
-        closeIcon.style.display = 'block';
-      } else {
-        menu.style.display = 'none';
-        menuIcon.style.display = 'block';
-        closeIcon.style.display = 'none';
-      }
-    }
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About LDAH</h3>
+        <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="index.html#services">What We Do</a>
+        <a href="events.html">Events</a>
+        <a href="volunteer.html">Volunteer</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+      <div class="footer-section">
+        <h3>Honolulu Office</h3>
+        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br>ldah@ldahawaii.org</p>
+      </div>
+      <div class="footer-section">
+        <h3>Connect With Us</h3>
+        <a href="https://www.facebook.com/groups/2659334410969387" target="_blank">Parent Talk Cafe</a>
+        <a href="install.html">Install Our App</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
+      <p>Developed by <a href="https://oahuappdesign.com" style="color: var(--accent-teal);">DP Consulting</a></p>
+    </div>
+  </footer>
 
-    // Close menu when clicking outside
-    document.addEventListener('click', function(event) {
-      const menu = document.getElementById('dropdownMenu');
-      const button = event.target.closest('button');
-     
+  <script>
+    // Remove any menu toggle scripts since we're using standard nav
+  </script>
+</body>
+</html>
