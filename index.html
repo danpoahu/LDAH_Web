@@ -113,6 +113,19 @@
       align-items: center;
       color: white;
       padding: 4rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.05;
+      background-image: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
     }
     
     .hero-content {
@@ -177,6 +190,20 @@
     .stats-section {
       background: var(--bg-light);
       padding: 4rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stats-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(77, 208, 225, 0.1) 2px, transparent 2px);
+      background-size: 30px 30px;
+      opacity: 0.5;
     }
     
     .stats-container {
@@ -217,6 +244,18 @@
     .services-section {
       padding: 6rem 2rem;
       background: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .services-section::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 400px;
+      height: 400px;
+      background-image: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid2" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="%23004E7C" stroke-width="1" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grid2)"/></svg>');
     }
     
     .section-header {
@@ -621,12 +660,12 @@
         const currentEvents = snapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
           .filter(event => {
-            if (!event.startDate || !event.moveToPastDate) return false;
-            const startDate = new Date(event.startDate);
+            if (!event.eventDate || !event.moveToPastDate) return false;
+            const eventDate = new Date(event.eventDate);
             const moveToPastDate = new Date(event.moveToPastDate);
-            return now >= startDate && now < moveToPastDate;
+            return now >= eventDate && now < moveToPastDate;
           })
-          .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+          .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
           .slice(0, 3);
         
         if (currentEvents.length === 0) {
@@ -643,7 +682,7 @@
         container.innerHTML = `
           <div class="events-grid">
             ${currentEvents.map(event => {
-              const eventDate = new Date(event.startDate);
+              const eventDate = new Date(event.eventDate);
               const formattedDate = eventDate.toLocaleDateString('en-US', { 
                 month: 'short', 
                 day: 'numeric', 
