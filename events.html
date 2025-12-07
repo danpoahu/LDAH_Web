@@ -648,7 +648,9 @@
             <div class="event-card">
               ${event.imageUrl ? 
                 (isPDF ? 
-                  `<embed src="${event.imageUrl}" type="application/pdf" style="width:100%; height:220px; display:block; border:none;">` :
+                  `<object data="${event.imageUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf" style="width:100%; height:220px; display:block; border:none; pointer-events:none;">
+                    <embed src="${event.imageUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf" style="width:100%; height:220px;">
+                  </object>` :
                   `<img src="${event.imageUrl}" alt="${event.title}" style="width:100%; height:auto; display:block;">`) :
                 `<div class="event-image"></div>`
               }
