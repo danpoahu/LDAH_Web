@@ -220,7 +220,7 @@
       </div>
       <div class="footer-section">
         <h3>Honolulu Office</h3>
-        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br>ldah@ldahawaii.org</p>
+        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e9858d8881a9858d8881889e888080c7869b8e">[email&#160;protected]</a></p>
       </div>
       <div class="footer-section">
         <h3>Connect With Us</h3>
@@ -234,7 +234,7 @@
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
@@ -333,9 +333,16 @@
         <form id="application-form" onsubmit="submitApplication(event, '${opportunityId}', '${opportunity.title}')">
           <div style="margin-bottom: 20px;">
             <label style="display: block; color: var(--primary-blue); font-weight: bold; margin-bottom: 8px; font-size: 14px;">
-              Full Name *
+              First Name *
             </label>
-            <input type="text" required id="app-name" placeholder="Your answer" style="width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px;">
+            <input type="text" required id="app-firstName" placeholder="Your answer" style="width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px;">
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; color: var(--primary-blue); font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+              Last Name *
+            </label>
+            <input type="text" required id="app-lastName" placeholder="Your answer" style="width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px;">
           </div>
 
           <div style="margin-bottom: 20px;">
@@ -347,19 +354,17 @@
 
           <div style="margin-bottom: 20px;">
             <label style="display: block; color: var(--primary-blue); font-weight: bold; margin-bottom: 8px; font-size: 14px;">
-              Phone Number *
+              Subject *
             </label>
-            <input type="tel" required id="app-phone" placeholder="(808) 555-1234" style="width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px;">
+            <input type="text" required id="app-subject" placeholder="e.g., Volunteer - Parent as Partners -- Volunteers" style="width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px;">
           </div>
 
-          ${opportunity.requirements ? `
           <div style="margin-bottom: 20px;">
             <label style="display: block; color: var(--primary-blue); font-weight: bold; margin-bottom: 8px; font-size: 14px;">
-              Why are you interested in this opportunity? *
+              Notes / Additional Information
             </label>
-            <textarea required id="app-interest" placeholder="Your answer" rows="4" style="width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;"></textarea>
+            <textarea id="app-notes" placeholder="Tell us more about your interest and availability" rows="4" style="width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical;"></textarea>
           </div>
-          ` : ''}
 
           <button type="submit" class="btn-apply" style="width: 100%; padding: 16px; font-size: 16px;">
             Submit Application
@@ -378,13 +383,14 @@
       event.preventDefault();
 
       const formData = {
-        name: document.getElementById('app-name').value,
+        firstName: document.getElementById('app-firstName').value,
+        lastName: document.getElementById('app-lastName').value,
         email: document.getElementById('app-email').value,
-        phone: document.getElementById('app-phone').value,
-        interest: document.getElementById('app-interest')?.value || '',
-        status: 'pending',
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        opportunityTitle: opportunityTitle
+        subject: document.getElementById('app-subject').value,
+        notes: document.getElementById('app-notes').value || '',
+        opportunityId: opportunityId,
+        submittedAt: new Date().toISOString(),
+        status: 'new'
       };
 
       try {
@@ -432,14 +438,4 @@
 
     // Close modal on background click
     document.getElementById('application-modal').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
-
-    // Load opportunities on page load
-    document.addEventListener('DOMContentLoaded', async () => {
-      await loadOpportunitiesData();
-      await loadOpportunities();
-    });
-  </script>
-</body>
-</html>
+      if (e.target === this) clo
