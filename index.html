@@ -560,13 +560,14 @@
               console.log('⏭️ Skipping (no dates):', event.title);
               return false;
             }
-            const eventDate = new Date(event.eventDate);
-            const moveToPastDate = new Date(event.moveToPastDate);
+            // Parse dates as local Hawaii time, not UTC
+            const eventDate = new Date(event.eventDate + 'T00:00:00');
+            const moveToPastDate = new Date(event.moveToPastDate + 'T00:00:00');
             const isCurrent = now >= eventDate && now < moveToPastDate;
-            console.log(`  ${event.title}: eventDate=${eventDate.toDateString()}, isCurrent=${isCurrent}`);
+            console.log(`  ${event.title}: eventDate=${eventDate.toDateString()}, moveToPast=${moveToPastDate.toDateString()}, isCurrent=${isCurrent}`);
             return isCurrent;
           })
-          .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
+          .sort((a, b) => new Date(a.eventDate + 'T00:00:00') - new Date(b.eventDate + 'T00:00:00'))
           .slice(0, 3);
         
         console.log('🎯 Current events found:', currentEvents.length);
@@ -585,7 +586,7 @@
         container.innerHTML = `
           <div class="events-grid" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
             ${currentEvents.map(event => {
-              const eventDate = new Date(event.eventDate);
+              const eventDate = new Date(event.eventDate + 'T00:00:00');
               const formattedDate = eventDate.toLocaleDateString('en-US', { 
                 month: 'short', 
                 day: 'numeric', 

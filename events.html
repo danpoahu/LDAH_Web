@@ -481,8 +481,8 @@
                 console.log('⏭️ Skipping event without dates:', event.title);
                 return false;
               }
-              const eventDate = new Date(event.eventDate);
-              const moveToPastDate = new Date(event.moveToPastDate);
+              const eventDate = new Date(event.eventDate + 'T00:00:00');
+              const moveToPastDate = new Date(event.moveToPastDate + 'T00:00:00');
               
               // Check if dates are valid
               if (isNaN(eventDate.getTime()) || isNaN(moveToPastDate.getTime())) {
@@ -496,7 +496,7 @@
               console.error('❌ Error filtering event:', event.title, err);
               return false;
             }
-          }).sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
+          }).sort((a, b) => new Date(a.eventDate + 'T00:00:00') - new Date(b.eventDate + 'T00:00:00'));
           
           console.log('🎯 Current events found:', upcomingEvents.length);
           
@@ -638,7 +638,7 @@
       }
 
       function createEventCard(event, type) {
-        const eventDate = event.eventDate ? new Date(event.eventDate) : new Date();
+        const eventDate = event.eventDate ? new Date(event.eventDate + 'T00:00:00') : new Date();
         const formattedDate = formatEventDate(eventDate);
         
         return `
