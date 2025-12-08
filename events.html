@@ -528,6 +528,48 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
+    footer {
+      background: var(--text-dark);
+      color: white;
+      padding: 3rem 2rem 2rem;
+    }
+    
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-section h3 {
+      color: var(--accent-teal);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    
+    .footer-section p,
+    .footer-section a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+    
+    .footer-section a:hover {
+      color: var(--accent-teal);
+    }
+    
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+    }
   </style>
 </head>
 <body>
@@ -593,8 +635,19 @@
     </div>
   </div>
 
-  <!-- Firebase Config -->
-  <script src="js/firebase-config.js"></script>
+  <!-- Firebase Init -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
+      authDomain: "ldah-932d5.firebaseapp.com",
+      projectId: "ldah-932d5",
+      storageBucket: "ldah-932d5.firebasestorage.app",
+      messagingSenderId: "662130454003",
+      appId: "1:662130454003:web:437576d5a5811ecd8df686"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
   
   <!-- Events Page Logic -->
   <script>
@@ -658,7 +711,7 @@
           const upcomingEvents = allEvents.filter(event => {
             try {
               if (!event.startDate || !event.moveToPastDate) {
-                console.log('⏭️ Skipping event without dates:', event.title);
+                console.log('⭕ Skipping event without dates:', event.title);
                 return false;
               }
               const startDate = new Date(event.startDate + 'T00:00:00');
@@ -1345,17 +1398,38 @@
         closeSignupModal();
       }
     }
-  
+
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+    
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('active');
+      });
+    });
 
     function openIframeModal(title, url) {
-      const modal = document.getElementById('iframeModal');
-      const titleEl = document.getElementById('iframeTitle');
-      const frame = document.getElementById('iframeFrame');
-      
-      titleEl.textContent = title;
-      frame.src = url;
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      // Special handling for Facebook
+      if (url.includes('facebook.com')) {
+        const modal = document.getElementById('iframeModal');
+        const titleEl = document.getElementById('iframeTitle');
+        const frame = document.getElementById('iframeFrame');
+        
+        titleEl.textContent = title;
+        frame.outerHTML = '<div id="iframeFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Hawaii families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open Parent Talk Cafe →</a></div>';
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      } else {
+        const modal = document.getElementById('iframeModal');
+        const titleEl = document.getElementById('iframeTitle');
+        const frame = document.getElementById('iframeFrame');
+        
+        titleEl.textContent = title;
+        frame.src = url;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
     }
     
     function closeIframeModal(event) {
@@ -1364,41 +1438,52 @@
       }
       
       const modal = document.getElementById('iframeModal');
-      const frame = document.getElementById('iframeFrame');
+      const frameEl = document.getElementById('iframeFrame');
       
       modal.classList.remove('active');
-      frame.src = '';
+      
+      // Reset iframe
+      if (frameEl.tagName === 'IFRAME') {
+        frameEl.src = '';
+      } else {
+        frameEl.outerHTML = '<iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>';
+      }
+      
       document.body.style.overflow = 'auto';
     }
-
   </script>
   
-  <footer style="background: var(--text-dark); color: white; padding: 3rem 2rem 2rem;">
-    <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
-      <div>
-        <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">About LDAH</h3>
-        <p style="color: rgba(255, 255, 255, 0.8);">Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About LDAH</h3>
+        <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
       </div>
-      <div>
-        <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Quick Links</h3>
-        <a href="index.html#services" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">What We Do</a>
-        <a href="events.html" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Events</a>
-        <a href="volunteer.html" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Volunteer</a>
-        <a href="contact.html" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Contact Us</a>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="index.html#services">What We Do</a>
+        <a href="events.html">Events</a>
+        <a href="volunteer.html">Volunteer</a>
+        <a href="contact.html">Contact Us</a>
       </div>
-      <div>
-        <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Honolulu Office</h3>
-        <p style="color: rgba(255, 255, 255, 0.8);">245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br>ldah@ldahawaii.org</p>
+      <div class="footer-section">
+        <h3>Honolulu Office</h3>
+        <p>
+          245 North Kukui Street, Suite 205<br>
+          Honolulu, HI 96817<br>
+          (808) 532-5364<br>
+          <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a>
+        </p>
       </div>
-      <div>
-        <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Connect With Us</h3>
-        <a href="https://www.facebook.com/groups/2659334410969387" target="_blank" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Parent Talk Cafe</a>
-        <a href="install.html" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Install Our App</a>
+      <div class="footer-section">
+        <h3>Connect With Us</h3>
+        <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')">Parent Talk Cafe</a>
+        <a href="install.html">Install Our App</a>
       </div>
     </div>
-    <div style="max-width: 1400px; margin: 0 auto; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; color: rgba(255, 255, 255, 0.6);">
+    <div class="footer-bottom">
       <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-      <p>Developed by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none;" cursor: pointer;">DP Consulting</a> | <a href="admin.html" style="color: rgba(255,255,255,0.3); font-size: 0.8rem; text-decoration: none;">Admin</a></p>
+      <p>Developed by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a></p>
     </div>
   </footer>
 
@@ -1413,5 +1498,5 @@
     </div>
   </div>
 
-  
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+</body>
+</html>

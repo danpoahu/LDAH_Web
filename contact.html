@@ -565,7 +565,7 @@
           <div class="contact-info">
             <div class="contact-label">Email</div>
             <div class="contact-value">
-              <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5f333b3e371f333b3e373e283e363671302d38">[email&#160;protected]</a>
+              <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a>
             </div>
           </div>
 
@@ -584,7 +584,7 @@
             onclick="openMapModal('Honolulu Office', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3717.1!2d-157.86!3d21.31!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s245%20North%20Kukui%20Street%20Suite%20205%20Honolulu%20HI%2096817!5e0!3m2!1sen!2sus!4v1234567890')"
             class="btn-directions"
           >
-            📍 Get Directions
+            🗺️ Get Directions
           </button>
         </div>
       </div>
@@ -630,7 +630,7 @@
             onclick="openMapModal('Ma\'ili Office', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3717.2!2d-158.18!3d21.43!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s87-790%20Kulauku%20St%20Suite%20A116%20Waianae%20HI%2096792!5e0!3m2!1sen!2sus!4v1234567890')"
             class="btn-directions"
           >
-            📍 Get Directions
+            🗺️ Get Directions
           </button>
         </div>
       </div>
@@ -642,7 +642,7 @@
       <p>
         Have a question or need assistance? We're here to help! Contact us by phone, email, or visit one of our offices.
       </p>
-      <a href="/cdn-cgi/l/email-protection#472b23262f072b23262f2630262e2e69283520" class="btn-directions" style="display: inline-block;">
+      <a href="mailto:ldah@ldahawaii.org" class="btn-directions" style="display: inline-block;">
         ✉️ Email Us
       </a>
     </div>
@@ -663,7 +663,12 @@
       </div>
       <div class="footer-section">
         <h3>Honolulu Office</h3>
-        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b3dfd7d2dbf3dfd7d2dbd2c4d2dada9ddcc1d4">[email&#160;protected]</a></p>
+        <p>
+          245 North Kukui Street, Suite 205<br>
+          Honolulu, HI 96817<br>
+          (808) 532-5364<br>
+          <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a>
+        </p>
       </div>
       <div class="footer-section">
         <h3>Connect With Us</h3>
@@ -673,7 +678,7 @@
     </div>
     <div class="footer-bottom">
       <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-      <p>Developed by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a> | <a href="admin.html" style="color: rgba(255,255,255,0.3); font-size: 0.8rem; text-decoration: none;">Admin</a></p>
+      <p>Developed by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a></p>
     </div>
   </footer>
 
@@ -699,7 +704,7 @@
     </div>
   </div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('active');
     }
@@ -735,14 +740,26 @@
     }
     
     function openIframeModal(title, url) {
-      const modal = document.getElementById('iframeModal');
-      const titleEl = document.getElementById('iframeTitle');
-      const frame = document.getElementById('iframeFrame');
-      
-      titleEl.textContent = title;
-      frame.src = url;
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      // Special handling for Facebook
+      if (url.includes('facebook.com')) {
+        const modal = document.getElementById('iframeModal');
+        const titleEl = document.getElementById('iframeTitle');
+        const frame = document.getElementById('iframeFrame');
+        
+        titleEl.textContent = title;
+        frame.outerHTML = '<div id="iframeFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Hawaii families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open Parent Talk Cafe →</a></div>';
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      } else {
+        const modal = document.getElementById('iframeModal');
+        const titleEl = document.getElementById('iframeTitle');
+        const frame = document.getElementById('iframeFrame');
+        
+        titleEl.textContent = title;
+        frame.src = url;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
     }
     
     function closeIframeModal(event) {
@@ -751,32 +768,19 @@
       }
       
       const modal = document.getElementById('iframeModal');
-      const frame = document.getElementById('iframeFrame');
+      const frameEl = document.getElementById('iframeFrame');
       
       modal.classList.remove('active');
-      frame.src = '';
+      
+      // Reset iframe
+      if (frameEl.tagName === 'IFRAME') {
+        frameEl.src = '';
+      } else {
+        frameEl.outerHTML = '<iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>';
+      }
+      
       document.body.style.overflow = 'auto';
     }
-  
-    // Special handler for Facebook (blocks iframes)
-    document.addEventListener('DOMContentLoaded', function() {
-      const originalOpen = window.openIframeModal;
-      window.openIframeModal = function(title, url) {
-        if (url.includes('facebook.com')) {
-          const modal = document.getElementById('iframeModal');
-          const titleEl = document.getElementById('iframeTitle');
-          const frameParent = document.getElementById('iframeFrame').parentElement;
-          
-          titleEl.textContent = title;
-          frameParent.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Hawaii families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open Parent Talk Cafe →</a></div>';
-          modal.classList.add('active');
-          document.body.style.overflow = 'hidden';
-        } else {
-          originalOpen(title, url);
-        }
-      };
-    });
-
   </script>
 </body>
 </html>
