@@ -844,6 +844,20 @@
       window.allEventsData = [];
     })();
     
+    // URL conversion function (global scope for modal access)
+    function convertUrlsToLinks(text) {
+      // Regular expression to match URLs (http, https, www)
+      const urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)/gi;
+      return text.replace(urlRegex, function(url) {
+        let href = url;
+        // Add https:// if URL starts with www
+        if (url.startsWith('www.')) {
+          href = 'https://' + url;
+        }
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color: #0066a1; text-decoration: underline;">${url}</a>`;
+      });
+    }
+    
     // Signup Modal Functions
     let signupFormData = {
       name: '',
@@ -991,8 +1005,8 @@
                 ${event.customQuestions && event.customQuestions.length > 0 ? 
                   event.customQuestions.map((question, idx) => `
                     <div style="margin-bottom: 20px;">
-                      <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
-                        ${question}
+                      <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px; line-height: 1.6;">
+                        ${convertUrlsToLinks(question)}
                       </label>
                       <textarea 
                         class="custom-answer"
@@ -1012,6 +1026,92 @@
                     </div>
                   `).join('') 
                 : ''}
+                
+                <!-- Special Accommodations -->
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                    Any additional comments or special accommodations we should know about?
+                  </label>
+                  <textarea 
+                    id="special-accommodations"
+                    placeholder="Your answer"
+                    rows="4"
+                    style="
+                      width: 100%;
+                      padding: 12px;
+                      border: 1px solid #D1D5DB;
+                      border-radius: 8px;
+                      font-size: 14px;
+                      font-family: inherit;
+                      resize: vertical;
+                    "
+                  ></textarea>
+                </div>
+
+                <!-- Participation Type -->
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                    Are you volunteering as an individual or with a group? *
+                  </label>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input
+                        type="radio"
+                        name="participation-type"
+                        value="Individual"
+                        required
+                        onchange="toggleGroupFields(false)"
+                        style="width: 18px; height: 18px; cursor: pointer;"
+                      />
+                      <span style="font-size: 14px; color: #374151;">Individual</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input
+                        type="radio"
+                        name="participation-type"
+                        value="Group"
+                        required
+                        onchange="toggleGroupFields(true)"
+                        style="width: 18px; height: 18px; cursor: pointer;"
+                      />
+                      <span style="font-size: 14px; color: #374151;">Group</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Group Name & Size (conditional) -->
+                <div id="group-fields" style="display: none; margin-bottom: 20px; padding-left: 26px;">
+                  <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
+                    What is the name of your group, and number of volunteers? *
+                  </label>
+                  <div style="display: flex; gap: 12px;">
+                    <input
+                      type="text"
+                      id="group-name"
+                      placeholder="Group name"
+                      style="
+                        flex: 2;
+                        padding: 12px;
+                        border: 1px solid #D1D5DB;
+                        border-radius: 8px;
+                        font-size: 14px;
+                      "
+                    />
+                    <input
+                      type="number"
+                      id="group-size"
+                      min="1"
+                      placeholder="# of volunteers"
+                      style="
+                        flex: 1;
+                        padding: 12px;
+                        border: 1px solid #D1D5DB;
+                        border-radius: 8px;
+                        font-size: 14px;
+                      "
+                    />
+                  </div>
+                </div>
                 
                 <button type="submit" style="
                   width: 100%;
@@ -1044,6 +1144,24 @@
       if (modal) modal.remove();
     }
     
+    function toggleGroupFields(show) {
+      const groupFields = document.getElementById('group-fields');
+      const groupName = document.getElementById('group-name');
+      const groupSize = document.getElementById('group-size');
+      
+      if (show) {
+        groupFields.style.display = 'block';
+        groupName.setAttribute('required', 'required');
+        groupSize.setAttribute('required', 'required');
+      } else {
+        groupFields.style.display = 'none';
+        groupName.removeAttribute('required');
+        groupSize.removeAttribute('required');
+        groupName.value = '';
+        groupSize.value = '';
+      }
+    }
+    
     async function submitSignup(event, eventId) {
       event.preventDefault();
       
@@ -1057,8 +1175,16 @@
         phone: document.getElementById('signupPhone').value,
         preferredContact: document.querySelector('input[name="preferredContact"]:checked').value,
         selectedDates: [],
-        customAnswers: []
+        customAnswers: [],
+        additionalComments: document.getElementById('special-accommodations').value,
+        participationType: document.querySelector('input[name="participation-type"]:checked').value
       };
+      
+      // Add group fields if Group is selected
+      if (formData.participationType === 'Group') {
+        formData.groupName = document.getElementById('group-name').value;
+        formData.groupSize = document.getElementById('group-size').value;
+      }
       
       // Get selected dates
       const dateCheckboxes = document.querySelectorAll('.signup-date-checkbox:checked');
@@ -1146,7 +1272,7 @@
       </div>
       <div>
         <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Honolulu Office</h3>
-        <p style="color: rgba(255, 255, 255, 0.8);">245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br>ldah@ldahawaii.org</p>
+        <p style="color: rgba(255, 255, 255, 0.8);">245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9bf7fffaf3dbf7fffaf3faecfaf2f2b5f4e9fc">[email&#160;protected]</a></p>
       </div>
       <div>
         <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Connect With Us</h3>
@@ -1160,15 +1286,7 @@
     </div>
   </footer>
   
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('active');
-    }
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', () => {
-        document.getElementById('navLinks').classList.remove('active');
-      });
-    });
-  </script>
-</body>
-</html>
+    

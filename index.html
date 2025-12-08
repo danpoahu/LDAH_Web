@@ -98,12 +98,14 @@
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      opacity: 0.1;
+      opacity: 1;
       background-image: 
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size: 50px 50px;
-      background-position: -1px -1px;
+        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px);
+      background-size: 30px 30px, 30px 30px, 60px 60px, 60px 60px;
+      background-position: 0 0, 0 0, -15px -15px, -15px -15px;
     }
     .hero-content { max-width: 1400px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
     .hero h1 { font-size: 3.5rem; margin-bottom: 1.5rem; }
@@ -122,16 +124,7 @@
     }
     .btn-secondary:hover { background: white; color: var(--primary-blue); }
     
-    .stats-section { background: var(--bg-light); padding: 4rem 2rem; position: relative; overflow: hidden; }
-    .stats-section::before {
-      content: '';
-      position: absolute;
-      top: -50px; right: -50px;
-      width: 800px; height: 800px;
-      background-image: radial-gradient(circle, rgba(77, 208, 225, 0.15) 2px, transparent 2px);
-      background-size: 30px 30px;
-      opacity: 1;
-    }
+    .stats-section { background: var(--bg-light); padding: 4rem 2rem; }
     .stats-container {
       max-width: 1400px; margin: 0 auto;
       display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;
@@ -175,9 +168,23 @@
     .cta-banner {
       background: linear-gradient(135deg, #004E7C, #0066a1);
       padding: 6rem 2rem; text-align: center; color: white;
+      position: relative; overflow: hidden;
     }
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle, transparent 0, transparent 22px, rgba(255, 255, 255, 0.15) 22px, rgba(255, 255, 255, 0.15) 24px, transparent 24px);
+      background-size: 48px 48px;
+      opacity: 1;
+    }
+    .cta-content { position: relative; z-index: 1; }
     .cta-content h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
-    .cta-content p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9; }
+    .cta-content p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95; }
     
     footer {
       background: var(--text-dark); color: white; padding: 4rem 2rem 2rem;
