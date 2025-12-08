@@ -565,7 +565,7 @@
           <div class="contact-info">
             <div class="contact-label">Email</div>
             <div class="contact-value">
-              ldah@ldahawaii.org
+              <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5f333b3e371f333b3e373e283e363671302d38">[email&#160;protected]</a>
             </div>
           </div>
 
@@ -663,7 +663,7 @@
       </div>
       <div class="footer-section">
         <h3>Honolulu Office</h3>
-        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br>ldah@ldahawaii.org</p>
+        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b3dfd7d2dbf3dfd7d2dbd2c4d2dada9ddcc1d4">[email&#160;protected]</a></p>
       </div>
       <div class="footer-section">
         <h3>Connect With Us</h3>
@@ -699,7 +699,7 @@
     </div>
   </div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('active');
     }
@@ -757,6 +757,26 @@
       frame.src = '';
       document.body.style.overflow = 'auto';
     }
+  
+    // Special handler for Facebook (blocks iframes)
+    document.addEventListener('DOMContentLoaded', function() {
+      const originalOpen = window.openIframeModal;
+      window.openIframeModal = function(title, url) {
+        if (url.includes('facebook.com')) {
+          const modal = document.getElementById('iframeModal');
+          const titleEl = document.getElementById('iframeTitle');
+          const frameParent = document.getElementById('iframeFrame').parentElement;
+          
+          titleEl.textContent = title;
+          frameParent.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Hawaii families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open Parent Talk Cafe →</a></div>';
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        } else {
+          originalOpen(title, url);
+        }
+      };
+    });
+
   </script>
 </body>
 </html>
