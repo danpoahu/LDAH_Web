@@ -371,6 +371,71 @@
       border: none;
     }
     
+    
+    }
+    
+    .message-card {
+      background: var(--bg-light);
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+    }
+    
+    .message-card h2 {
+      color: var(--primary-blue);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .message-card p {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+    
+    footer {
+      background: var(--text-dark);
+      color: white;
+      padding: 3rem 2rem 2rem;
+    }
+    
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-section h3 {
+      color: var(--accent-teal);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    
+    .footer-section p,
+    .footer-section a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+    
+    .footer-section a:hover {
+      color: var(--accent-teal);
+    }
+    
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  
     /* External Link Modal */
     .iframe-modal {
       display: none;
@@ -442,6 +507,29 @@
       width: 100%;
       flex: 1;
       border: none;
+      background: white;
+    }
+    
+    .iframe-error {
+      padding: 3rem;
+      text-align: center;
+      color: #666;
+    }
+    
+    .iframe-error h4 {
+      color: #004E7C;
+      margin-bottom: 1rem;
+    }
+    
+    .iframe-error a {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
     }
     
     @keyframes fadeIn {
@@ -453,68 +541,7 @@
       from { transform: translateY(50px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-    
-    .message-card {
-      background: var(--bg-light);
-      border-radius: 20px;
-      padding: 3rem;
-      text-align: center;
-    }
-    
-    .message-card h2 {
-      color: var(--primary-blue);
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    
-    .message-card p {
-      color: var(--text-light);
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
-    }
-    
-    footer {
-      background: var(--text-dark);
-      color: white;
-      padding: 3rem 2rem 2rem;
-    }
-    
-    .footer-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-bottom: 2rem;
-    }
-    
-    .footer-section h3 {
-      color: var(--accent-teal);
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-    
-    .footer-section p,
-    .footer-section a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      display: block;
-      margin-bottom: 0.5rem;
-      transition: color 0.3s;
-    }
-    
-    .footer-section a:hover {
-      color: var(--accent-teal);
-    }
-    
-    .footer-bottom {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-      color: rgba(255, 255, 255, 0.6);
-    }
+
   </style>
 </head>
 <body>
