@@ -49,7 +49,7 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
       background: linear-gradient(135deg, #FAF8F0 0%, #FFFFFF 50%, #F0FAFF 100%);
       color: var(--text-dark);
-      padding-top: 0;
+      padding-top: 80px;
     }
     
     /* Navigation */
@@ -187,29 +187,24 @@
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 0 2rem 2rem;
+      padding: 2rem;
     }
     
     .page-header {
-      margin-top: 88px;
-      padding: 4rem 2rem;
-      background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
-      color: white;
       text-align: center;
-      margin-bottom: 0;
+      margin-bottom: 3rem;
     }
     
     .page-title {
-      font-size: 3rem;
-      color: white;
-      margin-bottom: 1rem;
-      font-weight: 700;
+      font-size: 2.5rem;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+      font-weight: 800;
     }
     
     .page-subtitle {
-      font-size: 1.25rem;
-      color: white;
-      opacity: 0.9;
+      font-size: 1.2rem;
+      color: var(--text-light);
     }
     
     /* Section Headers */
@@ -552,14 +547,13 @@
     </div>
   </nav>
 
-  <!-- Page Header -->
-  <div class="page-header">
-    <h1 class="page-title">📅 Events & Workshops</h1>
-    <p class="page-subtitle">Join us for training, workshops, and community events</p>
-  </div>
-
   <!-- Main Content -->
   <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">📅 Events & Workshops</h1>
+      <p class="page-subtitle">Join us for training, workshops, and community events</p>
+    </div>
+
     <!-- Current Events Section -->
     <div class="section" id="currentEventsSection">
       <div class="section-header">
@@ -1345,32 +1339,6 @@
         closeSignupModal();
       }
     }
-  
-
-    function openIframeModal(title, url) {
-      const modal = document.getElementById('iframeModal');
-      const titleEl = document.getElementById('iframeTitle');
-      const frame = document.getElementById('iframeFrame');
-      
-      titleEl.textContent = title;
-      frame.src = url;
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeIframeModal(event) {
-      if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
-        return;
-      }
-      
-      const modal = document.getElementById('iframeModal');
-      const frame = document.getElementById('iframeFrame');
-      
-      modal.classList.remove('active');
-      frame.src = '';
-      document.body.style.overflow = 'auto';
-    }
-
   </script>
   
   <footer style="background: var(--text-dark); color: white; padding: 3rem 2rem 2rem;">
@@ -1388,7 +1356,7 @@
       </div>
       <div>
         <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Honolulu Office</h3>
-        <p style="color: rgba(255, 255, 255, 0.8);">245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="345850555c745850555c5543555d5d1a5b4653">[email&#160;protected]</a></p>
+        <p style="color: rgba(255, 255, 255, 0.8);">245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9bf7fffaf3dbf7fffaf3faecfaf2f2b5f4e9fc">[email&#160;protected]</a></p>
       </div>
       <div>
         <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Connect With Us</h3>
@@ -1414,4 +1382,33 @@
   </div>
 
   
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+
+    function openIframeModal(title, url) {
+      const modal = document.getElementById('iframeModal');
+      const titleEl = document.getElementById('iframeTitle');
+      const frame = document.getElementById('iframeFrame');
+      
+      titleEl.textContent = title;
+      frame.src = url;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeIframeModal(event) {
+      if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+        return;
+      }
+      
+      const modal = document.getElementById('iframeModal');
+      const frame = document.getElementById('iframeFrame');
+      
+      modal.classList.remove('active');
+      frame.src = '';
+      document.body.style.overflow = 'auto';
+    }
+
+  </script><script>
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    
