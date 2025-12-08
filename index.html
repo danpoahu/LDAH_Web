@@ -57,11 +57,31 @@
     }
     
     .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
-    .logo-img { width: 60px; height: 60px; }
-    .logo-text { font-size: 1.2rem; font-weight: 700; color: var(--primary-blue); }
+    .logo-img { width: 80px; height: 80px; filter: brightness(1.1); }
+    .logo-text { font-size: 1.4rem; font-weight: 700; color: var(--primary-blue); }
     .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
     .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 500; transition: color 0.3s; }
     .nav-links a:hover { color: var(--primary-blue); }
+    
+    /* Mobile Menu */
+    .hamburger { display: none; flex-direction: column; cursor: pointer; padding: 0.5rem; }
+    .hamburger span { width: 25px; height: 3px; background: var(--primary-blue); margin: 3px 0; transition: 0.3s; }
+    
+    @media (max-width: 768px) {
+      .nav-links { 
+        position: fixed; top: 88px; left: 0; right: 0;
+        background: white; flex-direction: column; padding: 2rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); gap: 1rem;
+        transform: translateY(-100%); opacity: 0;
+        transition: transform 0.3s, opacity 0.3s;
+        pointer-events: none;
+      }
+      .nav-links.active { transform: translateY(0); opacity: 1; pointer-events: all; }
+      .hamburger { display: flex; }
+      .logo-img { width: 80px; height: 60px; }
+      .logo-text { font-size: 1.2rem; }
+    }
+    
     .cta-button {
       padding: 0.75rem 1.5rem;
       background: linear-gradient(135deg, #004E7C, #0066a1);
@@ -78,10 +98,14 @@
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      opacity: 0.15;
-      background-image: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+      opacity: 0.1;
+      background-image: 
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: -1px -1px;
     }
-    .hero-content { max-width: 1400px; margin: 0 auto; text-align: center; }
+    .hero-content { max-width: 1400px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
     .hero h1 { font-size: 3.5rem; margin-bottom: 1.5rem; }
     .hero .highlight { color: var(--accent-teal); }
     .hero p { font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9; }
@@ -90,7 +114,7 @@
       padding: 1rem 2rem; background: white; color: var(--primary-blue);
       border-radius: 50px; font-weight: 600; text-decoration: none; transition: all 0.3s;
     }
-    .btn-primary:hover { transform: translateY(-3px); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(255,255,255,0.2); }
     .btn-secondary {
       padding: 1rem 2rem; background: transparent; color: white;
       border: 2px solid white; border-radius: 50px; font-weight: 600;
@@ -102,15 +126,16 @@
     .stats-section::before {
       content: '';
       position: absolute;
-      top: 0; right: 0;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(77, 208, 225, 0.3) 3px, transparent 3px);
-      background-size: 40px 40px;
+      top: -50px; right: -50px;
+      width: 800px; height: 800px;
+      background-image: radial-gradient(circle, rgba(77, 208, 225, 0.15) 2px, transparent 2px);
+      background-size: 30px 30px;
       opacity: 1;
     }
     .stats-container {
       max-width: 1400px; margin: 0 auto;
       display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;
+      position: relative; z-index: 1;
     }
     .stat-card {
       background: white; padding: 2rem; border-radius: 16px; text-align: center;
@@ -120,14 +145,7 @@
     .stat-number { font-size: 3rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 0.5rem; }
     .stat-label { font-size: 1rem; color: var(--text-light); font-weight: 500; }
     
-    .services-section { padding: 6rem 2rem; background: white; position: relative; overflow: hidden; }
-    .services-section::before {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 600px; height: 600px;
-      background-image: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid2" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="%23004E7C" stroke-width="1" opacity="0.15"/></pattern></defs><rect width="100" height="100" fill="url(%23grid2)"/></svg>');
-    }
+    .services-section { padding: 6rem 2rem; background: white; }
     .section-header { text-align: center; max-width: 800px; margin: 0 auto 4rem; }
     .section-title { font-size: 2.5rem; color: var(--primary-blue); margin-bottom: 1rem; }
     .section-description { font-size: 1.1rem; color: var(--text-light); }
@@ -196,15 +214,19 @@
   <nav>
     <div class="nav-content">
       <a href="index.html" class="logo-container">
-        <img src="assets/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+        <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
         <span class="logo-text">LDAH</span>
       </a>
-      <ul class="nav-links">
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
         <li><a href="#services">What We Do</a></li>
         <li><a href="events.html">Events</a></li>
         <li><a href="volunteer.html">Volunteer</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="#donate" class="cta-button">Donate</a></li>
+        <li><a href="contact.html" class="cta-button">Contact Us</a></li>
       </ul>
     </div>
   </nav>
@@ -343,6 +365,17 @@
       }
     }
     document.addEventListener('DOMContentLoaded', loadCurrentEvents);
+  </script>
+  <script>
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+    // Close menu when clicking a link
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('active');
+      });
+    });
   </script>
 </body>
 </html>

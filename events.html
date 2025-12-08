@@ -81,14 +81,91 @@
     }
     
     .logo-img {
-      width: 50px;
-      height: 50px;
+      width: 80px;
+      height: 80px;
+      filter: brightness(1.1);
     }
     
     .logo-text {
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--primary-blue);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    
+    .nav-links a:hover {
+      color: var(--primary-blue);
+    }
+    
+    .cta-button {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    
+    /* Mobile Menu */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+    
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background: var(--primary-blue);
+      margin: 3px 0;
+      transition: 0.3s;
+    }
+    
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 88px;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 2rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        gap: 1rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        transition: transform 0.3s, opacity 0.3s;
+        pointer-events: none;
+      }
+      .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+      .hamburger {
+        display: flex;
+      }
+      .logo-img {
+        width: 60px;
+        height: 60px;
+      }
+      .logo-text {
+        font-size: 1.2rem;
+      }
     }
     
     .back-btn {
@@ -369,10 +446,20 @@
   <nav>
     <div class="nav-content">
       <a href="index.html" class="logo-container">
-        <img src="assets/logo_transparent.png" alt="LDAH Logo" class="logo-img">
-        <span class="logo-text">LDAH Events</span>
+        <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+        <span class="logo-text">LDAH</span>
       </a>
-      <a href="index.html" class="back-btn">← Back to Home</a>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#services">What We Do</a></li>
+        <li><a href="events.html" class="cta-button">Events</a></li>
+        <li><a href="volunteer.html">Volunteer</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+      </ul>
     </div>
   </nav>
 
@@ -1042,6 +1129,46 @@
         closeSignupModal();
       }
     }
+  </script>
+  
+  <footer style="background: var(--text-dark); color: white; padding: 3rem 2rem 2rem;">
+    <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+      <div>
+        <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">About LDAH</h3>
+        <p style="color: rgba(255, 255, 255, 0.8);">Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
+      </div>
+      <div>
+        <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Quick Links</h3>
+        <a href="index.html#services" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">What We Do</a>
+        <a href="events.html" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Events</a>
+        <a href="volunteer.html" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Volunteer</a>
+        <a href="contact.html" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Contact Us</a>
+      </div>
+      <div>
+        <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Honolulu Office</h3>
+        <p style="color: rgba(255, 255, 255, 0.8);">245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br>ldah@ldahawaii.org</p>
+      </div>
+      <div>
+        <h3 style="color: var(--accent-teal); margin-bottom: 1rem; font-size: 1.2rem;">Connect With Us</h3>
+        <a href="https://www.facebook.com/groups/2659334410969387" target="_blank" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Parent Talk Cafe</a>
+        <a href="install.html" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; display: block; margin-bottom: 0.5rem; transition: color 0.3s;">Install Our App</a>
+      </div>
+    </div>
+    <div style="max-width: 1400px; margin: 0 auto; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; color: rgba(255, 255, 255, 0.6);">
+      <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
+      <p>Developed by <a href="https://oahuappdesign.com" style="color: var(--accent-teal); text-decoration: none;">DP Consulting</a> | <a href="admin.html" style="color: rgba(255,255,255,0.3); font-size: 0.8rem; text-decoration: none;">Admin</a></p>
+    </div>
+  </footer>
+  
+  <script>
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('active');
+      });
+    });
   </script>
 </body>
 </html>

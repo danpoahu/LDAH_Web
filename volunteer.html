@@ -54,11 +54,31 @@
       display: flex; justify-content: space-between; align-items: center;
     }
     .logo-container { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
-    .logo-img { width: 60px; height: 60px; }
-    .logo-text { font-size: 1.2rem; font-weight: 700; color: var(--primary-blue); }
+    .logo-img { width: 80px; height: 80px; filter: brightness(1.1); }
+    .logo-text { font-size: 1.4rem; font-weight: 700; color: var(--primary-blue); }
     .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
     .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 500; transition: color 0.3s; }
     .nav-links a:hover { color: var(--primary-blue); }
+    
+    /* Mobile Menu */
+    .hamburger { display: none; flex-direction: column; cursor: pointer; padding: 0.5rem; }
+    .hamburger span { width: 25px; height: 3px; background: var(--primary-blue); margin: 3px 0; transition: 0.3s; }
+    
+    @media (max-width: 768px) {
+      .nav-links { 
+        position: fixed; top: 88px; left: 0; right: 0;
+        background: white; flex-direction: column; padding: 2rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); gap: 1rem;
+        transform: translateY(-100%); opacity: 0;
+        transition: transform 0.3s, opacity 0.3s;
+        pointer-events: none;
+      }
+      .nav-links.active { transform: translateY(0); opacity: 1; pointer-events: all; }
+      .hamburger { display: flex; }
+      .logo-img { width: 60px; height: 60px; }
+      .logo-text { font-size: 1.2rem; }
+    }
+    
     .cta-button {
       padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #004E7C, #0066a1);
       color: white; border-radius: 50px; font-weight: 600; text-decoration: none;
@@ -175,7 +195,12 @@
         <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
         <span class="logo-text">LDAH</span>
       </a>
-      <ul class="nav-links">
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
         <li><a href="index.html#services">What We Do</a></li>
         <li><a href="events.html">Events</a></li>
         <li><a href="volunteer.html" class="cta-button">Volunteer</a></li>
@@ -230,7 +255,7 @@
     </div>
     <div class="footer-bottom">
       <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-      <p>Developed by <a href="https://oahuappdesign.com" style="color: var(--accent-teal);">DP Consulting</a></p>
+      <p>Developed by <a href="https://oahuappdesign.com" style="color: var(--accent-teal);">DP Consulting</a> | <a href="admin.html" style="color: rgba(255,255,255,0.3); font-size: 0.8rem;">Admin</a></p>
     </div>
   </footer>
 
@@ -445,6 +470,16 @@
     document.addEventListener('DOMContentLoaded', async () => {
       await loadOpportunitiesData();
       await loadOpportunities();
+    });
+  </script>
+  <script>
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('active');
+      });
     });
   </script>
 </body>
