@@ -218,11 +218,18 @@
       box-shadow: 0 4px 16px rgba(0, 78, 124, 0.1);
       transition: transform 0.3s, box-shadow 0.3s;
       border: 2px solid var(--bg-light);
+      display: flex;
+      flex-direction: column;
+      min-height: 500px;
     }
     
     .office-card:hover {
       transform: translateY(-8px);
       box-shadow: 0 8px 32px rgba(0, 78, 124, 0.2);
+    }
+    
+    .office-card-content {
+      flex-grow: 1;
     }
     
     .office-icon {
@@ -269,6 +276,12 @@
       text-decoration: underline;
     }
     
+    .button-container {
+      margin-top: auto;
+      padding-top: 1rem;
+      text-align: center;
+    }
+    
     .btn-directions {
       display: inline-block;
       padding: 0.75rem 1.5rem;
@@ -278,12 +291,167 @@
       font-weight: 600;
       text-decoration: none;
       transition: all 0.3s;
+      cursor: pointer;
+      border: none;
       margin-top: 1rem;
     }
     
     .btn-directions:hover {
       transform: translateY(-3px);
       box-shadow: 0 4px 12px rgba(0, 78, 124, 0.3);
+    }
+    
+    /* Map Modal */
+    .map-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      animation: fadeIn 0.3s;
+    }
+    
+    .map-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .map-content {
+      background: white;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 1000px;
+      height: 80vh;
+      max-height: 700px;
+      position: relative;
+      animation: slideUp 0.3s;
+      overflow: hidden;
+    }
+    
+    .map-header {
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .map-header h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    
+    .close-modal {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+    
+    .close-modal:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .map-frame {
+      width: 100%;
+      height: calc(100% - 80px);
+      border: none;
+    }
+    
+    /* External Link Modal */
+    .iframe-modal {
+      display: none;
+      position: fixed;
+      z-index: 3000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      animation: fadeIn 0.3s;
+    }
+    
+    .iframe-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .iframe-content {
+      background: white;
+      border-radius: 20px;
+      width: 95%;
+      max-width: 1200px;
+      height: 90vh;
+      max-height: 800px;
+      position: relative;
+      animation: slideUp 0.3s;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .iframe-header {
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    
+    .iframe-header h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    
+    .close-iframe {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+    
+    .close-iframe:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .iframe-frame {
+      width: 100%;
+      flex: 1;
+      border: none;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     
     .message-card {
@@ -379,89 +547,91 @@
     <div class="office-grid">
       <!-- Honolulu Office -->
       <div class="office-card">
-        <div style="text-align: center;">
-          <div class="office-icon">🏢</div>
-          <h2 class="office-title">Honolulu Office</h2>
-          <p class="office-subtitle">Main Office</p>
-        </div>
-        
-        <div class="contact-info">
-          <div class="contact-label">Phone</div>
-          <div class="contact-value">
-            <a href="tel:8085325364">(808) 532-5364</a><br>
-            <strong>Toll Free:</strong> <a href="tel:18005339684">1-800-533-9684</a>
+        <div class="office-card-content">
+          <div style="text-align: center;">
+            <div class="office-icon">🏢</div>
+            <h2 class="office-title">Honolulu Office</h2>
+            <p class="office-subtitle">Main Office</p>
+          </div>
+          
+          <div class="contact-info">
+            <div class="contact-label">Phone</div>
+            <div class="contact-value">
+              <a href="tel:8085325364">(808) 532-5364</a><br>
+              <strong>Toll Free:</strong> <a href="tel:18005339684">1-800-533-9684</a>
+            </div>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-label">Email</div>
+            <div class="contact-value">
+              <a href="/cdn-cgi/l/email-protection#c7aba3a6af87aba3a6afa6b0a6aeaee9a8b5a0"><span class="__cf_email__" data-cfemail="cda1a9aca58da1a9aca5acbaaca4a4e3a2bfaa">[email&#160;protected]</span></a>
+            </div>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-label">Address</div>
+            <div class="contact-value">
+              Harry and Jeanette Weinberg Kukui Center<br>
+              245 North Kukui Street, Suite 205<br>
+              Honolulu, HI 96817
+            </div>
           </div>
         </div>
 
-        <div class="contact-info">
-          <div class="contact-label">Email</div>
-          <div class="contact-value">
-            <a href="/cdn-cgi/l/email-protection#8be7efeae3cbe7efeae3eafceae2e2a5e4f9ec"><span class="__cf_email__" data-cfemail="355951545d755951545d5442545c5c1b5a4752">[email&#160;protected]</span></a>
-          </div>
-        </div>
-
-        <div class="contact-info">
-          <div class="contact-label">Address</div>
-          <div class="contact-value">
-            Harry and Jeanette Weinberg Kukui Center<br>
-            245 North Kukui Street, Suite 205<br>
-            Honolulu, HI 96817
-          </div>
-        </div>
-
-        <div style="text-align: center;">
-          <a 
-            href="https://www.google.com/maps/search/?api=1&query=245+North+Kukui+Street+Suite+205+Honolulu+HI+96817"
-            target="_blank"
+        <div class="button-container">
+          <button 
+            onclick="openMapModal('Honolulu Office', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3717.1!2d-157.86!3d21.31!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s245%20North%20Kukui%20Street%20Suite%20205%20Honolulu%20HI%2096817!5e0!3m2!1sen!2sus!4v1234567890')"
             class="btn-directions"
           >
             📍 Get Directions
-          </a>
+          </button>
         </div>
       </div>
 
       <!-- Ma'ili Office -->
       <div class="office-card">
-        <div style="text-align: center;">
-          <div class="office-icon">🏫</div>
-          <h2 class="office-title">Ma'ili Office</h2>
-          <p class="office-subtitle">School Readiness Project</p>
-        </div>
-        
-        <div class="contact-info">
-          <div class="contact-label">Phone & Fax</div>
-          <div class="contact-value">
-            <strong>Phone:</strong> <a href="tel:8086965361">(808) 696-5361</a><br>
-            <strong>Fax:</strong> (808) 696-5371
+        <div class="office-card-content">
+          <div style="text-align: center;">
+            <div class="office-icon">🏫</div>
+            <h2 class="office-title">Ma'ili Office</h2>
+            <p class="office-subtitle">School Readiness Project</p>
+          </div>
+          
+          <div class="contact-info">
+            <div class="contact-label">Phone & Fax</div>
+            <div class="contact-value">
+              <strong>Phone:</strong> <a href="tel:8086965361">(808) 696-5361</a><br>
+              <strong>Fax:</strong> (808) 696-5371
+            </div>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-label">Hours</div>
+            <div class="contact-value">
+              Monday to Friday<br>
+              8:00 AM – 5:00 PM
+            </div>
+          </div>
+
+          <div class="contact-info">
+            <div class="contact-label">Address</div>
+            <div class="contact-value">
+              Community Learning Center<br>
+              Kauhale Building<br>
+              87-790 Kulauku St., Suite A116<br>
+              Wai'anae, HI 96792
+            </div>
           </div>
         </div>
 
-        <div class="contact-info">
-          <div class="contact-label">Hours</div>
-          <div class="contact-value">
-            Monday to Friday<br>
-            8:00 AM – 5:00 PM
-          </div>
-        </div>
-
-        <div class="contact-info">
-          <div class="contact-label">Address</div>
-          <div class="contact-value">
-            Community Learning Center<br>
-            Kauhale Building<br>
-            87-790 Kulauku St., Suite A116<br>
-            Wai'anae, HI 96792
-          </div>
-        </div>
-
-        <div style="text-align: center;">
-          <a 
-            href="https://www.google.com/maps/search/?api=1&query=87-790+Kulauku+St+Suite+A116+Waianae+HI+96792"
-            target="_blank"
+        <div class="button-container">
+          <button 
+            onclick="openMapModal('Ma\'ili Office', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3717.2!2d-158.18!3d21.43!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s87-790%20Kulauku%20St%20Suite%20A116%20Waianae%20HI%2096792!5e0!3m2!1sen!2sus!4v1234567890')"
             class="btn-directions"
           >
             📍 Get Directions
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -472,7 +642,7 @@
       <p>
         Have a question or need assistance? We're here to help! Contact us by phone, email, or visit one of our offices.
       </p>
-      <a href="/cdn-cgi/l/email-protection#036f67626b436f67626b6274626a6a2d6c7164" class="btn-directions" style="display: inline-block;">
+      <a href="/cdn-cgi/l/email-protection#472b23262f072b23262f2630262e2e69283520" class="btn-directions" style="display: inline-block;">
         ✉️ Email Us
       </a>
     </div>
@@ -493,21 +663,43 @@
       </div>
       <div class="footer-section">
         <h3>Honolulu Office</h3>
-        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="81ede5e0e9c1ede5e0e9e0f6e0e8e8afeef3e6">[email&#160;protected]</a></p>
+        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="670b03060f270b03060f0610060e0e49081500">[email&#160;protected]</a></p>
       </div>
       <div class="footer-section">
         <h3>Connect With Us</h3>
-        <a href="https://www.facebook.com/groups/2659334410969387" target="_blank">Parent Talk Cafe</a>
+        <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')">Parent Talk Cafe</a>
         <a href="install.html">Install Our App</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 Leadership in Disabilities and       <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-      <p>Developed by <a href="https://oahuappdesign.com" style="color: var(--accent-teal); text-decoration: none;">DP Consulting</a> | <a href="admin.html" style="color: rgba(255,255,255,0.3); font-size: 0.8rem; text-decoration: none;">Admin</a></p>
+      <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
+      <p>Developed by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a> | <a href="admin.html" style="color: rgba(255,255,255,0.3); font-size: 0.8rem; text-decoration: none;">Admin</a></p>
     </div>
   </footer>
 
-  <script>
+  <!-- Map Modal -->
+  <div id="mapModal" class="map-modal" onclick="closeMapModal(event)">
+    <div class="map-content" onclick="event.stopPropagation()">
+      <div class="map-header">
+        <h3 id="modalTitle">Directions</h3>
+        <button class="close-modal" onclick="closeMapModal()">&times;</button>
+      </div>
+      <iframe id="mapFrame" class="map-frame" src="" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </div>
+
+  <!-- External Link Modal -->
+  <div id="iframeModal" class="iframe-modal" onclick="closeIframeModal(event)">
+    <div class="iframe-content" onclick="event.stopPropagation()">
+      <div class="iframe-header">
+        <h3 id="iframeTitle">Loading...</h3>
+        <button class="close-iframe" onclick="closeIframeModal()">&times;</button>
+      </div>
+      <iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>
+    </div>
+  </div>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('active');
     }
@@ -517,6 +709,54 @@
         document.getElementById('navLinks').classList.remove('active');
       });
     });
+    
+    function openMapModal(officeName, mapUrl) {
+      const modal = document.getElementById('mapModal');
+      const title = document.getElementById('modalTitle');
+      const frame = document.getElementById('mapFrame');
+      
+      title.textContent = officeName + ' - Directions';
+      frame.src = mapUrl;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMapModal(event) {
+      if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-modal')) {
+        return;
+      }
+      
+      const modal = document.getElementById('mapModal');
+      const frame = document.getElementById('mapFrame');
+      
+      modal.classList.remove('active');
+      frame.src = '';
+      document.body.style.overflow = 'auto';
+    }
+    
+    function openIframeModal(title, url) {
+      const modal = document.getElementById('iframeModal');
+      const titleEl = document.getElementById('iframeTitle');
+      const frame = document.getElementById('iframeFrame');
+      
+      titleEl.textContent = title;
+      frame.src = url;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeIframeModal(event) {
+      if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+        return;
+      }
+      
+      const modal = document.getElementById('iframeModal');
+      const frame = document.getElementById('iframeFrame');
+      
+      modal.classList.remove('active');
+      frame.src = '';
+      document.body.style.overflow = 'auto';
+    }
   </script>
 </body>
 </html>

@@ -192,6 +192,90 @@
       border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+  
+    /* External Link Modal */
+    .iframe-modal {
+      display: none;
+      position: fixed;
+      z-index: 3000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      animation: fadeIn 0.3s;
+    }
+    
+    .iframe-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .iframe-content {
+      background: white;
+      border-radius: 20px;
+      width: 95%;
+      max-width: 1200px;
+      height: 90vh;
+      max-height: 800px;
+      position: relative;
+      animation: slideUp 0.3s;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .iframe-header {
+      background: linear-gradient(135deg, #004E7C, #0066a1);
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    
+    .iframe-header h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    
+    .close-iframe {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+    
+    .close-iframe:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .iframe-frame {
+      width: 100%;
+      flex: 1;
+      border: none;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
   </style>
 </head>
 <body>
@@ -251,21 +335,33 @@
       </div>
       <div class="footer-section">
         <h3>Honolulu Office</h3>
-        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e9858d8881a9858d8881889e888080c7869b8e">[email&#160;protected]</a></p>
+        <p>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817<br>(808) 532-5364<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7d11191c153d11191c151c0a1c141453120f1a">[email&#160;protected]</a></p>
       </div>
       <div class="footer-section">
         <h3>Connect With Us</h3>
-        <a href="https://www.facebook.com/groups/2659334410969387" target="_blank">Parent Talk Cafe</a>
+        <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')">Parent Talk Cafe</a>
         <a href="install.html">Install Our App</a>
       </div>
     </div>
     <div class="footer-bottom">
       <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-      <p>Developed by <a href="https://oahuappdesign.com" style="color: var(--accent-teal);">DP Consulting</a> | <a href="admin.html" style="color: rgba(255,255,255,0.3); font-size: 0.8rem;">Admin</a></p>
+      <p>Developed by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal);" cursor: pointer;">DP Consulting</a> | <a href="admin.html" style="color: rgba(255,255,255,0.3); font-size: 0.8rem;">Admin</a></p>
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <!-- External Link Modal -->
+  <div id="iframeModal" class="iframe-modal" onclick="closeIframeModal(event)">
+    <div class="iframe-content" onclick="event.stopPropagation()">
+      <div class="iframe-header">
+        <h3 id="iframeTitle">Loading...</h3>
+        <button class="close-iframe" onclick="closeIframeModal()">&times;</button>
+      </div>
+      <iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>
+    </div>
+  </div>
+
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
@@ -477,16 +573,34 @@
       await loadOpportunitiesData();
       await loadOpportunities();
     });
+  
+
+    function openIframeModal(title, url) {
+      const modal = document.getElementById('iframeModal');
+      const titleEl = document.getElementById('iframeTitle');
+      const frame = document.getElementById('iframeFrame');
+      
+      titleEl.textContent = title;
+      frame.src = url;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeIframeModal(event) {
+      if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+        return;
+      }
+      
+      const modal = document.getElementById('iframeModal');
+      const frame = document.getElementById('iframeFrame');
+      
+      modal.classList.remove('active');
+      frame.src = '';
+      document.body.style.overflow = 'auto';
+    }
+
   </script>
   <script>
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('active');
-    }
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', () => {
-        document.getElementById('navLinks').classList.remove('active');
-      });
-    });
-  </script>
-</body>
-</html>
+   
