@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serving Military Families - LDAH</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+    :root {
+        --primary-blue: #004E7C;
+        --light-blue: #0066a1;
+        --accent-teal: #4DD0E1;
+        --text-dark: #1a1a1a;
+        --text-light: #666;
+        --bg-light: #f8f9fa;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        color: var(--text-dark);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    h1, h2, h3 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    /* Navigation */
+    nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 8px rgba(0, 78, 124, 0.1);
+    }
+
+    .nav-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-decoration: none;
+    }
+
+    .logo-img {
+        width: 80px;
+        height: 80px;
+        filter: brightness(1.1);
+    }
+
+    .logo-text {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+        align-items: center;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: var(--text-dark);
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+        color: var(--primary-blue);
+    }
+
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    .hamburger span {
+        width: 25px;
+        height: 3px;
+        background: var(--primary-blue);
+        margin: 3px 0;
+        transition: 0.3s;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        margin-top: 88px;
+        background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
+        color: white;
+        padding: 80px 20px 60px;
+        text-align: center;
+    }
+
+    .hero-section h1 {
+        font-size: 2.8em;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    .hero-section p {
+        font-size: 1.3em;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.6;
+        opacity: 0.95;
+    }
+
+    /* Content Wrapper */
+    .content-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 60px 20px;
+    }
+
+    /* Top Cards Grid - Video and Additional Resources */
+    .top-cards-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+
+    .card {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .card h2 {
+        color: var(--primary-blue);
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Video Card */
+    .video-container-small {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .video-container-small iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* Resources Image Card */
+    .resources-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Resource Cards Grid */
+    .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+
+    .resource-card {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .resource-content h3 {
+        color: var(--primary-blue);
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    .resource-content p {
+        color: var(--text-light);
+        line-height: 1.8;
+        margin-bottom: 25px;
+        font-size: 1.05em;
+    }
+
+    /* Download Button */
+    .download-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+        color: white;
+        padding: 14px 35px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.05em;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 78, 124, 0.2);
+    }
+
+    .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 78, 124, 0.3);
+    }
+
+    .download-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Support Section */
+    .support-section {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-top: 60px;
+        text-align: center;
+    }
+
+    .support-section h2 {
+        color: var(--primary-blue);
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    .support-section p {
+        font-size: 1.15em;
+        color: #374151;
+        line-height: 1.8;
+        max-width: 800px;
+        margin: 0 auto 30px;
+    }
+
+    .contact-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+        color: white;
+        padding: 15px 40px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1em;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 78, 124, 0.2);
+    }
+
+    .contact-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 78, 124, 0.3);
+    }
+
+    /* Footer */
+    footer {
+        background: var(--text-dark);
+        color: white;
+        padding: 4rem 2rem 2rem;
+    }
+
+    .footer-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .footer-section h3 {
+        color: var(--accent-teal);
+        margin-bottom: 1.5rem;
+    }
+
+    .footer-section a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .footer-section a:hover {
+        color: var(--accent-teal);
+    }
+
+    .footer-section p {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .footer-bottom {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* External Link Modal */
+    .iframe-modal {
+        display: none;
+        position: fixed;
+        z-index: 3000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        animation: fadeIn 0.3s;
+    }
+
+    .iframe-modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .iframe-content {
+        background: white;
+        width: 90%;
+        max-width: 1200px;
+        height: 85vh;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        animation: slideUp 0.3s;
+    }
+
+    .iframe-header {
+        padding: 1.5rem;
+        background: var(--primary-blue);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .close-iframe {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        padding: 0;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .iframe-frame {
+        flex: 1;
+        border: none;
+        width: 100%;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { 
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to { 
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .nav-links {
+            position: fixed;
+            top: 88px;
+            left: 0;
+            right: 0;
+            background: white;
+            flex-direction: column;
+            padding: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            gap: 1rem;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .nav-links.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .hamburger {
+            display: flex;
+        }
+
+        .hero-section h1 {
+            font-size: 2em;
+        }
+
+        .hero-section p {
+            font-size: 1.1em;
+        }
+
+        .top-cards-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .resources-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card {
+            padding: 20px;
+        }
+
+        .resource-card {
+            padding: 25px;
+        }
+
+        .support-section {
+            padding: 25px;
+        }
+    }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav>
+        <div class="nav-content">
+            <a href="index.html" class="logo-container">
+                <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+                <span class="logo-text">LDAH</span>
+            </a>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#services">What We Do</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="volunteer.html">Volunteer</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>Serving Military Families</h1>
+        <p>Supporting Hawaii's military families through transitions, education, and advocacy</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <!-- Top Row: Video and Additional Resources Side by Side -->
+        <div class="top-cards-grid">
+            <div class="card video-card">
+                <h2>Relocating With an IEP</h2>
+                <div class="video-container-small">
+                    <iframe 
+                        width="560" 
+                        height="315" 
+                        src="https://www.youtube.com/embed/emeHncPsjX4" 
+                        title="Relocating with an IEP - LDAH"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="card resources-card">
+                <h2>Additional Military Resources</h2>
+                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/oahu-militaryresources.jpg" 
+                     alt="Oahu Military Resources"
+                     class="resources-image">
+            </div>
+        </div>
+
+        <!-- Bottom Row: PDF Resource Cards -->
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-content">
+                    <h3>Relocating With an IEP</h3>
+                    <p>
+                        Essential information and checklists for military families relocating with children who have 
+                        Individualized Education Programs (IEPs). Learn what to do before, during, and after your move 
+                        to ensure continuity of services.
+                    </p>
+                    <a href="https://ldahawaii.org/wp-content/uploads/2024/01/Special-Education.pdf" 
+                       class="download-btn" 
+                       download="LDAH-Relocating-With-IEP.pdf">Download PDF</a>
+                </div>
+            </div>
+
+            <div class="resource-card">
+                <div class="resource-content">
+                    <h3>Forever Transitioning</h3>
+                    <p>
+                        A comprehensive checklist of must-do tasks for military families coming to or leaving Hawaii. 
+                        Reduce the anxiety of unpredictable circumstances and prepare for smooth transitions, whether 
+                        your children have special needs or not.
+                    </p>
+                    <a href="https://ldahawaii.org/wp-content/uploads/2024/01/Forever-Transitioning.pdf" 
+                       class="download-btn" 
+                       download="LDAH-Forever-Transitioning.pdf">Download PDF</a>
+                </div>
+            </div>
+        </div>
+
+        <section class="support-section">
+            <h2>We're Here to Help</h2>
+            <p>
+                Whether you're arriving at your new duty station in Hawaii or preparing to leave, our team is ready 
+                to support you and your family. We can help you navigate the special education system, connect with 
+                local resources, and ensure your child's educational needs are met.
+            </p>
+            <a href="contact.html" class="contact-btn">Contact Us Today</a>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About LDAH</h3>
+                <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="index.html#services">What We Do</a>
+                <a href="events.html">Events</a>
+                <a href="volunteer.html">Volunteer</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+            <div class="footer-section">
+                <h3>Honolulu Office</h3>
+                <p>
+                    245 North Kukui Street, Suite 205<br>
+                    Honolulu, HI 96817<br>
+                    (808) 532-5364<br>
+                    <a href="mailto:info@ldah.org">info@ldah.org</a>
+                </p>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')">Parent Talk Cafe</a>
+                <a href="install.html">Install Our App</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
+            <p>
+                Developed by 
+                <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a>
+                <span style="margin: 0 0.5rem; color: rgba(255,255,255,0.3);">|</span>
+                <a href="cms.html" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">⚙️ CMS</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- External Link Modal -->
+    <div id="iframeModal" class="iframe-modal" onclick="closeIframeModal(event)">
+        <div class="iframe-content" onclick="event.stopPropagation()">
+            <div class="iframe-header">
+                <h3 id="iframeTitle">Loading...</h3>
+                <button class="close-iframe" onclick="closeIframeModal()">&times;</button>
+            </div>
+            <iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Toggle mobile menu
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks) {
+                navLinks.classList.toggle('active');
+            }
+        }
+
+        // Open iframe modal
+        function openIframeModal(title, url) {
+            // Special handling for Facebook
+            if (url.includes('facebook.com')) {
+                const modal = document.getElementById('iframeModal');
+                const titleEl = document.getElementById('iframeTitle');
+                const frame = document.getElementById('iframeFrame');
+                
+                titleEl.textContent = title;
+                frame.outerHTML = '<div id="iframeFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Hawaii families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open Parent Talk Cafe →</a></div>';
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                const modal = document.getElementById('iframeModal');
+                const titleEl = document.getElementById('iframeTitle');
+                const frame = document.getElementById('iframeFrame');
+
+                titleEl.textContent = title;
+                frame.src = url;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Close iframe modal
+        function closeIframeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+                return;
+            }
+
+            const modal = document.getElementById('iframeModal');
+            const frameEl = document.getElementById('iframeFrame');
+            
+            modal.classList.remove('active');
+            
+            // Reset iframe
+            if (frameEl.tagName === 'IFRAME') {
+                frameEl.src = '';
+            } else {
+                frameEl.outerHTML = '<iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>';
+            }
+            
+            document.body.style.overflow = 'auto';
+        }
+
+        // Initialize Firebase
+        firebase.initializeApp({
+            apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
+            authDomain: "ldah-932d5.firebaseapp.com",
+            projectId: "ldah-932d5",
+            storageBucket: "ldah-932d5.firebasestorage.app",
+            messagingSenderId: "662130454003",
+            appId: "1:662130454003:web:437576d5a5811ecd8df686"
+        });
+
+        // Initialize Analytics
+        const analytics = firebase.analytics();
+        
+        // Track page view
+        analytics.logEvent('page_view', {
+            page_title: 'Military Families',
+            page_location: window.location.href,
+            page_path: '/military.html'
+        });
+
+        // Track PDF interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const action = this.classList.contains('view-btn') ? 'view' : 'download';
+                    const pdfName = this.href.split('/').pop().split('?')[0];
+                    
+                    analytics.logEvent('pdf_interaction', {
+                        action: action,
+                        pdf_name: pdfName,
+                        page: 'military_families'
+                    });
+                    
+                    console.log('PDF interaction tracked:', action, pdfName);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
