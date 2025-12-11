@@ -277,13 +277,149 @@
     }
 
   </style>
+    <script>
+        // LDAH Header/Footer Loader with Modal Functions
+        
+        // Define modal functions FIRST so footer links work
+        function openIframeModal(title, url) {
+            if (url.includes('facebook.com')) {
+                const modal = document.getElementById('iframeModal');
+                const titleEl = document.getElementById('iframeTitle');
+                const frame = document.getElementById('iframeFrame');
+                
+                titleEl.textContent = title;
+                frame.outerHTML = '<div id="iframeFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Hawaii families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open Parent Talk Cafe →</a></div>';
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                const modal = document.getElementById('iframeModal');
+                const titleEl = document.getElementById('iframeTitle');
+                const frame = document.getElementById('iframeFrame');
+                
+                titleEl.textContent = title;
+                frame.src = url;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeIframeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+                return;
+            }
+            
+            const modal = document.getElementById('iframeModal');
+            const frameEl = document.getElementById('iframeFrame');
+            
+            modal.classList.remove('active');
+            
+            if (frameEl.tagName === 'IFRAME') {
+                frameEl.src = '';
+            } else {
+                frameEl.outerHTML = '<iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>';
+            }
+            
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Header and Footer HTML
+        const headerHTML = `<nav>
+    <div class="nav-content">
+        <a href="index.html" class="logo-container">
+            <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+            <span class="logo-text">LDAH</span>
+        </a>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html#services">What We Do</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="volunteer.html">Volunteer</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </div>
+</nav>`;
+        
+        const footerHTML = `<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>About LDAH</h3>
+            <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
+        </div>
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <a href="index.html#services">What We Do</a>
+            <a href="events.html">Events</a>
+            <a href="volunteer.html">Volunteer</a>
+            <a href="contact.html">Contact Us</a>
+        </div>
+        <div class="footer-section">
+            <h3>Honolulu Office</h3>
+            <p>
+                245 North Kukui Street, Suite 205<br>
+                Honolulu, HI 96817<br>
+                (808) 532-5364<br>
+                <a href="mailto:info@ldah.org">info@ldah.org</a>
+            </p>
+        </div>
+        <div class="footer-section">
+            <h3>Connect With Us</h3>
+            <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')">Parent Talk Cafe</a>
+            <a href="install.html">Install Our App</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
+        <p>
+            Developed by 
+            <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a>
+        </p>
+    </div>
     
-    <!-- Load header/footer script -->
-    <script src="js/header-footer-loader.js"></script>
+    <div id="cmsAccessButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 999; cursor: pointer; opacity: 0.6; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'" onclick="window.location.href='cms.html'">
+        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));">
+            <circle cx="12" cy="12" r="10" fill="#004E7C"/>
+            <path d="M12 8v8M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9.5 6.5l-1 1M14.5 6.5l1 1M17.5 9.5l-1 1M17.5 14.5l-1-1M14.5 17.5l1-1M9.5 17.5l-1-1M6.5 14.5l1-1M6.5 9.5l1 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+    </div>
+</footer>`;
+        
+        function loadHeaderFooter() {
+            const headerContainer = document.getElementById('header-container');
+            if (headerContainer) {
+                headerContainer.innerHTML = headerHTML;
+                console.log('✅ Header loaded');
+            }
+            
+            const footerContainer = document.getElementById('footer-container');
+            if (footerContainer) {
+                footerContainer.innerHTML = footerHTML;
+                console.log('✅ Footer loaded');
+            }
+        }
+        
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks) {
+                navLinks.classList.toggle('active');
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadHeaderFooter);
+        } else {
+            loadHeaderFooter();
+        }
+    </script>
 </head>
 <body>
     <!-- Header Container - Auto-loaded -->
     <div id="header-container"></div>
+
 
   <div class="page-header">
     <h1>Volunteer Opportunities</h1>
