@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title - LDAH</title>
+    
+    <!-- Firebase (if needed for this page) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Include common styles for nav/footer -->
+    <link rel="stylesheet" href="css/common.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Page-specific styles -->
+    <style>
+        :root {
+            --primary-blue: #004E7C;
+            --light-blue: #0066a1;
+            --accent-teal: #4DD0E1;
+            --text-dark: #1a1a1a;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        /* Page Hero */
+        .page-hero {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            color: white;
+            padding: 140px 2rem 4rem;
+            text-align: center;
+        }
+        
+        .page-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .page-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        /* Content Section */
+        .content-section {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+        
+        .content-section h2 {
+            color: var(--primary-blue);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .content-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 78, 124, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .content-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .content-card p {
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+        
+        /* Call to Action */
+        .cta-section {
+            background: var(--bg-light);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 78, 124, 0.3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .page-hero {
+                padding: 120px 2rem 3rem;
+            }
+            
+            .content-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    
+    <!-- Load header/footer script -->
+    <script src="js/header-footer-loader.js"></script>
+</head>
+<body>
+    <!-- Header Container - Auto-loaded -->
+    <div id="header-container"></div>
+    
+    <!-- Page Hero Section -->
+    <section class="page-hero">
+        <h1>🎯 Your Page Title Here</h1>
+        <p>A compelling subtitle or brief description of what this page is about</p>
+    </section>
+    
+    <!-- Main Content Section -->
+    <section class="content-section">
+        <h2>Section Heading</h2>
+        <p>
+            Write your content here. This is where you'll add all the details, information, 
+            and helpful resources related to this topic. Make it engaging and informative!
+        </p>
+        <p>
+            You can add multiple paragraphs to fully explain the topic. Use clear, 
+            straightforward language that families can easily understand.
+        </p>
+    </section>
+    
+    <!-- Content Grid (Optional) -->
+    <section class="content-section">
+        <h2>Key Points</h2>
+        <div class="content-grid">
+            <div class="content-card">
+                <h3>📋 Point One</h3>
+                <p>Description of the first key point or feature. Keep it concise and focused.</p>
+            </div>
+            
+            <div class="content-card">
+                <h3>💡 Point Two</h3>
+                <p>Description of the second key point. Use emojis to make it visually appealing.</p>
+            </div>
+            
+            <div class="content-card">
+                <h3>🎓 Point Three</h3>
+                <p>Description of the third key point. Highlight what makes this important.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Additional Content Section -->
+    <section class="content-section">
+        <h2>More Information</h2>
+        <p>
+            Continue adding as many sections as you need. You can repeat the pattern above 
+            or create custom layouts specific to your content.
+        </p>
+        <p>
+            Remember to keep the user experience in mind - make it easy to read and navigate.
+        </p>
+    </section>
+    
+    <!-- Call to Action -->
+    <section class="cta-section">
+        <h2>Ready to Learn More?</h2>
+        <p>
+            Get in touch with us to discuss how we can help your family navigate this journey together.
+        </p>
+        <a href="contact.html" class="btn-primary">Contact Us Today</a>
+    </section>
+    
+    <!-- Footer Container - Auto-loaded -->
+    <div id="footer-container"></div>
+    
+    <!-- Page-specific scripts (if needed) -->
+    <script>
+        // Add any page-specific JavaScript here
+        console.log('Page loaded successfully');
+    </script>
+</body>
+</html>

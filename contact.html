@@ -516,27 +516,13 @@
       color: rgba(255, 255, 255, 0.6);
     }
   </style>
+    
+    <!-- Load header/footer script -->
+    <script src="js/header-footer-loader.js"></script>
 </head>
 <body>
-  <nav>
-    <div class="nav-content">
-      <a href="index.html" class="logo-container">
-        <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
-        <span class="logo-text">LDAH</span>
-      </a>
-      <div class="hamburger" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html#services">What We Do</a></li>
-        <li><a href="events.html">Events</a></li>
-        <li><a href="volunteer.html">Volunteer</a></li>
-        <li><a href="contact.html" class="cta-button">Contact Us</a></li>
-      </ul>
-    </div>
-  </nav>
+    <!-- Header Container - Auto-loaded -->
+    <div id="header-container"></div>
 
   <div class="page-header">
     <h1>Contact Us</h1>
@@ -565,7 +551,7 @@
           <div class="contact-info">
             <div class="contact-label">Email</div>
             <div class="contact-value">
-              <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a>
+              <a href="/cdn-cgi/l/email-protection#0e626a6f664e626a6f666f796f676720617c69"><span class="__cf_email__" data-cfemail="553931343d153931343d3422343c3c7b3a2732">[email&#160;protected]</span></a>
             </div>
           </div>
 
@@ -642,45 +628,15 @@
       <p>
         Have a question or need assistance? We're here to help! Contact us by phone, email, or visit one of our offices.
       </p>
-      <a href="mailto:ldah@ldahawaii.org" class="btn-directions" style="display: inline-block;">
+      <a href="/cdn-cgi/l/email-protection#92fef6f3fad2fef6f3faf3e5f3fbfbbcfde0f5" class="btn-directions" style="display: inline-block;">
         ✉️ Email Us
       </a>
     </div>
   </div>
 
-  <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>About LDAH</h3>
-        <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
-      </div>
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <a href="index.html#services">What We Do</a>
-        <a href="events.html">Events</a>
-        <a href="volunteer.html">Volunteer</a>
-        <a href="contact.html">Contact Us</a>
-      </div>
-      <div class="footer-section">
-        <h3>Honolulu Office</h3>
-        <p>
-          245 North Kukui Street, Suite 205<br>
-          Honolulu, HI 96817<br>
-          (808) 532-5364<br>
-          <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a>
-        </p>
-      </div>
-      <div class="footer-section">
-        <h3>Connect With Us</h3>
-        <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')">Parent Talk Cafe</a>
-        <a href="install.html">Install Our App</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-      <p>Developed by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a></p>
-    </div>
-  </footer>
+
+    <!-- Footer Container - Auto-loaded -->
+    <div id="footer-container"></div>
 
   <!-- Map Modal -->
   <div id="mapModal" class="map-modal" onclick="closeMapModal(event)">
@@ -704,7 +660,7 @@
     </div>
   </div>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('active');
     }
@@ -768,19 +724,4 @@
       }
       
       const modal = document.getElementById('iframeModal');
-      const frameEl = document.getElementById('iframeFrame');
-      
-      modal.classList.remove('active');
-      
-      // Reset iframe
-      if (frameEl.tagName === 'IFRAME') {
-        frameEl.src = '';
-      } else {
-        frameEl.outerHTML = '<iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>';
-      }
-      
-      document.body.style.overflow = 'auto';
-    }
-  </script>
-</body>
-</html>
+      const frameEl = do

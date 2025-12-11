@@ -560,37 +560,13 @@
         }
     }
     </style>
+    
+    <!-- Load header/footer script -->
+    <script src="js/header-footer-loader.js"></script>
 </head>
 <body>
-    <nav>
-        <div class="nav-content">
-            <a href="index.html" class="logo-container">
-                <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
-                <span class="logo-text">LDAH</span>
-            </a>
-            <div class="hamburger" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <ul class="nav-links" id="navLinks">
-                <li>
-                    <a href="#services">What We Do</a>
-                </li>
-                <li>
-                    <a href="events.html">Events</a>
-                </li>
-                <li>
-                    <a href="volunteer.html">Volunteer</a>
-                </li>
-                <li>
-                    <a href="contact.html" class="cta-button">Contact Us</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <section class="hero">
+    <!-- Header Container - Auto-loaded -->
+    <div id="header-container"></div>
         <div class="hero-content">
             <h1>
                 Empowering Families, 
@@ -698,45 +674,8 @@
         </div>
     </section>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>About LDAH</h3>
-                <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <a href="#services">What We Do</a>
-                <a href="events.html">Events</a>
-                <a href="volunteer.html">Volunteer</a>
-                <a href="contact.html">Contact Us</a>
-            </div>
-            <div class="footer-section">
-                <h3>Honolulu Office</h3>
-                <p>
-                    245 North Kukui Street, Suite 205
-                    <br>
-                    Honolulu, HI 96817
-                    <br>
-                    (808) 532-5364
-                    <br>
-                    <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a>
-                </p>
-            </div>
-            <div class="footer-section">
-                <h3>Connect With Us</h3>
-                <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')">Parent Talk Cafe</a>
-                <a href="install.html">Install Our App</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-            <p>
-                Developed by 
-                <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a>
-            </p>
-        </div>
-    </footer>
+    <!-- Footer Container - Auto-loaded -->
+    <div id="footer-container"></div>
 
     <!-- External Link Modal -->
     <div id="iframeModal" class="iframe-modal" onclick="closeIframeModal(event)">
@@ -748,9 +687,6 @@
             <iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>
         </div>
     </div>
-
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
     function openIframeModal(title, url) {
         // Special handling for Facebook
@@ -847,12 +783,4 @@
     function toggleMenu() {
         document.getElementById('navLinks').classList.toggle('active');
     }
-    // Close menu when clicking a link
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => {
-            document.getElementById('navLinks').classList.remove('active');
-        });
-    });
-    </script>
-</body>
-</html>
+    // Close menu when clicking a l

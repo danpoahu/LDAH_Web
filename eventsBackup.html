@@ -571,13 +571,28 @@
       color: rgba(255, 255, 255, 0.6);
     }
   </style>
-    
-    <!-- Load header/footer script -->
-    <script src="js/header-footer-loader.js"></script>
 </head>
 <body>
-    <!-- Header Container - Auto-loaded -->
-    <div id="header-container"></div>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-content">
+      <a href="index.html" class="logo-container">
+        <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+        <span class="logo-text">LDAH</span>
+      </a>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#services">What We Do</a></li>
+        <li><a href="events.html" class="cta-button">Events</a></li>
+        <li><a href="volunteer.html">Volunteer</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+      </ul>
+    </div>
+  </nav>
 
   <!-- Page Header -->
   <div class="page-header">
@@ -1068,7 +1083,6 @@
                     border: 1px solid #D1D5DB;
                     border-radius: 8px;
                     font-size: 14px;
-                    text-transform: capitalize;
                   ">
                 </div>
                 
@@ -1115,7 +1129,7 @@
                 ${event.signupDates && event.signupDates.length > 0 ? `
                   <div style="margin-bottom: 20px;">
                     <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
-                      Select the Dates you are Available to Participate *
+                      Select the Dates you are Available to Volunteer *
                     </label>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                       ${event.signupDates.map((date, idx) => `
@@ -1180,7 +1194,7 @@
                 <!-- Participation Type -->
                 <div style="margin-bottom: 20px;">
                   <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
-                    Are you participating as an individual or with a group? *
+                    Are you volunteering as an individual or with a group? *
                   </label>
                   <div style="display: flex; flex-direction: column; gap: 8px;">
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
@@ -1211,7 +1225,7 @@
                 <!-- Group Name & Size (conditional) -->
                 <div id="group-fields" style="display: none; margin-bottom: 20px; padding-left: 26px;">
                   <label style="display: block; color: #004E7C; font-weight: bold; margin-bottom: 8px; font-size: 14px;">
-                    What is the name of your group, and number of participants? *
+                    What is the name of your group, and number of volunteers? *
                   </label>
                   <div style="display: flex; gap: 12px;">
                     <input
@@ -1230,7 +1244,7 @@
                       type="number"
                       id="group-size"
                       min="1"
-                      placeholder="# of participants"
+                      placeholder="# of volunteers"
                       style="
                         flex: 1;
                         padding: 12px;
@@ -1439,12 +1453,50 @@
     }
   </script>
   
-
-    <!-- Footer Container - Auto-loaded -->
-    <div id="footer-container"></div>
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About LDAH</h3>
+        <p>Hawai'i & Pacific Island Parent Training & Information Center empowering families and children with disabilities.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="index.html#services">What We Do</a>
+        <a href="events.html">Events</a>
+        <a href="volunteer.html">Volunteer</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+      <div class="footer-section">
+        <h3>Honolulu Office</h3>
+        <p>
+          245 North Kukui Street, Suite 205<br>
+          Honolulu, HI 96817<br>
+          (808) 532-5364<br>
+          <a href="mailto:ldah@ldahawaii.org">ldah@ldahawaii.org</a>
+        </p>
+      </div>
+      <div class="footer-section">
+        <h3>Connect With Us</h3>
+        <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')">Parent Talk Cafe</a>
+        <a href="install.html">Install Our App</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
+      <p>Developed by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a></p>
+    </div>
+  </footer>
 
   <!-- External Link Modal -->
   <div id="iframeModal" class="iframe-modal" onclick="closeIframeModal(event)">
     <div class="iframe-content" onclick="event.stopPropagation()">
       <div class="iframe-header">
-        <h3
+        <h3 id="iframeTitle">Loading...</h3>
+        <button class="close-iframe" onclick="closeIframeModal()">&times;</button>
+      </div>
+      <iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>
+    </div>
+  </div>
+
+</body>
+</html>
