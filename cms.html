@@ -338,15 +338,10 @@
       
       <div class="error-message" id="loginError"></div>
       
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" required>
-        </div>
-        
+      <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" required>
+          <input type="password" id="password" required placeholder="Enter CMS password">
         </div>
         
         <button type="submit" class="btn btn-primary">Sign In</button>
@@ -355,13 +350,12 @@
   </div>
 
   <!-- CMS Panel -->
-  <div id="cmsPanel">
+  <div id="cmsPanel" style="display: none;">
     <div class="cms-header">
       <h1>📝 LDAH Content Management</h1>
       <div class="user-info">
-        <span id="userEmail"></span>
         <a href="index.html" class="preview-button" target="_blank">Preview Site</a>
-        <button class="btn-logout" id="logoutBtn">Logout</button>
+        <button class="btn-logout" id="logoutBtn" onclick="handleLogout()">Logout</button>
       </div>
     </div>
     
@@ -482,10 +476,51 @@
     </div>
   </div>
 
-  <!-- Firebase Config -->
-  <script src="js/firebase-config.js"></script>
-  
-  <!-- CMS Logic -->
-  <script src="js/cms.js"></script>
+  <!-- Simple Password Authentication -->
+  <script>
+    // Simple password check (use ldah2024 as the password)
+    const CMS_PASSWORD = 'ldah2024';
+    
+    function handleLogin(event) {
+      event.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('loginError');
+      
+      if (password === CMS_PASSWORD) {
+        // Password correct - show CMS panel
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('cmsPanel').style.display = 'block';
+        
+        // Store login state in session
+        sessionStorage.setItem('cmsLoggedIn', 'true');
+      } else {
+        // Password incorrect - show error
+        errorDiv.textContent = 'Incorrect password. Please try again.';
+        errorDiv.style.display = 'block';
+        document.getElementById('password').value = '';
+      }
+    }
+    
+    function handleLogout() {
+      // Clear session and go back to login
+      sessionStorage.removeItem('cmsLoggedIn');
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('cmsPanel').style.display = 'none';
+      document.getElementById('password').value = '';
+      document.getElementById('loginError').style.display = 'none';
+    }
+    
+    // Check if already logged in
+    window.addEventListener('load', () => {
+      if (sessionStorage.getItem('cmsLoggedIn') === 'true') {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('cmsPanel').style.display = 'block';
+      }
+    });
+    
+    // Note: The CMS functionality (saving content) would still use Firebase
+    // This just simplifies the login process
+  </script>
 </body>
 </html>
