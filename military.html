@@ -193,11 +193,58 @@
     }
 
     /* Resources Image Card */
-    .resources-image {
-        width: 100%;
-        height: auto;
+    .resources-text {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .resource-section {
+        padding: 20px;
+        background: linear-gradient(135deg, rgba(0, 78, 124, 0.03), rgba(0, 102, 161, 0.03));
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-left: 4px solid var(--primary-blue);
+    }
+
+    .resource-section h3 {
+        color: var(--primary-blue);
+        font-size: 1.3em;
+        margin-bottom: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .resource-item {
+        margin-bottom: 15px;
+    }
+
+    .resource-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .resource-item strong {
+        color: var(--text-dark);
+        font-size: 1.05em;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .resource-item p {
+        color: var(--text-light);
+        margin: 3px 0;
+        padding-left: 10px;
+    }
+
+    .resource-item a {
+        color: var(--primary-blue);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .resource-item a:hover {
+        color: var(--light-blue);
+        text-decoration: underline;
     }
 
     /* Resource Cards Grid */
@@ -527,9 +574,44 @@
 
             <div class="card resources-card">
                 <h2>Additional Military Resources</h2>
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/oahu-militaryresources.jpg" 
-                     alt="Oahu Military Resources"
-                     class="resources-image">
+                <div class="resources-text">
+                    <div class="resource-section">
+                        <h3>ARMY</h3>
+                        <div class="resource-item">
+                            <strong>Family Advocacy Behavioral Health:</strong>
+                            <p>Schofield Barracks: <a href="tel:433-8579">433-8579</a></p>
+                            <p>TAMC: <a href="tel:433-6606">433-6606</a></p>
+                        </div>
+                        <div class="resource-item">
+                            <strong>24/7 SAFE Line:</strong>
+                            <p><a href="tel:624-7233">624-7233 (SAFE)</a></p>
+                        </div>
+                    </div>
+
+                    <div class="resource-section">
+                        <h3>NAVY/AIR FORCE</h3>
+                        <div class="resource-item">
+                            <strong>Family Advocacy:</strong>
+                            <p><a href="tel:474-1999">474-1999</a></p>
+                        </div>
+                    </div>
+
+                    <div class="resource-section">
+                        <h3>MARINE CORPS</h3>
+                        <div class="resource-item">
+                            <strong>Family Advocacy Program:</strong>
+                            <p>K-Bay: <a href="tel:254-7658">254-7658</a></p>
+                        </div>
+                    </div>
+
+                    <div class="resource-section">
+                        <h3>COAST GUARD</h3>
+                        <div class="resource-item">
+                            <strong>Work-Life:</strong>
+                            <p><a href="tel:842-2263">842-2263</a></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
