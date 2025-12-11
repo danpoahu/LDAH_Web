@@ -697,34 +697,20 @@
         <p>
             Developed by 
             <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a>
+            <span style="margin: 0 0.5rem; color: rgba(255,255,255,0.3);">|</span>
+            <a href="cms.html" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">⚙️ CMS</a>
         </p>
     </div>
-    
-    <div id="cmsAccessButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 999; cursor: pointer; opacity: 0.6; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'" onclick="window.location.href='cms.html'">
-        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));">
-            <circle cx="12" cy="12" r="10" fill="#004E7C"/>
-            <path d="M12 8v8M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <path d="M9.5 6.5l-1 1M14.5 6.5l1 1M17.5 9.5l-1 1M17.5 14.5l-1-1M14.5 17.5l1-1M9.5 17.5l-1-1M6.5 14.5l1-1M6.5 9.5l1 1" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-    </div>
-</footer>
-
-<!-- Iframe Modal -->
-<div id="iframeModal" class="iframe-modal" onclick="closeIframeModal(event)">
-    <div class="iframe-content" onclick="event.stopPropagation()">
-        <div class="iframe-header">
-            <h3 id="iframeTitle">Loading...</h3>
-            <button class="close-iframe" onclick="closeIframeModal()">&times;</button>
-        </div>
-        <iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>
-    </div>
-</div>`;
+</footer>`;
         
         function loadHeaderFooter() {
             const headerContainer = document.getElementById('header-container');
             if (headerContainer) {
                 headerContainer.innerHTML = headerHTML;
                 console.log('✅ Header loaded');
+                
+                // Set active page indicator
+                setActiveNavLink();
             }
             
             const footerContainer = document.getElementById('footer-container');
@@ -732,6 +718,29 @@
                 footerContainer.innerHTML = footerHTML;
                 console.log('✅ Footer loaded');
             }
+        }
+        
+        function setActiveNavLink() {
+            // Get current page filename
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            
+            // Find all nav links
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                
+                // Check if this link matches current page
+                if (href === currentPage || 
+                    (currentPage === 'index.html' && href.includes('index.html')) ||
+                    (currentPage === '' && href.includes('index.html'))) {
+                    
+                    // Add blue underline
+                    link.style.borderBottom = '3px solid #004E7C';
+                    link.style.color = '#004E7C';
+                    link.style.paddingBottom = '4px';
+                }
+            });
         }
         
         function toggleMenu() {
@@ -1614,7 +1623,7 @@
   </script>
   
 
-  <!-- Footer Container - Auto-loaded (includes iframe modal) -->
+  <!-- Footer Container - Auto-loaded -->
   <div id="footer-container"></div>
     <div class="footer-bottom">
       <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
