@@ -797,7 +797,7 @@
             <p class="section-description">We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.</p>
         </div>
         <div class="services-grid">
-            <div class="service-card">
+            <div class="service-card" onclick="openIframeModal('Parent Training & Information Center', 'https://www.parentcenterhub.org/')" style="cursor: pointer;">
                 <div class="service-icon">📚</div>
                 <h3 class="service-title">Parent Training & Information</h3>
                 <p class="service-description">Comprehensive training and resources to help parents navigate special education systems and advocate for their children.</p>
@@ -868,6 +868,7 @@
     <div id="iframeModal" class="iframe-modal" onclick="closeIframeModal(event)">
         <div class="iframe-content" onclick="event.stopPropagation()">
             <div class="iframe-header">
+                <img src="https://ldahawaii.org/wp-content/uploads/2023/07/LDAH-Logo.png" alt="LDAH" onclick="closeIframeModal()" style="height: 50px; cursor: pointer; filter: brightness(0) invert(1);" title="Close">
                 <h3 id="iframeTitle">Loading...</h3>
                 <button class="close-iframe" onclick="closeIframeModal()">&times;</button>
             </div>
