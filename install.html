@@ -661,6 +661,11 @@
 
   <!-- Footer Container - Auto-loaded -->
   <div id="footer-container"></div>
+
+  <!-- External Link Modal -->
+  <div id="iframeModal" class="iframe-modal" onclick="closeIframeModal(event)">
+    <div class="iframe-content" onclick="event.stopPropagation()">
+      <div class="iframe-header">
         <h3 id="iframeTitle">Loading...</h3>
         <button class="close-iframe" onclick="closeIframeModal()">&times;</button>
       </div>
