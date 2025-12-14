@@ -825,6 +825,22 @@
             document.body.style.overflow = 'auto';
         }
 
+        // Pledge Modal functions
+        function openPledgeModal() {
+            const modal = document.getElementById('pledgeModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePledgeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-pledge')) {
+                return;
+            }
+            const modal = document.getElementById('pledgeModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
         // Header and Footer Loader - Fetches from external files
         async function loadHeaderFooter() {
             const headerContainer = document.getElementById('header-container');

@@ -901,6 +901,35 @@
             document.body.style.overflow = 'auto';
         }
 
+        // Island Modal functions
+        function openIslandModal(islandKey) {
+            const island = islandData[islandKey];
+            if (!island) return;
+            
+            const modal = document.getElementById('islandModal');
+            const header = document.getElementById('islandModalHeader');
+            const flag = document.getElementById('islandFlag');
+            const name = document.getElementById('islandName');
+            const body = document.getElementById('islandModalBody');
+            
+            header.style.background = island.color;
+            flag.textContent = island.flag;
+            name.textContent = island.name;
+            body.innerHTML = `<p class="partner-badge">Partner: ${island.partner}</p>${island.content}`;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeIslandModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-island-modal')) {
+                return;
+            }
+            const modal = document.getElementById('islandModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
         // Island data - Full standalone content with maps and photos
         const islandData = {
             samoa: {
