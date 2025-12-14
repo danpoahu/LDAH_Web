@@ -969,11 +969,32 @@
 
     <!-- Header/Footer Loader -->
     <script>
-        // Inline Header/Footer HTML (fallback for file:// protocol)
-        const headerHTML = `<nav>
+        // Header and Footer Loader - Fetches from external files
+        async function loadHeaderFooter() {
+            const headerContainer = document.getElementById('header-container');
+            const footerContainer = document.getElementById('footer-container');
+            
+            try {
+                // Try to fetch from external files first
+                const [headerResponse, footerResponse] = await Promise.all([
+                    fetch('header.html'),
+                    fetch('footer.html')
+                ]);
+                
+                if (headerResponse.ok && footerResponse.ok) {
+                    headerContainer.innerHTML = await headerResponse.text();
+                    footerContainer.innerHTML = await footerResponse.text();
+                    console.log('✅ Header and footer loaded from external files');
+                } else {
+                    throw new Error('Failed to fetch');
+                }
+            } catch (error) {
+                console.log('⚠️ Using inline fallback for header/footer');
+                // Fallback for file:// protocol or fetch failure
+                headerContainer.innerHTML = `<nav>
     <div class="nav-content">
         <a href="index.html" class="logo-container">
-            <img src="assets/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+            <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
             <span class="logo-text">LDAH</span>
         </a>
         <div class="hamburger" onclick="toggleMenu()">
@@ -985,12 +1006,12 @@
             <li><a href="index.html#services">What We Do</a></li>
             <li><a href="events.html">Events</a></li>
             <li><a href="volunteer.html">Volunteer</a></li>
+            <li><a href="resources.html">Resources</a></li>
             <li><a href="contact.html">Contact</a></li>
         </ul>
     </div>
 </nav>`;
-
-        const footerHTML = `<footer>
+                footerContainer.innerHTML = `<footer>
     <div class="footer-content">
         <div class="footer-section">
             <h3>About LDAH</h3>
@@ -1001,6 +1022,7 @@
             <a href="index.html#services">What We Do</a>
             <a href="events.html">Events</a>
             <a href="volunteer.html">Volunteer</a>
+            <a href="resources.html">Resources</a>
             <a href="contact.html">Contact Us</a>
         </div>
         <div class="footer-section">
@@ -1020,51 +1042,42 @@
     </div>
     <div class="footer-bottom">
         <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-        <p>
-            Developed by 
-            <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a>
-        </p>
     </div>
 </footer>`;
-
-    // Header/Footer Loader with fallback
-    async function loadHeaderFooter() {
-        const headerContainer = document.getElementById('header-container');
-        const footerContainer = document.getElementById('footer-container');
+            }
+            
+            // Set active nav link after loading
+            setActiveNavLink();
+        }
         
-        if (window.location.protocol === 'file:') {
-            headerContainer.innerHTML = headerHTML;
-            footerContainer.innerHTML = footerHTML;
-            console.log('✅ Header/footer loaded (inline fallback for file://)');
-        } else {
-            try {
-                const headerResponse = await fetch('header.html');
-                const headerHtml = await headerResponse.text();
-                headerContainer.innerHTML = headerHtml;
-                
-                const footerResponse = await fetch('footer.html');
-                const footerHtml = await footerResponse.text();
-                footerContainer.innerHTML = footerHtml;
-                
-                console.log('✅ Header/footer loaded (external files)');
-            } catch (error) {
-                headerContainer.innerHTML = headerHTML;
-                footerContainer.innerHTML = footerHTML;
-                console.log('✅ Header/footer loaded (inline fallback)');
+        function setActiveNavLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage || 
+                    (currentPage === 'index.html' && href.includes('index.html')) ||
+                    (currentPage === '' && href.includes('index.html'))) {
+                    link.style.borderBottom = '3px solid #004E7C';
+                    link.style.color = '#004E7C';
+                    link.style.paddingBottom = '4px';
+                }
+            });
+        }
+        
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks) {
+                navLinks.classList.toggle('active');
             }
         }
-    }
-
-    function toggleMenu() {
-        const navLinks = document.getElementById('navLinks');
-        if (navLinks) navLinks.classList.toggle('active');
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadHeaderFooter);
-    } else {
-        loadHeaderFooter();
-    }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadHeaderFooter);
+        } else {
+            loadHeaderFooter();
+        }
     </script>
 </body>
 </html>

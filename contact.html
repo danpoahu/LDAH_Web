@@ -588,8 +588,29 @@
             document.body.style.overflow = 'auto';
         }
         
-        // Header and Footer HTML
-        const headerHTML = `<nav>
+        // Header and Footer Loader - Fetches from external files
+        async function loadHeaderFooter() {
+            const headerContainer = document.getElementById('header-container');
+            const footerContainer = document.getElementById('footer-container');
+            
+            try {
+                // Try to fetch from external files first
+                const [headerResponse, footerResponse] = await Promise.all([
+                    fetch('header.html'),
+                    fetch('footer.html')
+                ]);
+                
+                if (headerResponse.ok && footerResponse.ok) {
+                    headerContainer.innerHTML = await headerResponse.text();
+                    footerContainer.innerHTML = await footerResponse.text();
+                    console.log('✅ Header and footer loaded from external files');
+                } else {
+                    throw new Error('Failed to fetch');
+                }
+            } catch (error) {
+                console.log('⚠️ Using inline fallback for header/footer');
+                // Fallback for file:// protocol or fetch failure
+                headerContainer.innerHTML = `<nav>
     <div class="nav-content">
         <a href="index.html" class="logo-container">
             <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
@@ -604,12 +625,12 @@
             <li><a href="index.html#services">What We Do</a></li>
             <li><a href="events.html">Events</a></li>
             <li><a href="volunteer.html">Volunteer</a></li>
+            <li><a href="resources.html">Resources</a></li>
             <li><a href="contact.html">Contact</a></li>
         </ul>
     </div>
 </nav>`;
-        
-        const footerHTML = `<footer>
+                footerContainer.innerHTML = `<footer>
     <div class="footer-content">
         <div class="footer-section">
             <h3>About LDAH</h3>
@@ -620,6 +641,7 @@
             <a href="index.html#services">What We Do</a>
             <a href="events.html">Events</a>
             <a href="volunteer.html">Volunteer</a>
+            <a href="resources.html">Resources</a>
             <a href="contact.html">Contact Us</a>
         </div>
         <div class="footer-section">
@@ -639,48 +661,23 @@
     </div>
     <div class="footer-bottom">
         <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-        <p>
-            Developed by 
-            <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a>
-            <span style="margin: 0 0.5rem; color: rgba(255,255,255,0.3);">|</span>
-            <a href="cms.html" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">⚙️ CMS</a>
-        </p>
     </div>
 </footer>`;
-        
-        function loadHeaderFooter() {
-            const headerContainer = document.getElementById('header-container');
-            if (headerContainer) {
-                headerContainer.innerHTML = headerHTML;
-                console.log('✅ Header loaded');
-                
-                // Set active page indicator
-                setActiveNavLink();
             }
             
-            const footerContainer = document.getElementById('footer-container');
-            if (footerContainer) {
-                footerContainer.innerHTML = footerHTML;
-                console.log('✅ Footer loaded');
-            }
+            // Set active nav link after loading
+            setActiveNavLink();
         }
         
         function setActiveNavLink() {
-            // Get current page filename
             const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-            
-            // Find all nav links
             const navLinks = document.querySelectorAll('.nav-links a');
             
             navLinks.forEach(link => {
                 const href = link.getAttribute('href');
-                
-                // Check if this link matches current page
                 if (href === currentPage || 
                     (currentPage === 'index.html' && href.includes('index.html')) ||
                     (currentPage === '' && href.includes('index.html'))) {
-                    
-                    // Add blue underline
                     link.style.borderBottom = '3px solid #004E7C';
                     link.style.color = '#004E7C';
                     link.style.paddingBottom = '4px';
@@ -811,7 +808,7 @@
       <p>
         Have a question or need assistance? We're here to help! Contact us by phone, email, or visit one of our offices.
       </p>
-      <a href="mailto:info@ldah.org" class="btn-directions" style="display: inline-block;">
+      <a href="/cdn-cgi/l/email-protection#9ef7f0f8f1def2fafff6b0f1ecf9" class="btn-directions" style="display: inline-block;">
         ✉️ Email Us
       </a>
     </div>
@@ -843,7 +840,7 @@
     </div>
   </div>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('active');
     }
@@ -902,9 +899,4 @@
     }
     
     function closeIframeModal(event) {
-      if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
-        return;
-      }
-      
-      const modal = document.getElementById('iframeModal');
-      const frameEl = do
+      if (event && event.target !== event.currentTarget && !event.target.classList

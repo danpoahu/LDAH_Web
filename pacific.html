@@ -879,6 +879,28 @@
     </div>
 
     <script>
+        // Modal functions - must be defined before footer loads
+        function openIframeModal(title, url) {
+            const modal = document.getElementById('iframeModal');
+            const titleEl = document.getElementById('iframeTitle');
+            const frame = document.getElementById('iframeFrame');
+
+            titleEl.textContent = title;
+            frame.src = url;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeIframeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+                return;
+            }
+            const modal = document.getElementById('iframeModal');
+            document.getElementById('iframeFrame').src = '';
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
         // Island data - Full standalone content with maps and photos
         const islandData = {
             samoa: {
@@ -889,7 +911,6 @@
                 content: `
                     <div class="social-links">
                         <button onclick="event.stopPropagation(); openIframeModal('PCSN Facebook Page', 'https://www.facebook.com/PagoPagonetwork/')" class="social-btn facebook">📘 Facebook Page</button>
-                        <button onclick="event.stopPropagation(); openIframeModal('PCSN YouTube Channel', 'https://www.youtube.com/@PCSNAmericanSamoa-gz3mz')" class="social-btn youtube">📺 YouTube Channel</button>
                     </div>
                     
                     <div class="island-map-section">
@@ -1219,16 +1240,42 @@
                     <h3>📸 Photo Gallery</h3>
                     <div class="photo-gallery">
                         <img src="https://www.ldahawaii.org/wp-content/uploads/2023/11/LDAH-Palau-32.jpg" alt="Palau Event" class="gallery-photo">
+                        <img src="https://www.ldahawaii.org/wp-content/uploads/2023/11/LDAH-Palau-35.jpg" alt="Palau Community" class="gallery-photo">
+                        <img src="https://www.ldahawaii.org/wp-content/uploads/2023/11/LDAH-Palau-34.jpg" alt="Palau Families" class="gallery-photo">
+                        <img src="https://www.ldahawaii.org/wp-content/uploads/2023/11/LDAH-Palau-31.jpg" alt="Palau Activities" class="gallery-photo">
+                        <img src="https://www.ldahawaii.org/wp-content/uploads/2023/11/LDAH-Palau-28.jpg" alt="Palau Support" class="gallery-photo">
+                        <img src="https://www.ldahawaii.org/wp-content/uploads/2023/11/LDAH-Palau-25.jpg" alt="PPE Event" class="gallery-photo">
                     </div>
                 `
             }
         };
 
-        // Inline Header/Footer HTML (fallback for file:// protocol)
-        const headerHTML = `<nav>
+        // Header and Footer Loader - Fetches from external files
+        async function loadHeaderFooter() {
+            const headerContainer = document.getElementById('header-container');
+            const footerContainer = document.getElementById('footer-container');
+            
+            try {
+                // Try to fetch from external files first
+                const [headerResponse, footerResponse] = await Promise.all([
+                    fetch('header.html'),
+                    fetch('footer.html')
+                ]);
+                
+                if (headerResponse.ok && footerResponse.ok) {
+                    headerContainer.innerHTML = await headerResponse.text();
+                    footerContainer.innerHTML = await footerResponse.text();
+                    console.log('✅ Header and footer loaded from external files');
+                } else {
+                    throw new Error('Failed to fetch');
+                }
+            } catch (error) {
+                console.log('⚠️ Using inline fallback for header/footer');
+                // Fallback for file:// protocol or fetch failure
+                headerContainer.innerHTML = `<nav>
     <div class="nav-content">
         <a href="index.html" class="logo-container">
-            <img src="assets/logo_transparent.png" alt="LDAH Logo" class="logo-img">
+            <img src="https://danpoahu.github.io/LDAH/logo_transparent.png" alt="LDAH Logo" class="logo-img">
             <span class="logo-text">LDAH</span>
         </a>
         <div class="hamburger" onclick="toggleMenu()">
@@ -1240,12 +1287,12 @@
             <li><a href="index.html#services">What We Do</a></li>
             <li><a href="events.html">Events</a></li>
             <li><a href="volunteer.html">Volunteer</a></li>
+            <li><a href="resources.html">Resources</a></li>
             <li><a href="contact.html">Contact</a></li>
         </ul>
     </div>
 </nav>`;
-
-        const footerHTML = `<footer>
+                footerContainer.innerHTML = `<footer>
     <div class="footer-content">
         <div class="footer-section">
             <h3>About LDAH</h3>
@@ -1256,6 +1303,7 @@
             <a href="index.html#services">What We Do</a>
             <a href="events.html">Events</a>
             <a href="volunteer.html">Volunteer</a>
+            <a href="resources.html">Resources</a>
             <a href="contact.html">Contact Us</a>
         </div>
         <div class="footer-section">
@@ -1275,141 +1323,38 @@
     </div>
     <div class="footer-bottom">
         <p>&copy; 2025 Leadership in Disabilities and Achievement of Hawai'i. All rights reserved.</p>
-        <p>
-            Developed by 
-            <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a>
-        </p>
+        <p>Made with Aloha by <a href="javascript:void(0)" onclick="openIframeModal('DP Consulting', 'https://oahuappdesign.com')" style="color: var(--accent-teal); text-decoration: none; cursor: pointer;">DP Consulting</a></p>
     </div>
 </footer>`;
-
-        // Header/Footer Loader with fallback
-        async function loadHeaderFooter() {
-            const headerContainer = document.getElementById('header-container');
-            const footerContainer = document.getElementById('footer-container');
-            
-            if (window.location.protocol === 'file:') {
-                headerContainer.innerHTML = headerHTML;
-                footerContainer.innerHTML = footerHTML;
-                console.log('✅ Header/footer loaded (inline fallback for file://)');
-            } else {
-                try {
-                    const headerResponse = await fetch('header.html');
-                    const headerHtml = await headerResponse.text();
-                    headerContainer.innerHTML = headerHtml;
-                    
-                    const footerResponse = await fetch('footer.html');
-                    const footerHtml = await footerResponse.text();
-                    footerContainer.innerHTML = footerHtml;
-                    
-                    console.log('✅ Header/footer loaded (external files)');
-                } catch (error) {
-                    headerContainer.innerHTML = headerHTML;
-                    footerContainer.innerHTML = footerHTML;
-                    console.log('✅ Header/footer loaded (inline fallback)');
-                }
             }
+            
+            // Set active nav link after loading
+            setActiveNavLink();
         }
-
+        
+        function setActiveNavLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage || 
+                    (currentPage === 'index.html' && href.includes('index.html')) ||
+                    (currentPage === '' && href.includes('index.html'))) {
+                    link.style.borderBottom = '3px solid #004E7C';
+                    link.style.color = '#004E7C';
+                    link.style.paddingBottom = '4px';
+                }
+            });
+        }
+        
         function toggleMenu() {
             const navLinks = document.getElementById('navLinks');
-            if (navLinks) navLinks.classList.toggle('active');
-        }
-
-        // Iframe Modal functions
-        function openIframeModal(title, url) {
-            if (url.includes('facebook.com')) {
-                const modal = document.getElementById('iframeModal');
-                const titleEl = document.getElementById('iframeTitle');
-                const frame = document.getElementById('iframeFrame');
-                
-                titleEl.textContent = title;
-                frame.outerHTML = '<div id="iframeFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Pacific Island families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #0077b6, #00b4d8); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open PI Partners Facebook →</a></div>';
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            } else {
-                const modal = document.getElementById('iframeModal');
-                const titleEl = document.getElementById('iframeTitle');
-                const frame = document.getElementById('iframeFrame');
-
-                titleEl.textContent = title;
-                frame.src = url;
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+            if (navLinks) {
+                navLinks.classList.toggle('active');
             }
         }
-
-        function closeIframeModal(event) {
-            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
-                return;
-            }
-
-            const modal = document.getElementById('iframeModal');
-            const frameEl = document.getElementById('iframeFrame');
-            
-            modal.classList.remove('active');
-            
-            if (frameEl.tagName === 'IFRAME') {
-                frameEl.src = '';
-            } else {
-                frameEl.outerHTML = '<iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>';
-            }
-            
-            document.body.style.overflow = 'auto';
-        }
-
-        // Island Modal functions
-        function openIslandModal(islandKey) {
-            const island = islandData[islandKey];
-            if (!island) return;
-
-            const modal = document.getElementById('islandModal');
-            const header = document.getElementById('islandModalHeader');
-            const flag = document.getElementById('islandFlag');
-            const name = document.getElementById('islandName');
-            const body = document.getElementById('islandModalBody');
-
-            header.style.background = island.color;
-            flag.textContent = island.flag;
-            name.textContent = island.name;
-            body.innerHTML = `<p style="color: var(--pacific-teal); font-weight: 600; margin-bottom: 1rem;">${island.partner}</p>` + island.content;
-
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // Log analytics
-            if (typeof analytics !== 'undefined') {
-                analytics.logEvent('island_modal_opened', {
-                    island: island.name
-                });
-            }
-        }
-
-        function closeIslandModal(event) {
-            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-island-modal')) {
-                return;
-            }
-            document.getElementById('islandModal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Initialize Firebase
-        firebase.initializeApp({
-            apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk",
-            authDomain: "ldah-932d5.firebaseapp.com",
-            projectId: "ldah-932d5",
-            storageBucket: "ldah-932d5.firebasestorage.app",
-            messagingSenderId: "662130454003",
-            appId: "1:662130454003:web:437576d5a5811ecd8df686"
-        });
-
-        const analytics = firebase.analytics();
-        analytics.logEvent('page_view', {
-            page_title: 'Pacific Islands Outreach',
-            page_location: window.location.href,
-            page_path: '/pacific.html'
-        });
-
-        // Load header/footer when DOM ready
+        
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', loadHeaderFooter);
         } else {
