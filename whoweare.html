@@ -733,7 +733,7 @@
         border: none;
     }
 
-    /* Lightbox for gallery */
+    /* Lightbox for gallery with carousel */
     .lightbox {
         display: none;
         position: fixed;
@@ -753,8 +753,8 @@
     }
 
     .lightbox img {
-        max-width: 90%;
-        max-height: 90%;
+        max-width: 85%;
+        max-height: 85%;
         border-radius: 8px;
         animation: slideUp 0.3s;
     }
@@ -767,10 +767,74 @@
         font-size: 3rem;
         cursor: pointer;
         transition: transform 0.3s;
+        z-index: 4001;
     }
 
     .lightbox .close-lightbox:hover {
         transform: scale(1.2);
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: none;
+        font-size: 2.5rem;
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: all 0.3s;
+        z-index: 4001;
+    }
+
+    .lightbox-prev:hover,
+    .lightbox-next:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .lightbox-prev {
+        left: 20px;
+    }
+
+    .lightbox-next {
+        right: 20px;
+    }
+
+    .lightbox-counter {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 1rem;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .lightbox-prev,
+        .lightbox-next {
+            font-size: 1.5rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        .lightbox-prev {
+            left: 10px;
+        }
+        
+        .lightbox-next {
+            right: 10px;
+        }
+        
+        .lightbox img {
+            max-width: 95%;
+            max-height: 70%;
+        }
     }
 
     @keyframes fadeIn {
@@ -880,47 +944,47 @@
         </div>
 
         <div class="gallery-grid">
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/384419106_773304831474792_822951070977656541_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/384419106_773304831474792_822951070977656541_n-300x263.jpg" alt="LDAH Community Event">
+            <div class="gallery-item" onclick="openLightbox(0)">
+                <img src="assets/gallery/384419106_773304831474792_822951070977656541_n.jpg" alt="LDAH Community Event">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/kosraekids.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/kosraekids-300x225.jpg" alt="Kosrae Kids">
+            <div class="gallery-item" onclick="openLightbox(1)">
+                <img src="assets/gallery/kosraekids.jpg" alt="Kosrae Kids">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/366308606_737851391686803_4056530556721101084_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/366308606_737851391686803_4056530556721101084_n-300x225.jpg" alt="LDAH Event">
+            <div class="gallery-item" onclick="openLightbox(2)">
+                <img src="assets/gallery/366308606_737851391686803_4056530556721101084_n.jpg" alt="LDAH Event">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/367978943_741945864610689_3526387872520216538_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/367978943_741945864610689_3526387872520216538_n-300x225.jpg" alt="Community Outreach">
+            <div class="gallery-item" onclick="openLightbox(3)">
+                <img src="assets/gallery/367978943_741945864610689_3526387872520216538_n.jpg" alt="Community Outreach">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/361967783_722383963233546_4251162667766617022_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/361967783_722383963233546_4251162667766617022_n-300x225.jpg" alt="LDAH Workshop">
+            <div class="gallery-item" onclick="openLightbox(4)">
+                <img src="assets/gallery/361967783_722383963233546_4251162667766617022_n.jpg" alt="LDAH Workshop">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/394705360_789016399903635_6323687903415276621_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/394705360_789016399903635_6323687903415276621_n-300x197.jpg" alt="Family Support Event">
+            <div class="gallery-item" onclick="openLightbox(5)">
+                <img src="assets/gallery/394705360_789016399903635_6323687903415276621_n.jpg" alt="Family Support Event">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/395813424_790817796390162_8833441711604382934_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/395813424_790817796390162_8833441711604382934_n-300x225.jpg" alt="Training Session">
+            <div class="gallery-item" onclick="openLightbox(6)">
+                <img src="assets/gallery/395813424_790817796390162_8833441711604382934_n.jpg" alt="Training Session">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/385815536_778018397670102_8084649761247443676_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/385815536_778018397670102_8084649761247443676_n-300x225.jpg" alt="Community Event">
+            <div class="gallery-item" onclick="openLightbox(7)">
+                <img src="assets/gallery/385815536_778018397670102_8084649761247443676_n.jpg" alt="Community Event">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/400979273_803779668427308_6105668977447761562_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/400979273_803779668427308_6105668977447761562_n-300x225.jpg" alt="LDAH Activity">
+            <div class="gallery-item" onclick="openLightbox(8)">
+                <img src="assets/gallery/400979273_803779668427308_6105668977447761562_n.jpg" alt="LDAH Activity">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/tmc-kona-ldah.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/tmc-kona-ldah-207x300.jpg" alt="Kona Event">
+            <div class="gallery-item" onclick="openLightbox(9)">
+                <img src="assets/gallery/tmc-kona-ldah.jpg" alt="Kona Event">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/Outreach-4-2-23.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/Outreach-4-2-23-300x225.jpg" alt="Outreach Event">
+            <div class="gallery-item" onclick="openLightbox(10)">
+                <img src="assets/gallery/Outreach-4-2-23.jpg" alt="Outreach Event">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2024/01/346633256_592880162814484_5264848762991946190_n.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2024/01/346633256_592880162814484_5264848762991946190_n-e1704507313756-300x300.jpg" alt="LDAH Moment">
+            <div class="gallery-item" onclick="openLightbox(11)">
+                <img src="assets/gallery/346633256_592880162814484_5264848762991946190_n.jpg" alt="LDAH Moment">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2023/12/sw3.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2023/12/sw3-225x300.jpg" alt="Special Event">
+            <div class="gallery-item" onclick="openLightbox(12)">
+                <img src="assets/gallery/sw3.jpg" alt="Special Event">
             </div>
-            <div class="gallery-item" onclick="openLightbox('https://www.ldahawaii.org/wp-content/uploads/2023/12/20231207_175409.jpg')">
-                <img src="https://www.ldahawaii.org/wp-content/uploads/2023/12/20231207_175409-300x225.jpg" alt="December Event">
+            <div class="gallery-item" onclick="openLightbox(13)">
+                <img src="assets/gallery/20231207_175409.jpg" alt="December Event">
             </div>
         </div>
     </section>
@@ -1069,10 +1133,13 @@
         </div>
     </div>
 
-    <!-- Lightbox -->
-    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-        <span class="close-lightbox">&times;</span>
-        <img id="lightboxImg" src="" alt="Gallery Image">
+    <!-- Lightbox with Carousel -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <button class="lightbox-prev" onclick="prevImage(event)">&#10094;</button>
+        <img id="lightboxImg" src="" alt="Gallery Image" onclick="event.stopPropagation()">
+        <button class="lightbox-next" onclick="nextImage(event)">&#10095;</button>
+        <div class="lightbox-counter"><span id="lightboxCounter">1 / 14</span></div>
     </div>
 
     <!-- External Link Modal -->
@@ -1116,14 +1183,52 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Lightbox
-        function openLightbox(imgSrc) {
-            document.getElementById('lightboxImg').src = imgSrc;
+        // Gallery images array
+        const galleryImages = [
+            'assets/gallery/384419106_773304831474792_822951070977656541_n.jpg',
+            'assets/gallery/kosraekids.jpg',
+            'assets/gallery/366308606_737851391686803_4056530556721101084_n.jpg',
+            'assets/gallery/367978943_741945864610689_3526387872520216538_n.jpg',
+            'assets/gallery/361967783_722383963233546_4251162667766617022_n.jpg',
+            'assets/gallery/394705360_789016399903635_6323687903415276621_n.jpg',
+            'assets/gallery/395813424_790817796390162_8833441711604382934_n.jpg',
+            'assets/gallery/385815536_778018397670102_8084649761247443676_n.jpg',
+            'assets/gallery/400979273_803779668427308_6105668977447761562_n.jpg',
+            'assets/gallery/tmc-kona-ldah.jpg',
+            'assets/gallery/Outreach-4-2-23.jpg',
+            'assets/gallery/346633256_592880162814484_5264848762991946190_n.jpg',
+            'assets/gallery/sw3.jpg',
+            'assets/gallery/20231207_175409.jpg'
+        ];
+        let currentImageIndex = 0;
+
+        // Lightbox with carousel
+        function openLightbox(index) {
+            currentImageIndex = index;
+            updateLightboxImage();
             document.getElementById('lightbox').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        function closeLightbox() {
+        function updateLightboxImage() {
+            document.getElementById('lightboxImg').src = galleryImages[currentImageIndex];
+            document.getElementById('lightboxCounter').textContent = (currentImageIndex + 1) + ' / ' + galleryImages.length;
+        }
+
+        function nextImage(event) {
+            event.stopPropagation();
+            currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+            updateLightboxImage();
+        }
+
+        function prevImage(event) {
+            event.stopPropagation();
+            currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+            updateLightboxImage();
+        }
+
+        function closeLightbox(event) {
+            if (event && event.target.tagName === 'IMG') return;
             document.getElementById('lightbox').classList.remove('active');
             document.body.style.overflow = 'auto';
         }
@@ -1179,6 +1284,14 @@
                 closeBoardModal();
                 closeLightbox();
                 closeIframeModal();
+            }
+            // Arrow keys for lightbox navigation
+            if (document.getElementById('lightbox').classList.contains('active')) {
+                if (e.key === 'ArrowRight') {
+                    nextImage(e);
+                } else if (e.key === 'ArrowLeft') {
+                    prevImage(e);
+                }
             }
         });
 
