@@ -652,6 +652,14 @@
                 } else {
                     throw new Error('Failed to fetch');
                 }
+                
+                // Load accessibility widget script
+                if (!document.getElementById('a11y-script')) {
+                    const script = document.createElement('script');
+                    script.id = 'a11y-script';
+                    script.src = 'accessibility.js';
+                    document.body.appendChild(script);
+                }
             } catch (error) {
                 console.log('⚠️ Using inline fallback for header/footer');
                 // Fallback for file:// protocol or fetch failure
