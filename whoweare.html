@@ -1321,9 +1321,6 @@
                     script.src = 'accessibility.js';
                     document.body.appendChild(script);
                 }
-            }
-                
-                // Load accessibility widget (optional - don't fail if missing)
             } catch (error) {
                 console.log('⚠️ Using inline fallback for header/footer');
                 headerContainer.innerHTML = `<nav>
