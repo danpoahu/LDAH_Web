@@ -1017,7 +1017,7 @@
                         <div class="role">Executive Director</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="mailto:rrowe@LDAHawaii.org">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#5123233e2634111d15101930263038387f3e2336">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1027,7 +1027,7 @@
                         <div class="role">Parent Consultant, Parent Training & Information</div>
                         <div class="contact-links">
                             <a href="tel:+18085369684">📞 Call</a>
-                            <a href="mailto:lkailiawa@LDAHawaii.org">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#fc90979d9590959d8b9dbcb0b8bdb49d8b9d9595d2938e9b">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1037,7 +1037,7 @@
                         <div class="role">Parent Consultant, Early Detection & Support</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="mailto:TMickelsen@LDAHawaii.org">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#abffe6c2c8c0cec7d8cec5ebe7efeae3cadccac2c285c4d9cc">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1047,7 +1047,7 @@
                         <div class="role">Parent Consultant, School Readiness Project</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="mailto:AHurd@LDAHawaii.org">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#b3f2fbc6c1d7f3fff7f2fbd2c4d2dada9ddcc1d4">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1057,7 +1057,7 @@
                         <div class="role">Program Coordinator, School Readiness Project & Malama Na Keiki</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="mailto:CKruse@LDAHawaii.org">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#df9c94adaaacba9f939b9e97bea8beb6b6f1b0adb8">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1067,7 +1067,7 @@
                         <div class="role">Pacific Islands Education and Training Coordinator</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="mailto:VSilk@LDAHawaii.org">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#5600053f3a3d161a12171e3721373f3f78392431">✉️ Email</a>
                         </div>
                     </div>
                 </div>
@@ -1154,7 +1154,7 @@
         </div>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Team Modal
         function openTeamModal() {
             document.getElementById('teamModal').classList.add('active');
@@ -1300,10 +1300,19 @@
             const headerContainer = document.getElementById('header-container');
             const footerContainer = document.getElementById('footer-container');
             
+            // Create accessibility container if it doesn't exist
+            let a11yContainer = document.getElementById('accessibility-container');
+            if (!a11yContainer) {
+                a11yContainer = document.createElement('div');
+                a11yContainer.id = 'accessibility-container';
+                document.body.appendChild(a11yContainer);
+            }
+            
             try {
-                const [headerResponse, footerResponse] = await Promise.all([
+                const [headerResponse, footerResponse, a11yResponse] = await Promise.all([
                     fetch('header.html'),
-                    fetch('footer.html')
+                    fetch('footer.html'),
+                    fetch('accessibility.html')
                 ]);
                 
                 if (headerResponse.ok && footerResponse.ok) {
@@ -1312,6 +1321,12 @@
                     console.log('✅ Header and footer loaded from external files');
                 } else {
                     throw new Error('Failed to fetch');
+                }
+                
+                // Load accessibility widget (optional - don't fail if missing)
+                if (a11yResponse.ok) {
+                    a11yContainer.innerHTML = await a11yResponse.text();
+                    console.log('✅ Accessibility widget loaded');
                 }
             } catch (error) {
                 console.log('⚠️ Using inline fallback for header/footer');
@@ -1391,17 +1406,4 @@
         }
         
         function toggleMenu() {
-            const navLinks = document.getElementById('navLinks');
-            if (navLinks) {
-                navLinks.classList.toggle('active');
-            }
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadHeaderFooter);
-        } else {
-            loadHeaderFooter();
-        }
-    </script>
-</body>
-</html>
+            const navLink

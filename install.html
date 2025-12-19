@@ -480,11 +480,20 @@
             const headerContainer = document.getElementById('header-container');
             const footerContainer = document.getElementById('footer-container');
             
+            // Create accessibility container if it doesn't exist
+            let a11yContainer = document.getElementById('accessibility-container');
+            if (!a11yContainer) {
+                a11yContainer = document.createElement('div');
+                a11yContainer.id = 'accessibility-container';
+                document.body.appendChild(a11yContainer);
+            }
+            
             try {
                 // Try to fetch from external files first
-                const [headerResponse, footerResponse] = await Promise.all([
+                const [headerResponse, footerResponse, a11yResponse] = await Promise.all([
                     fetch('header.html'),
-                    fetch('footer.html')
+                    fetch('footer.html'),
+                    fetch('accessibility.html')
                 ]);
                 
                 if (headerResponse.ok && footerResponse.ok) {
@@ -493,6 +502,12 @@
                     console.log('✅ Header and footer loaded from external files');
                 } else {
                     throw new Error('Failed to fetch');
+                }
+                
+                // Load accessibility widget (optional - don't fail if missing)
+                if (a11yResponse.ok) {
+                    a11yContainer.innerHTML = await a11yResponse.text();
+                    console.log('✅ Accessibility widget loaded');
                 }
             } catch (error) {
                 console.log('⚠️ Using inline fallback for header/footer');
