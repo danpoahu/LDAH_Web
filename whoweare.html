@@ -1017,7 +1017,7 @@
                         <div class="role">Executive Director</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#5123233e2634111d15101930263038387f3e2336">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#bfcdcdd0c8dafff3fbfef7dec8ded6d691d0cdd8">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1027,7 +1027,7 @@
                         <div class="role">Parent Consultant, Parent Training & Information</div>
                         <div class="contact-links">
                             <a href="tel:+18085369684">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#fc90979d9590959d8b9dbcb0b8bdb49d8b9d9595d2938e9b">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#c6aaada7afaaafa7b1a7868a82878ea7b1a7afafe8a9b4a1">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1037,7 +1037,7 @@
                         <div class="role">Parent Consultant, Early Detection & Support</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#abffe6c2c8c0cec7d8cec5ebe7efeae3cadccac2c285c4d9cc">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#acf8e1c5cfc7c9c0dfc9c2ece0e8ede4cddbcdc5c582c3decb">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1047,7 +1047,7 @@
                         <div class="role">Parent Consultant, School Readiness Project</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#b3f2fbc6c1d7f3fff7f2fbd2c4d2dada9ddcc1d4">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#89c8c1fcfbedc9c5cdc8c1e8fee8e0e0a7e6fbee">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1057,7 +1057,7 @@
                         <div class="role">Program Coordinator, School Readiness Project & Malama Na Keiki</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#df9c94adaaacba9f939b9e97bea8beb6b6f1b0adb8">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#591a122b2c2a3c19151d1811382e38303077362b3e">✉️ Email</a>
                         </div>
                     </div>
 
@@ -1067,7 +1067,7 @@
                         <div class="role">Pacific Islands Education and Training Coordinator</div>
                         <div class="contact-links">
                             <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#5600053f3a3d161a12171e3721373f3f78392431">✉️ Email</a>
+                            <a href="/cdn-cgi/l/email-protection#fea8ad979295beb2babfb69f899f9797d0918c99">✉️ Email</a>
                         </div>
                     </div>
                 </div>
@@ -1255,17 +1255,7 @@
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
-        }
-
-        function closeIframeModal(event) {
-            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
-                return;
-            }
-
-            const modal = document.getElementById('iframeModal');
-            const frameEl = document.getElementById('iframeFrame');
-            
-            modal.classList.remove('active');
+odal.classList.remove('active');
             
             // Reset iframe
             if (frameEl.tagName === 'IFRAME') {
@@ -1399,4 +1389,17 @@
         }
         
         function toggleMenu() {
-            const navLink
+            const navLinks = document.getElementById('navLinks');
+            if (navLinks) {
+                navLinks.classList.toggle('active');
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadHeaderFooter);
+        } else {
+            loadHeaderFooter();
+        }
+    </script>
+</body>
+</html>
