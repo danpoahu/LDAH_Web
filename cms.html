@@ -26,6 +26,8 @@
       --text-dark: #1a1a1a;
       --text-light: #666;
       --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --danger: #dc3545;
+      --success: #28a745;
     }
     
     body {
@@ -73,18 +75,27 @@
       color: var(--text-dark);
     }
     
-    .form-group input {
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
       width: 100%;
       padding: 0.75rem;
       border: 2px solid #ddd;
       border-radius: 8px;
       font-size: 1rem;
       transition: border-color 0.3s;
+      font-family: inherit;
     }
     
-    .form-group input:focus {
+    .form-group input:focus,
+    .form-group textarea:focus {
       outline: none;
       border-color: var(--primary-blue);
+    }
+    
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
     }
     
     .btn {
@@ -128,6 +139,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     
     .cms-header h1 {
@@ -139,6 +152,7 @@
       display: flex;
       align-items: center;
       gap: 1rem;
+      flex-wrap: wrap;
     }
     
     .btn-logout {
@@ -159,9 +173,10 @@
     
     .cms-tabs {
       display: flex;
-      gap: 1rem;
+      gap: 0.5rem;
       margin-bottom: 2rem;
       border-bottom: 2px solid #ddd;
+      flex-wrap: wrap;
     }
     
     .tab {
@@ -178,6 +193,10 @@
     .tab.active {
       color: var(--primary-blue);
       border-bottom-color: var(--primary-blue);
+    }
+    
+    .tab:hover {
+      color: var(--primary-blue);
     }
     
     .tab-content {
@@ -202,111 +221,6 @@
       font-size: 1.5rem;
     }
     
-    .field-group {
-      margin-bottom: 1.5rem;
-    }
-    
-    .field-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: var(--text-dark);
-    }
-    
-    .field-group input,
-    .field-group textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: inherit;
-    }
-    
-    .field-group textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-    
-    .image-upload {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-    
-    .image-preview {
-      width: 150px;
-      height: 150px;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 2px solid #ddd;
-    }
-    
-    .btn-upload {
-      padding: 0.75rem 1.5rem;
-      background: var(--primary-blue);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    
-    .btn-save {
-      padding: 1rem 2rem;
-      background: linear-gradient(135deg, #004E7C, #0066a1);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-    
-    .btn-save:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,78,124,0.3);
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-    
-    .stat-editor {
-      padding: 1.5rem;
-      border: 2px solid #ddd;
-      border-radius: 12px;
-    }
-    
-    .services-list {
-      display: grid;
-      gap: 1rem;
-    }
-    
-    .service-item {
-      padding: 1.5rem;
-      border: 2px solid #ddd;
-      border-radius: 12px;
-    }
-    
-    .service-item h3 {
-      color: var(--primary-blue);
-      margin-bottom: 1rem;
-    }
-    
-    .btn-add {
-      padding: 0.75rem 1.5rem;
-      background: var(--accent-teal);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    
     .success-message {
       background: #d4edda;
       color: #155724;
@@ -326,6 +240,344 @@
       font-weight: 600;
       text-decoration: none;
       display: inline-block;
+    }
+    
+    .preview-button:hover {
+      background: var(--primary-blue);
+      color: white;
+    }
+    
+    /* Team/Board Grid */
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .person-card {
+      background: #f8f9fa;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      transition: all 0.3s;
+      cursor: grab;
+    }
+    
+    .person-card:hover {
+      border-color: var(--primary-blue);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .person-card.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+    
+    .person-card.drag-over {
+      border-color: var(--accent-teal);
+      background: #e8f4f8;
+    }
+    
+    .person-card-header {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .person-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-blue);
+      flex-shrink: 0;
+    }
+    
+    .person-photo-placeholder {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+      border: 3px solid var(--primary-blue);
+    }
+    
+    .person-info h4 {
+      color: var(--primary-blue);
+      margin-bottom: 0.25rem;
+    }
+    
+    .person-info .role {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    .person-info .contact {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 0.5rem;
+    }
+    
+    .person-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ddd;
+    }
+    
+    .btn-edit, .btn-delete {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      flex: 1;
+    }
+    
+    .btn-edit {
+      background: var(--primary-blue);
+      color: white;
+    }
+    
+    .btn-delete {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .btn-add-person {
+      padding: 1rem 2rem;
+      background: var(--accent-teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn-add-person:hover {
+      background: #3dbfd0;
+    }
+    
+    .drag-handle {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      color: #aaa;
+      cursor: grab;
+      font-size: 1.2rem;
+    }
+    
+    .order-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: var(--primary-blue);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+      display: none;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      color: var(--primary-blue);
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid #ddd;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    
+    .btn-cancel {
+      padding: 0.75rem 1.5rem;
+      background: #ddd;
+      color: var(--text-dark);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .btn-save {
+      padding: 0.75rem 1.5rem;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .btn-save:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+    
+    /* Photo Upload in Modal */
+    .photo-upload-area {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .photo-preview {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-blue);
+      margin-bottom: 1rem;
+    }
+    
+    .photo-preview-placeholder {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin: 0 auto 1rem;
+      border: 3px dashed #ccc;
+    }
+    
+    .btn-upload-photo {
+      padding: 0.5rem 1rem;
+      background: var(--light-blue);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .photo-hint {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 0.5rem;
+    }
+    
+    .upload-progress {
+      width: 100%;
+      height: 6px;
+      background: #eee;
+      border-radius: 3px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+      display: none;
+    }
+    
+    .upload-progress-bar {
+      height: 100%;
+      background: var(--primary-blue);
+      width: 0%;
+      transition: width 0.3s;
+    }
+    
+    /* Loading State */
+    .loading-spinner {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-light);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-light);
+    }
+    
+    .empty-state p {
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .cms-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .cms-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+      }
+      
+      .tab {
+        padding: 0.75rem 1rem;
+        white-space: nowrap;
+      }
+      
+      .people-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -350,152 +602,182 @@
   </div>
 
   <!-- CMS Panel -->
-  <div id="cmsPanel" style="display: none;">
+  <div id="cmsPanel">
     <div class="cms-header">
       <h1>📝 LDAH Content Management</h1>
       <div class="user-info">
+        <a href="whoweare.html" class="preview-button" target="_blank">Preview Who We Are</a>
         <a href="index.html" class="preview-button" target="_blank">Preview Site</a>
-        <button class="btn-logout" id="logoutBtn" onclick="handleLogout()">Logout</button>
+        <button class="btn-logout" onclick="handleLogout()">Logout</button>
       </div>
     </div>
     
     <div class="cms-container">
       <!-- Tabs -->
       <div class="cms-tabs">
-        <button class="tab active" data-tab="hero">Hero Section</button>
-        <button class="tab" data-tab="stats">Statistics</button>
-        <button class="tab" data-tab="services">Services</button>
-        <button class="tab" data-tab="cta">Call to Action</button>
-        <button class="tab" data-tab="events">Events</button>
+        <button class="tab active" data-tab="team">👥 Our Team</button>
+        <button class="tab" data-tab="board">🏆 Board of Directors</button>
       </div>
       
-      <!-- Hero Tab -->
-      <div class="tab-content active" id="hero-tab">
+      <!-- Team Tab -->
+      <div class="tab-content active" id="team-tab">
         <div class="content-section">
-          <h2>Hero Section Content</h2>
-          <div class="success-message" id="heroSuccess">Content saved successfully!</div>
-          
-          <div class="field-group">
-            <label>Main Title</label>
-            <input type="text" id="heroTitle" placeholder="Enter hero title">
-          </div>
-          
-          <div class="field-group">
-            <label>Subtitle</label>
-            <textarea id="heroSubtitle" placeholder="Enter hero subtitle"></textarea>
-          </div>
-          
-          <div class="field-group">
-            <label>Hero Image</label>
-            <div class="image-upload">
-              <img id="heroImagePreview" class="image-preview" src="" alt="Hero">
-              <div>
-                <input type="file" id="heroImageInput" accept="image/*" style="display: none;">
-                <button type="button" class="btn-upload" onclick="document.getElementById('heroImageInput').click()">
-                  Choose Image
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <button class="btn-save" onclick="saveHeroContent()">Save Changes</button>
-        </div>
-      </div>
-      
-      <!-- Stats Tab -->
-      <div class="tab-content" id="stats-tab">
-        <div class="content-section">
-          <h2>Website Statistics</h2>
-          <div class="success-message" id="statsSuccess">Statistics saved successfully!</div>
-          
-          <div class="stats-grid" id="statsEditor">
-            <!-- Stats will be loaded here -->
-          </div>
-          
-          <button class="btn-save" onclick="saveStats()">Save All Statistics</button>
-        </div>
-      </div>
-      
-      <!-- Services Tab -->
-      <div class="tab-content" id="services-tab">
-        <div class="content-section">
-          <h2>Services Section</h2>
-          <div class="success-message" id="servicesSuccess">Services saved successfully!</div>
-          
-          <div class="field-group">
-            <label>Section Title</label>
-            <input type="text" id="servicesTitle" placeholder="Enter services section title">
-          </div>
-          
-          <div class="field-group">
-            <label>Section Description</label>
-            <textarea id="servicesDescription" placeholder="Enter section description"></textarea>
-          </div>
-          
-          <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Service Items</h3>
-          <button class="btn-add" onclick="addServiceItem()">+ Add New Service</button>
-          
-          <div class="services-list" id="servicesList">
-            <!-- Services will be loaded here -->
-          </div>
-          
-          <button class="btn-save" onclick="saveServices()">Save All Services</button>
-        </div>
-      </div>
-      
-      <!-- CTA Tab -->
-      <div class="tab-content" id="cta-tab">
-        <div class="content-section">
-          <h2>Call to Action Section</h2>
-          <div class="success-message" id="ctaSuccess">CTA saved successfully!</div>
-          
-          <div class="field-group">
-            <label>CTA Title</label>
-            <input type="text" id="ctaTitle" placeholder="Enter CTA title">
-          </div>
-          
-          <div class="field-group">
-            <label>CTA Description</label>
-            <textarea id="ctaDescription" placeholder="Enter CTA description"></textarea>
-          </div>
-          
-          <button class="btn-save" onclick="saveCTA()">Save Changes</button>
-        </div>
-      </div>
-      
-      <!-- Events Tab -->
-      <div class="tab-content" id="events-tab">
-        <div class="content-section">
-          <h2>Manage Events</h2>
-          <p style="color: var(--text-light); margin-bottom: 1rem;">
-            Events are managed through the LDAH mobile app admin panel and automatically sync to the website.
+          <h2>👥 Manage Our Team</h2>
+          <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+            Add, edit, or remove team members. Drag cards to reorder. Changes appear on the Who We Are page.
           </p>
-          <a href="events.html" class="preview-button">View Events Page</a>
+          
+          <div class="success-message" id="teamSuccess">Changes saved successfully!</div>
+          
+          <button class="btn-add-person" onclick="openPersonModal('team')">+ Add Team Member</button>
+          
+          <div id="teamLoading" class="loading-spinner">Loading team members...</div>
+          <div id="teamEmpty" class="empty-state" style="display:none;">
+            <p>No team members yet.</p>
+            <button class="btn-add-person" onclick="openPersonModal('team')">+ Add Your First Team Member</button>
+          </div>
+          <div class="people-grid" id="teamGrid"></div>
+        </div>
+      </div>
+      
+      <!-- Board Tab -->
+      <div class="tab-content" id="board-tab">
+        <div class="content-section">
+          <h2>🏆 Manage Board of Directors</h2>
+          <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+            Add, edit, or remove board members. Drag cards to reorder. Changes appear on the Who We Are page.
+          </p>
+          
+          <div class="success-message" id="boardSuccess">Changes saved successfully!</div>
+          
+          <button class="btn-add-person" onclick="openPersonModal('board')">+ Add Board Member</button>
+          
+          <div id="boardLoading" class="loading-spinner">Loading board members...</div>
+          <div id="boardEmpty" class="empty-state" style="display:none;">
+            <p>No board members yet.</p>
+            <button class="btn-add-person" onclick="openPersonModal('board')">+ Add Your First Board Member</button>
+          </div>
+          <div class="people-grid" id="boardGrid"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Simple Password Authentication -->
+  <!-- Add/Edit Person Modal -->
+  <div class="modal-overlay" id="personModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Team Member</h3>
+        <button class="modal-close" onclick="closePersonModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="personId">
+        <input type="hidden" id="personType">
+        <input type="hidden" id="personPhotoUrl">
+        
+        <div class="photo-upload-area">
+          <div id="photoPreviewContainer">
+            <div class="photo-preview-placeholder" id="photoPlaceholder">👤</div>
+          </div>
+          <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handlePhotoSelect(event)">
+          <button type="button" class="btn-upload-photo" onclick="document.getElementById('photoInput').click()">
+            📷 Choose Photo
+          </button>
+          <p class="photo-hint">Max 2MB. JPG, PNG, or WebP.</p>
+          <div class="upload-progress" id="uploadProgress">
+            <div class="upload-progress-bar" id="uploadProgressBar"></div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="personName" placeholder="e.g., John Smith" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Title / Role *</label>
+          <input type="text" id="personRole" placeholder="e.g., Executive Director">
+        </div>
+        
+        <div class="form-group" id="phoneGroup">
+          <label>Phone Number</label>
+          <input type="tel" id="personPhone" placeholder="e.g., (808) 555-1234">
+        </div>
+        
+        <div class="form-group" id="emailGroup">
+          <label>Email Address</label>
+          <input type="email" id="personEmail" placeholder="e.g., john@ldah.org">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closePersonModal()">Cancel</button>
+        <button class="btn-save" id="savePersonBtn" onclick="savePerson()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>Confirm Delete</h3>
+        <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to remove <strong id="deletePersonName"></strong>?</p>
+        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This will also delete their photo. This action cannot be undone.</p>
+        <input type="hidden" id="deletePersonId">
+        <input type="hidden" id="deletePersonType">
+        <input type="hidden" id="deletePhotoUrl">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDelete()" style="flex: none; padding: 0.75rem 1.5rem;">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Simple password check (use ldah2024 as the password)
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk",
+      authDomain: "ldah-932d5.firebaseapp.com",
+      projectId: "ldah-932d5",
+      storageBucket: "ldah-932d5.firebasestorage.app",
+      messagingSenderId: "662130454003",
+      appId: "1:662130454003:web:437576d5a5811ecd8df686"
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    const auth = firebase.auth();
+
+    // Password
     const CMS_PASSWORD = 'ldah2024';
-    
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
+    // State
+    let teamMembers = [];
+    let boardMembers = [];
+    let selectedPhotoFile = null;
+    let draggedItem = null;
+
+    // ===== Authentication =====
     function handleLogin(event) {
       event.preventDefault();
-      
       const password = document.getElementById('password').value;
       const errorDiv = document.getElementById('loginError');
       
       if (password === CMS_PASSWORD) {
-        // Password correct - show CMS panel
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('cmsPanel').style.display = 'block';
-        
-        // Store login state in session
         sessionStorage.setItem('cmsLoggedIn', 'true');
+        initializeCMS();
       } else {
-        // Password incorrect - show error
         errorDiv.textContent = 'Incorrect password. Please try again.';
         errorDiv.style.display = 'block';
         document.getElementById('password').value = '';
@@ -503,24 +785,465 @@
     }
     
     function handleLogout() {
-      // Clear session and go back to login
       sessionStorage.removeItem('cmsLoggedIn');
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('cmsPanel').style.display = 'none';
       document.getElementById('password').value = '';
       document.getElementById('loginError').style.display = 'none';
     }
-    
-    // Check if already logged in
+
+    // ===== Initialize CMS =====
+    async function initializeCMS() {
+      try {
+        await auth.signInAnonymously();
+        loadTeamMembers();
+        loadBoardMembers();
+      } catch (error) {
+        console.error('Firebase auth error:', error);
+      }
+    }
+
+    // ===== Tab Navigation =====
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+      });
+    });
+
+    // ===== Load Data =====
+    async function loadTeamMembers() {
+      const loading = document.getElementById('teamLoading');
+      const empty = document.getElementById('teamEmpty');
+      const grid = document.getElementById('teamGrid');
+      
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+      
+      try {
+        const snapshot = await db.collection('teamMembers').orderBy('order').get();
+        teamMembers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        loading.style.display = 'none';
+        
+        if (teamMembers.length === 0) {
+          empty.style.display = 'block';
+        } else {
+          renderPeopleGrid(teamMembers, 'team', grid);
+        }
+      } catch (error) {
+        console.error('Error loading team:', error);
+        loading.innerHTML = 'Error loading team members. Please refresh.';
+      }
+    }
+
+    async function loadBoardMembers() {
+      const loading = document.getElementById('boardLoading');
+      const empty = document.getElementById('boardEmpty');
+      const grid = document.getElementById('boardGrid');
+      
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+      
+      try {
+        const snapshot = await db.collection('boardMembers').orderBy('order').get();
+        boardMembers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        loading.style.display = 'none';
+        
+        if (boardMembers.length === 0) {
+          empty.style.display = 'block';
+        } else {
+          renderPeopleGrid(boardMembers, 'board', grid);
+        }
+      } catch (error) {
+        console.error('Error loading board:', error);
+        loading.innerHTML = 'Error loading board members. Please refresh.';
+      }
+    }
+
+    // ===== Render Grid =====
+    function renderPeopleGrid(people, type, container) {
+      container.innerHTML = '';
+      
+      people.forEach((person, index) => {
+        const card = document.createElement('div');
+        card.className = 'person-card';
+        card.draggable = true;
+        card.dataset.id = person.id;
+        card.dataset.type = type;
+        
+        const photoHtml = person.photoUrl 
+          ? `<img src="${person.photoUrl}" alt="${person.name}" class="person-photo">`
+          : `<div class="person-photo-placeholder">👤</div>`;
+        
+        const contactHtml = type === 'team' ? `
+          <div class="contact">
+            ${person.phone ? `📞 ${person.phone}` : ''}
+            ${person.phone && person.email ? ' • ' : ''}
+            ${person.email ? `✉️ ${person.email}` : ''}
+          </div>
+        ` : '';
+        
+        card.innerHTML = `
+          <div class="order-badge">${index + 1}</div>
+          <div class="drag-handle">⋮⋮</div>
+          <div class="person-card-header">
+            ${photoHtml}
+            <div class="person-info">
+              <h4>${person.name}</h4>
+              <div class="role">${person.role}</div>
+              ${contactHtml}
+            </div>
+          </div>
+          <div class="person-actions">
+            <button class="btn-edit" onclick="editPerson('${type}', '${person.id}')">✏️ Edit</button>
+            <button class="btn-delete" onclick="deletePerson('${type}', '${person.id}', '${person.name}', '${person.photoUrl || ''}')">🗑️ Delete</button>
+          </div>
+        `;
+        
+        // Drag events
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+        card.addEventListener('dragover', handleDragOver);
+        card.addEventListener('drop', handleDrop);
+        card.addEventListener('dragleave', handleDragLeave);
+        
+        container.appendChild(card);
+      });
+    }
+
+    // ===== Drag and Drop =====
+    function handleDragStart(e) {
+      draggedItem = this;
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragEnd(e) {
+      this.classList.remove('dragging');
+      document.querySelectorAll('.person-card').forEach(card => {
+        card.classList.remove('drag-over');
+      });
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (this !== draggedItem && this.dataset.type === draggedItem.dataset.type) {
+        this.classList.add('drag-over');
+      }
+    }
+
+    function handleDragLeave(e) {
+      this.classList.remove('drag-over');
+    }
+
+    async function handleDrop(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      
+      if (this === draggedItem || this.dataset.type !== draggedItem.dataset.type) return;
+      
+      const type = this.dataset.type;
+      const collection = type === 'team' ? 'teamMembers' : 'boardMembers';
+      const members = type === 'team' ? teamMembers : boardMembers;
+      const grid = document.getElementById(type + 'Grid');
+      
+      const draggedId = draggedItem.dataset.id;
+      const targetId = this.dataset.id;
+      
+      const draggedIndex = members.findIndex(m => m.id === draggedId);
+      const targetIndex = members.findIndex(m => m.id === targetId);
+      
+      // Reorder array
+      const [removed] = members.splice(draggedIndex, 1);
+      members.splice(targetIndex, 0, removed);
+      
+      // Update order in Firestore
+      const batch = db.batch();
+      members.forEach((member, index) => {
+        const ref = db.collection(collection).doc(member.id);
+        batch.update(ref, { order: index });
+        member.order = index;
+      });
+      
+      try {
+        await batch.commit();
+        renderPeopleGrid(members, type, grid);
+        showSuccess(type);
+      } catch (error) {
+        console.error('Error updating order:', error);
+        alert('Failed to update order. Please try again.');
+      }
+    }
+
+    // ===== Modal Functions =====
+    function openPersonModal(type, person = null) {
+      document.getElementById('personModal').classList.add('active');
+      document.getElementById('personType').value = type;
+      
+      const isTeam = type === 'team';
+      document.getElementById('phoneGroup').style.display = isTeam ? 'block' : 'none';
+      document.getElementById('emailGroup').style.display = isTeam ? 'block' : 'none';
+      
+      if (person) {
+        document.getElementById('modalTitle').textContent = isTeam ? 'Edit Team Member' : 'Edit Board Member';
+        document.getElementById('personId').value = person.id;
+        document.getElementById('personName').value = person.name || '';
+        document.getElementById('personRole').value = person.role || '';
+        document.getElementById('personPhone').value = person.phone || '';
+        document.getElementById('personEmail').value = person.email || '';
+        document.getElementById('personPhotoUrl').value = person.photoUrl || '';
+        
+        if (person.photoUrl) {
+          document.getElementById('photoPreviewContainer').innerHTML = 
+            `<img src="${person.photoUrl}" class="photo-preview" id="photoPreview">`;
+        } else {
+          document.getElementById('photoPreviewContainer').innerHTML = 
+            `<div class="photo-preview-placeholder" id="photoPlaceholder">👤</div>`;
+        }
+      } else {
+        document.getElementById('modalTitle').textContent = isTeam ? 'Add Team Member' : 'Add Board Member';
+        document.getElementById('personId').value = '';
+        document.getElementById('personName').value = '';
+        document.getElementById('personRole').value = '';
+        document.getElementById('personPhone').value = '';
+        document.getElementById('personEmail').value = '';
+        document.getElementById('personPhotoUrl').value = '';
+        document.getElementById('photoPreviewContainer').innerHTML = 
+          `<div class="photo-preview-placeholder" id="photoPlaceholder">👤</div>`;
+      }
+      
+      selectedPhotoFile = null;
+      document.getElementById('photoInput').value = '';
+    }
+
+    function closePersonModal() {
+      document.getElementById('personModal').classList.remove('active');
+      selectedPhotoFile = null;
+    }
+
+    function editPerson(type, id) {
+      const members = type === 'team' ? teamMembers : boardMembers;
+      const person = members.find(m => m.id === id);
+      if (person) {
+        openPersonModal(type, person);
+      }
+    }
+
+    // ===== Photo Handling =====
+    function handlePhotoSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (file.size > MAX_FILE_SIZE) {
+        alert('Photo must be under 2MB. Please choose a smaller image.');
+        event.target.value = '';
+        return;
+      }
+      
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        alert('Please select a JPG, PNG, or WebP image.');
+        event.target.value = '';
+        return;
+      }
+      
+      selectedPhotoFile = file;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('photoPreviewContainer').innerHTML = 
+          `<img src="${e.target.result}" class="photo-preview" id="photoPreview">`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function uploadPhoto(file, personId, type) {
+      const extension = file.name.split('.').pop();
+      const filename = `${type}/${personId}_${Date.now()}.${extension}`;
+      const storageRef = storage.ref(filename);
+      
+      const progressBar = document.getElementById('uploadProgress');
+      const progressFill = document.getElementById('uploadProgressBar');
+      progressBar.style.display = 'block';
+      
+      return new Promise((resolve, reject) => {
+        const uploadTask = storageRef.put(file);
+        
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            progressFill.style.width = progress + '%';
+          },
+          (error) => {
+            progressBar.style.display = 'none';
+            reject(error);
+          },
+          async () => {
+            progressBar.style.display = 'none';
+            const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+            resolve(downloadUrl);
+          }
+        );
+      });
+    }
+
+    async function deletePhotoFromStorage(photoUrl) {
+      if (!photoUrl || !photoUrl.includes('firebase')) return;
+      
+      try {
+        const photoRef = storage.refFromURL(photoUrl);
+        await photoRef.delete();
+      } catch (error) {
+        console.error('Error deleting photo:', error);
+        // Don't throw - photo deletion failure shouldn't block other operations
+      }
+    }
+
+    // ===== Save Person =====
+    async function savePerson() {
+      const name = document.getElementById('personName').value.trim();
+      const role = document.getElementById('personRole').value.trim();
+      const type = document.getElementById('personType').value;
+      const existingId = document.getElementById('personId').value;
+      const existingPhotoUrl = document.getElementById('personPhotoUrl').value;
+      
+      if (!name || !role) {
+        alert('Please fill in Name and Role.');
+        return;
+      }
+      
+      const saveBtn = document.getElementById('savePersonBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+      
+      try {
+        const collection = type === 'team' ? 'teamMembers' : 'boardMembers';
+        const members = type === 'team' ? teamMembers : boardMembers;
+        
+        let photoUrl = existingPhotoUrl;
+        
+        // Upload new photo if selected
+        if (selectedPhotoFile) {
+          const tempId = existingId || db.collection(collection).doc().id;
+          
+          // Delete old photo if replacing
+          if (existingPhotoUrl) {
+            await deletePhotoFromStorage(existingPhotoUrl);
+          }
+          
+          photoUrl = await uploadPhoto(selectedPhotoFile, tempId, type);
+        }
+        
+        const personData = {
+          name,
+          role,
+          photoUrl: photoUrl || '',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (type === 'team') {
+          personData.phone = document.getElementById('personPhone').value.trim();
+          personData.email = document.getElementById('personEmail').value.trim();
+        }
+        
+        if (existingId) {
+          // Update existing
+          await db.collection(collection).doc(existingId).update(personData);
+        } else {
+          // Add new
+          personData.order = members.length;
+          personData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          await db.collection(collection).add(personData);
+        }
+        
+        closePersonModal();
+        
+        if (type === 'team') {
+          await loadTeamMembers();
+        } else {
+          await loadBoardMembers();
+        }
+        
+        showSuccess(type);
+        
+      } catch (error) {
+        console.error('Error saving person:', error);
+        alert('Failed to save. Please try again.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save';
+      }
+    }
+
+    // ===== Delete Person =====
+    function deletePerson(type, id, name, photoUrl) {
+      document.getElementById('deletePersonId').value = id;
+      document.getElementById('deletePersonType').value = type;
+      document.getElementById('deletePersonName').textContent = name;
+      document.getElementById('deletePhotoUrl').value = photoUrl;
+      document.getElementById('deleteModal').classList.add('active');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('active');
+    }
+
+    async function confirmDelete() {
+      const id = document.getElementById('deletePersonId').value;
+      const type = document.getElementById('deletePersonType').value;
+      const photoUrl = document.getElementById('deletePhotoUrl').value;
+      
+      try {
+        const collection = type === 'team' ? 'teamMembers' : 'boardMembers';
+        
+        // Delete from Firestore
+        await db.collection(collection).doc(id).delete();
+        
+        // Delete photo from storage
+        if (photoUrl) {
+          await deletePhotoFromStorage(photoUrl);
+        }
+        
+        closeDeleteModal();
+        
+        if (type === 'team') {
+          await loadTeamMembers();
+        } else {
+          await loadBoardMembers();
+        }
+        
+        showSuccess(type);
+        
+      } catch (error) {
+        console.error('Error deleting person:', error);
+        alert('Failed to delete. Please try again.');
+      }
+    }
+
+    // ===== Utility =====
+    function showSuccess(type) {
+      const successEl = document.getElementById(type + 'Success');
+      successEl.style.display = 'block';
+      setTimeout(() => {
+        successEl.style.display = 'none';
+      }, 3000);
+    }
+
+    // ===== Init on Load =====
     window.addEventListener('load', () => {
       if (sessionStorage.getItem('cmsLoggedIn') === 'true') {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('cmsPanel').style.display = 'block';
+        initializeCMS();
       }
     });
-    
-    // Note: The CMS functionality (saving content) would still use Firebase
-    // This just simplifies the login process
   </script>
 </body>
 </html>

@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Who We Are - LDAH</title>
     
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1010,66 +1015,9 @@
                 <button class="close-modal" onclick="closeTeamModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="team-grid">
-                    <div class="team-member">
-                        <img src="assets/RosieR.jpg" alt="Rosie Rowe">
-                        <h4>Rosie Rowe</h4>
-                        <div class="role">Executive Director</div>
-                        <div class="contact-links">
-                            <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#bfcdcdd0c8dafff3fbfef7dec8ded6d691d0cdd8">✉️ Email</a>
-                        </div>
-                    </div>
-
-                    <div class="team-member">
-                        <img src="assets/LeilaniK.jpg" alt="Leilani Kailiawa">
-                        <h4>Leilani Kailiawa</h4>
-                        <div class="role">Parent Consultant, Parent Training & Information</div>
-                        <div class="contact-links">
-                            <a href="tel:+18085369684">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#c6aaada7afaaafa7b1a7868a82878ea7b1a7afafe8a9b4a1">✉️ Email</a>
-                        </div>
-                    </div>
-
-                    <div class="team-member">
-                        <img src="assets/TeddyM.jpg" alt="Teddy Mickelsen">
-                        <h4>Teddy Mickelsen</h4>
-                        <div class="role">Parent Consultant, Early Detection & Support</div>
-                        <div class="contact-links">
-                            <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#acf8e1c5cfc7c9c0dfc9c2ece0e8ede4cddbcdc5c582c3decb">✉️ Email</a>
-                        </div>
-                    </div>
-
-                    <div class="team-member">
-                        <img src="assets/AlexH.jpg" alt="Alexa Hurd">
-                        <h4>Alexa Hurd</h4>
-                        <div class="role">Parent Consultant, School Readiness Project</div>
-                        <div class="contact-links">
-                            <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#89c8c1fcfbedc9c5cdc8c1e8fee8e0e0a7e6fbee">✉️ Email</a>
-                        </div>
-                    </div>
-
-                    <div class="team-member">
-                        <img src="assets/ChassidyK.jpg" alt="Chassidy Kruse">
-                        <h4>Chassidy Kruse</h4>
-                        <div class="role">Program Coordinator, School Readiness Project & Malama Na Keiki</div>
-                        <div class="contact-links">
-                            <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#591a122b2c2a3c19151d1811382e38303077362b3e">✉️ Email</a>
-                        </div>
-                    </div>
-
-                    <div class="team-member">
-                        <img src="assets/VeronicaS.jpeg" alt="Veronica Silk">
-                        <h4>Veronica Silk</h4>
-                        <div class="role">Pacific Islands Education and Training Coordinator</div>
-                        <div class="contact-links">
-                            <a href="tel:+18085369685">📞 Call</a>
-                            <a href="/cdn-cgi/l/email-protection#fea8ad979295beb2babfb69f899f9797d0918c99">✉️ Email</a>
-                        </div>
-                    </div>
+                <div class="team-grid" id="teamGridDisplay">
+                    <!-- Team members loaded dynamically from Firebase -->
+                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">Loading team...</div>
                 </div>
 
                 <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 12px;">
@@ -1088,42 +1036,9 @@
                 <button class="close-modal" onclick="closeBoardModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="team-grid">
-                    <div class="board-member">
-                        <img src="assets/young-paul.png" alt="Paul M. Young">
-                        <h4>Paul M. Young</h4>
-                        <div class="role">President</div>
-                    </div>
-
-                    <div class="board-member">
-                        <img src="assets/Carlos-Penaloza.jpg" alt="Carlos G. Penaloza, Ph.D.">
-                        <h4>Carlos G. Penaloza, Ph.D.</h4>
-                        <div class="role">Vice President/Treasurer</div>
-                    </div>
-
-                    <div class="board-member">
-                        <img src="assets/Tamar_deFries.jpg" alt="Tamar deFries">
-                        <h4>Tamar deFries</h4>
-                        <div class="role">Secretary</div>
-                    </div>
-
-                    <div class="board-member">
-                        <div class="member-icon">👤</div>
-                        <h4>Sam Yee, Esq.</h4>
-                        <div class="role">Director</div>
-                    </div>
-
-                    <div class="board-member">
-                        <img src="assets/Patricia_M.jpg" alt="Patricia Morrissey, Ph.D.">
-                        <h4>Patricia Morrissey, Ph.D.</h4>
-                        <div class="role">Director</div>
-                    </div>
-
-                    <div class="board-member">
-                        <img src="assets/Linda_Elento.jpg" alt="Linda Elento">
-                        <h4>Linda Elento</h4>
-                        <div class="role">Director</div>
-                    </div>
+                <div class="team-grid" id="boardGridDisplay">
+                    <!-- Board members loaded dynamically from Firebase -->
+                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">Loading board members...</div>
                 </div>
 
                 <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 12px;">
@@ -1155,6 +1070,92 @@
     </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk",
+            authDomain: "ldah-932d5.firebaseapp.com",
+            projectId: "ldah-932d5",
+            storageBucket: "ldah-932d5.firebasestorage.app",
+            messagingSenderId: "662130454003",
+            appId: "1:662130454003:web:437576d5a5811ecd8df686"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Load team and board data from Firebase
+        async function loadTeamAndBoardData() {
+            try {
+                await auth.signInAnonymously();
+                
+                // Load Team Members
+                const teamSnapshot = await db.collection('teamMembers').orderBy('order').get();
+                const teamGrid = document.getElementById('teamGridDisplay');
+                
+                if (teamSnapshot.empty) {
+                    teamGrid.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-light);">No team members to display.</div>';
+                } else {
+                    teamGrid.innerHTML = '';
+                    teamSnapshot.forEach(doc => {
+                        const member = doc.data();
+                        const photoHtml = member.photoUrl 
+                            ? `<img src="${member.photoUrl}" alt="${member.name}">`
+                            : `<div class="member-icon">👤</div>`;
+                        
+                        const contactHtml = (member.phone || member.email) ? `
+                            <div class="contact-links">
+                                ${member.phone ? `<a href="tel:${member.phone.replace(/[^0-9+]/g, '')}">📞 Call</a>` : ''}
+                                ${member.email ? `<a href="mailto:${member.email}">✉️ Email</a>` : ''}
+                            </div>
+                        ` : '';
+                        
+                        teamGrid.innerHTML += `
+                            <div class="team-member">
+                                ${photoHtml}
+                                <h4>${member.name}</h4>
+                                <div class="role">${member.role}</div>
+                                ${contactHtml}
+                            </div>
+                        `;
+                    });
+                }
+                
+                // Load Board Members
+                const boardSnapshot = await db.collection('boardMembers').orderBy('order').get();
+                const boardGrid = document.getElementById('boardGridDisplay');
+                
+                if (boardSnapshot.empty) {
+                    boardGrid.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-light);">No board members to display.</div>';
+                } else {
+                    boardGrid.innerHTML = '';
+                    boardSnapshot.forEach(doc => {
+                        const member = doc.data();
+                        const photoHtml = member.photoUrl 
+                            ? `<img src="${member.photoUrl}" alt="${member.name}">`
+                            : `<div class="member-icon">👤</div>`;
+                        
+                        boardGrid.innerHTML += `
+                            <div class="board-member">
+                                ${photoHtml}
+                                <h4>${member.name}</h4>
+                                <div class="role">${member.role}</div>
+                            </div>
+                        `;
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error loading team/board data:', error);
+            }
+        }
+
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', loadTeamAndBoardData);
+
         // Team Modal
         function openTeamModal() {
             document.getElementById('teamModal').classList.add('active');
@@ -1255,7 +1256,17 @@
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
-odal.classList.remove('active');
+        }
+
+        function closeIframeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+                return;
+            }
+
+            const modal = document.getElementById('iframeModal');
+            const frameEl = document.getElementById('iframeFrame');
+            
+            modal.classList.remove('active');
             
             // Reset iframe
             if (frameEl.tagName === 'IFRAME') {
@@ -1389,17 +1400,4 @@ odal.classList.remove('active');
         }
         
         function toggleMenu() {
-            const navLinks = document.getElementById('navLinks');
-            if (navLinks) {
-                navLinks.classList.toggle('active');
-            }
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadHeaderFooter);
-        } else {
-            loadHeaderFooter();
-        }
-    </script>
-</body>
-</html>
+            const navLink
