@@ -7,6 +7,7 @@
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -701,8 +702,12 @@
     </div>
 
     <script>
-        // Sample Resources Data (will be replaced with Firebase data later)
-        const resourcesData = [
+        // Resources data will be loaded from Firebase
+        let resourcesData = [];
+        let isLoading = true;
+
+        // Fallback data in case Firebase is empty or fails
+        const fallbackData = [
             {
                 id: 1,
                 name: "Makaha Learning Center",
@@ -716,135 +721,9 @@
                 fax: "NA",
                 email: "info@makahalearning.org",
                 website: "www.makahalearning.org",
-                services: "Classes the Makaha Learning Center currently offers: Core Construction class - Get started in the industry by learning construction basics including Field Safety, Construction Math, Hand Tools, Rigging, Communication, Employability Skills, and Material Handling. Solar PV 101 class - Solar installation and preparation coursework that covers the NABCEP Entry Level Learning Objectives.",
+                services: "Classes the Makaha Learning Center currently offers: Core Construction class - Get started in the industry by learning construction basics. Solar PV 101 class - Solar installation and preparation coursework.",
                 notes: "Rev. 7/8/24",
                 island: "Oahu",
-                logo: "https://www.ldahawaii.org/wp-content/uploads/2023/10/Leadership-in-Disabilities-Achievement-of-Hawaii-4.jpg"
-            },
-            {
-                id: 2,
-                name: "Hawaii Department of Education - Special Education",
-                type: "Education",
-                person: "Special Education Section",
-                address: "1390 Miller Street",
-                city: "Honolulu",
-                state: "HI",
-                zip: "96813",
-                phone: "(808) 586-3310",
-                fax: "(808) 586-3234",
-                email: "sped@k12.hi.us",
-                website: "www.hawaiipublicschools.org",
-                services: "The Special Education Section provides leadership and support to public schools in developing, implementing, and monitoring special education programs and services for students with disabilities, ages 3-21.",
-                notes: "State agency",
-                island: "Statewide",
-                logo: ""
-            },
-            {
-                id: 3,
-                name: "Easter Seals Hawaii",
-                type: "Support Services",
-                person: "Main Office",
-                address: "710 Green Street",
-                city: "Honolulu",
-                state: "HI",
-                zip: "96813",
-                phone: "(808) 536-1015",
-                fax: "(808) 536-3765",
-                email: "info@eastersealshawaii.org",
-                website: "www.eastersealshawaii.org",
-                services: "Easter Seals Hawaii provides exceptional services, education, outreach, and advocacy so that people with disabilities can live, learn, work, and play in our communities.",
-                notes: "",
-                island: "Statewide",
-                logo: ""
-            },
-            {
-                id: 4,
-                name: "Maui Family Support Services",
-                type: "Support Services",
-                person: "Family Support Team",
-                address: "1844 Wili Pa Loop",
-                city: "Wailuku",
-                state: "HI",
-                zip: "96793",
-                phone: "(808) 242-0900",
-                fax: "(808) 242-0901",
-                email: "info@mauifss.org",
-                website: "www.mauifss.org",
-                services: "Provides early intervention services, family support, and community resources for families with children who have developmental delays or disabilities on Maui.",
-                notes: "",
-                island: "Maui",
-                logo: ""
-            },
-            {
-                id: 5,
-                name: "Hawaii Centers for Independent Living",
-                type: "Specialized Resources",
-                person: "Intake Coordinator",
-                address: "414 Kuwili Street, Suite 102",
-                city: "Honolulu",
-                state: "HI",
-                zip: "96817",
-                phone: "(808) 522-5400",
-                fax: "(808) 522-5427",
-                email: "info@hcil.org",
-                website: "www.hcil.org",
-                services: "HCIL provides services to people with disabilities including independent living skills training, peer counseling, advocacy, information and referral, and transition services for youth.",
-                notes: "",
-                island: "Oahu",
-                logo: ""
-            },
-            {
-                id: 6,
-                name: "Vocational Rehabilitation Division",
-                type: "Transition Resources",
-                person: "VR Services",
-                address: "1901 Bachelot Street",
-                city: "Honolulu",
-                state: "HI",
-                zip: "96817",
-                phone: "(808) 586-9744",
-                fax: "(808) 586-9755",
-                email: "vr@dhs.hawaii.gov",
-                website: "humanservices.hawaii.gov/vocational-rehabilitation",
-                services: "VR assists individuals with disabilities to prepare for, secure, retain, or regain employment. Services include assessment, counseling, training, job placement, and support services.",
-                notes: "State agency",
-                island: "Statewide",
-                logo: ""
-            },
-            {
-                id: 7,
-                name: "Arc of Kona",
-                type: "Support Services",
-                person: "Program Director",
-                address: "74-5622 Alapa Street",
-                city: "Kailua-Kona",
-                state: "HI",
-                zip: "96740",
-                phone: "(808) 329-4433",
-                fax: "(808) 329-4398",
-                email: "info@arcofkona.org",
-                website: "www.arcofkona.org",
-                services: "The Arc of Kona provides programs and services for individuals with intellectual and developmental disabilities including day programs, employment services, and community integration.",
-                notes: "",
-                island: "Hawaii",
-                logo: ""
-            },
-            {
-                id: 8,
-                name: "Kauai Center for Independent Living",
-                type: "Specialized Resources",
-                person: "Executive Director",
-                address: "4340 Nawiliwili Road, Suite A",
-                city: "Lihue",
-                state: "HI",
-                zip: "96766",
-                phone: "(808) 245-4034",
-                fax: "(808) 245-7218",
-                email: "info@kauaicil.org",
-                website: "www.kauaicil.org",
-                services: "Provides independent living services, advocacy, peer support, and information and referral for people with disabilities on Kauai.",
-                notes: "",
-                island: "Kauai",
                 logo: ""
             }
         ];
@@ -854,54 +733,132 @@
         let currentTypeFilter = 'all';
         let searchQuery = '';
 
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk",
+            authDomain: "ldah-932d5.firebaseapp.com",
+            projectId: "ldah-932d5",
+            storageBucket: "ldah-932d5.firebasestorage.app",
+            messagingSenderId: "662130454003",
+            appId: "1:662130454003:web:437576d5a5811ecd8df686"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
+        
+        analytics.logEvent('page_view', {
+            page_title: 'Resources',
+            page_location: window.location.href,
+            page_path: '/resources.html'
+        });
+
+        // Load resources from Firebase
+        async function loadResources() {
+            const listContainer = document.getElementById('resourcesList');
+            listContainer.innerHTML = '<div class="no-results"><div class="icon">⏳</div><h3>Loading resources...</h3></div>';
+
+            try {
+                let snapshot;
+                try {
+                    snapshot = await db.collection('resources').orderBy('order').get();
+                } catch (indexError) {
+                    // Fallback if index doesn't exist
+                    console.log('Index not available, using unordered query');
+                    snapshot = await db.collection('resources').get();
+                }
+
+                if (snapshot.empty) {
+                    console.log('No resources in Firebase, using fallback data');
+                    resourcesData = fallbackData;
+                } else {
+                    resourcesData = snapshot.docs.map((doc, index) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                        // Ensure all fields have defaults
+                        name: doc.data().name || '',
+                        type: doc.data().type || doc.data().types?.[0] || 'Specialized Resources',
+                        person: doc.data().person || '',
+                        address: doc.data().address || '',
+                        city: doc.data().city || '',
+                        state: doc.data().state || 'HI',
+                        zip: doc.data().zip || '',
+                        phone: doc.data().phone || '',
+                        fax: doc.data().fax || '',
+                        email: doc.data().email || '',
+                        website: doc.data().website || '',
+                        services: doc.data().services || '',
+                        notes: doc.data().notes || '',
+                        island: doc.data().island || '',
+                        logo: doc.data().logo || ''
+                    }));
+                    // Sort alphabetically by name
+                    resourcesData.sort((a, b) => a.name.localeCompare(b.name));
+                }
+
+                isLoading = false;
+                filterAndRender();
+                console.log(`✅ Loaded ${resourcesData.length} resources`);
+
+            } catch (error) {
+                console.error('Error loading resources:', error);
+                resourcesData = fallbackData;
+                isLoading = false;
+                filterAndRender();
+            }
+        }
+
         // Render resource card
         function renderResourceCard(resource) {
             const logoHtml = resource.logo 
-                ? `<img src="${resource.logo}" alt="${resource.name}" class="resource-logo">`
+                ? `<img src="${resource.logo}" alt="${resource.name}" class="resource-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                   <div class="resource-logo-placeholder" style="display:none;">🏢</div>`
                 : `<div class="resource-logo-placeholder">🏢</div>`;
             
-            const websiteUrl = resource.website.startsWith('http') ? resource.website : `https://${resource.website}`;
+            const websiteUrl = resource.website && resource.website.startsWith('http') ? resource.website : `https://${resource.website}`;
+            const displayIsland = resource.island || 'Statewide';
+            const displayPhone = resource.phone || 'N/A';
             
             return `
                 <div class="resource-card" data-id="${resource.id}" data-island="${resource.island}" data-type="${resource.type}">
-                    <div class="resource-header" onclick="toggleCard(${resource.id})">
+                    <div class="resource-header" onclick="toggleCard('${resource.id}')">
                         ${logoHtml}
                         <div class="resource-summary">
                             <div class="resource-type-badge">${resource.type}</div>
                             <h3 class="resource-name">${resource.name}</h3>
                             <div class="resource-meta">
-                                <span>📍 ${resource.island}</span>
-                                <span>📞 ${resource.phone}</span>
+                                <span>📍 ${displayIsland}</span>
+                                ${resource.phone ? `<span>📞 ${resource.phone}</span>` : ''}
                             </div>
                         </div>
                         <div class="expand-icon">▼</div>
                     </div>
                     <div class="resource-details">
                         <div class="resource-details-inner">
-                            <div class="detail-section">
+                            ${resource.person ? `<div class="detail-section">
                                 <h4>Contact Person</h4>
                                 <p>${resource.person}</p>
-                            </div>
-                            <div class="detail-section">
+                            </div>` : ''}
+                            ${resource.address || resource.city ? `<div class="detail-section">
                                 <h4>Address</h4>
-                                <p>${resource.address}<br>${resource.city}, ${resource.state} ${resource.zip}</p>
-                            </div>
-                            <div class="detail-section">
+                                <p>${resource.address ? resource.address + '<br>' : ''}${resource.city}${resource.state ? ', ' + resource.state : ''} ${resource.zip}</p>
+                            </div>` : ''}
+                            ${resource.phone ? `<div class="detail-section">
                                 <h4>Phone</h4>
-                                <p><a href="tel:${resource.phone.replace(/[^0-9]/g, '')}">${resource.phone}</a></p>
-                            </div>
-                            <div class="detail-section">
+                                <p><a href="tel:${resource.phone.replace(/[^0-9+]/g, '')}">${resource.phone}</a></p>
+                            </div>` : ''}
+                            ${resource.email ? `<div class="detail-section">
                                 <h4>Email</h4>
                                 <p><a href="mailto:${resource.email}">${resource.email}</a></p>
-                            </div>
-                            <div class="services-section">
+                            </div>` : ''}
+                            ${resource.services ? `<div class="services-section">
                                 <h4>Services Offered</h4>
                                 <p>${resource.services}</p>
-                            </div>
+                            </div>` : ''}
                             <div class="contact-buttons">
-                                <a href="tel:${resource.phone.replace(/[^0-9]/g, '')}" class="contact-btn phone">📞 Call</a>
-                                <a href="mailto:${resource.email}" class="contact-btn email">✉️ Email</a>
-                                ${resource.website ? `<button onclick="event.stopPropagation(); openIframeModal('${resource.name}', '${websiteUrl}')" class="contact-btn website">🌐 Website</button>` : ''}
+                                ${resource.phone ? `<a href="tel:${resource.phone.replace(/[^0-9+]/g, '')}" class="contact-btn phone">📞 Call</a>` : ''}
+                                ${resource.email ? `<a href="mailto:${resource.email}" class="contact-btn email">✉️ Email</a>` : ''}
+                                ${resource.website ? `<button onclick="event.stopPropagation(); openIframeModal('${resource.name.replace(/'/g, "\\'")}', '${websiteUrl}')" class="contact-btn website">🌐 Website</button>` : ''}
                             </div>
                         </div>
                     </div>
@@ -912,18 +869,29 @@
         // Toggle card expansion
         function toggleCard(id) {
             const card = document.querySelector(`.resource-card[data-id="${id}"]`);
-            card.classList.toggle('expanded');
+            if (card) card.classList.toggle('expanded');
         }
 
         // Filter and render resources
         function filterAndRender() {
+            if (isLoading) return;
+
             const filteredResources = resourcesData.filter(resource => {
-                const matchesIsland = currentIslandFilter === 'all' || resource.island === currentIslandFilter;
-                const matchesType = currentTypeFilter === 'all' || resource.type === currentTypeFilter;
+                const resourceIsland = (resource.island || '').toLowerCase();
+                const matchesIsland = currentIslandFilter === 'all' || 
+                    resourceIsland === currentIslandFilter.toLowerCase() ||
+                    (currentIslandFilter === 'Statewide' && !resource.island);
+                
+                const resourceType = (resource.type || '').toLowerCase();
+                const matchesType = currentTypeFilter === 'all' || 
+                    resourceType.includes(currentTypeFilter.toLowerCase());
+                
+                const searchLower = searchQuery.toLowerCase();
                 const matchesSearch = searchQuery === '' || 
-                    resource.name.toLowerCase().includes(searchQuery) ||
-                    resource.services.toLowerCase().includes(searchQuery) ||
-                    resource.city.toLowerCase().includes(searchQuery);
+                    (resource.name || '').toLowerCase().includes(searchLower) ||
+                    (resource.services || '').toLowerCase().includes(searchLower) ||
+                    (resource.city || '').toLowerCase().includes(searchLower) ||
+                    (resource.person || '').toLowerCase().includes(searchLower);
                 
                 return matchesIsland && matchesType && matchesSearch;
             });
@@ -1128,28 +1096,11 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Initialize Firebase
-        firebase.initializeApp({
-            apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk",
-            authDomain: "ldah-932d5.firebaseapp.com",
-            projectId: "ldah-932d5",
-            storageBucket: "ldah-932d5.firebasestorage.app",
-            messagingSenderId: "662130454003",
-            appId: "1:662130454003:web:437576d5a5811ecd8df686"
-        });
-
-        const analytics = firebase.analytics();
-        analytics.logEvent('page_view', {
-            page_title: 'Resources',
-            page_location: window.location.href,
-            page_path: '/resources.html'
-        });
-
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
             loadHeaderFooter();
             setupFilters();
-            filterAndRender();
+            loadResources(); // Load from Firebase
         });
     </script>
 </body>
