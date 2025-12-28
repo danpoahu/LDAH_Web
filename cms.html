@@ -825,8 +825,19 @@
       grid.innerHTML = '';
       
       try {
-        const snapshot = await db.collection('teamMembers').orderBy('order').get();
+        let snapshot;
+        try {
+          // Try with orderBy first (requires index)
+          snapshot = await db.collection('teamMembers').orderBy('order').get();
+        } catch (indexError) {
+          // If index doesn't exist, fall back to simple query and sort client-side
+          console.log('Index not available, falling back to client-side sort');
+          snapshot = await db.collection('teamMembers').get();
+        }
+        
         teamMembers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Sort by order field (client-side fallback)
+        teamMembers.sort((a, b) => (a.order || 0) - (b.order || 0));
         
         loading.style.display = 'none';
         
@@ -837,7 +848,9 @@
         }
       } catch (error) {
         console.error('Error loading team:', error);
-        loading.innerHTML = 'Error loading team members. Please refresh.';
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        empty.innerHTML = '<p>No team members yet. Click "Add Team Member" to get started!</p>';
       }
     }
 
@@ -851,8 +864,19 @@
       grid.innerHTML = '';
       
       try {
-        const snapshot = await db.collection('boardMembers').orderBy('order').get();
+        let snapshot;
+        try {
+          // Try with orderBy first (requires index)
+          snapshot = await db.collection('boardMembers').orderBy('order').get();
+        } catch (indexError) {
+          // If index doesn't exist, fall back to simple query and sort client-side
+          console.log('Index not available, falling back to client-side sort');
+          snapshot = await db.collection('boardMembers').get();
+        }
+        
         boardMembers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Sort by order field (client-side fallback)
+        boardMembers.sort((a, b) => (a.order || 0) - (b.order || 0));
         
         loading.style.display = 'none';
         
@@ -863,7 +887,9 @@
         }
       } catch (error) {
         console.error('Error loading board:', error);
-        loading.innerHTML = 'Error loading board members. Please refresh.';
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        empty.innerHTML = '<p>No board members yet. Click "Add Board Member" to get started!</p>';
       }
     }
 
