@@ -556,6 +556,94 @@
     .empty-state p {
       margin-bottom: 1rem;
     }
+    
+    /* Resources Grid */
+    .resources-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .resource-card {
+      background: #f8f9fa;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .resource-card:hover {
+      border-color: var(--primary-blue);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .resource-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: contain;
+      background: white;
+      padding: 4px;
+      border: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+    
+    .resource-logo-placeholder {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    
+    .resource-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .resource-info h4 {
+      color: var(--primary-blue);
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .resource-type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #e0f2fe;
+      color: #0369a1;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .resource-meta {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    
+    .resource-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .resource-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
 
     /* Responsive */
     @media (max-width: 768px) {
@@ -577,6 +665,15 @@
       
       .people-grid {
         grid-template-columns: 1fr;
+      }
+      
+      .resource-card {
+        flex-direction: column;
+      }
+      
+      .resource-actions {
+        width: 100%;
+        justify-content: flex-end;
       }
     }
   </style>
@@ -607,6 +704,7 @@
       <h1>📝 LDAH Content Management</h1>
       <div class="user-info">
         <a href="whoweare.html" class="preview-button" target="_blank">Preview Who We Are</a>
+        <a href="resources.html" class="preview-button" target="_blank">Preview Resources</a>
         <a href="index.html" class="preview-button" target="_blank">Preview Site</a>
         <button class="btn-logout" onclick="handleLogout()">Logout</button>
       </div>
@@ -617,6 +715,7 @@
       <div class="cms-tabs">
         <button class="tab active" data-tab="team">👥 Our Team</button>
         <button class="tab" data-tab="board">🏆 Board of Directors</button>
+        <button class="tab" data-tab="resources">📚 Resources</button>
       </div>
       
       <!-- Team Tab -->
@@ -658,6 +757,33 @@
             <button class="btn-add-person" onclick="openPersonModal('board')">+ Add Your First Board Member</button>
           </div>
           <div class="people-grid" id="boardGrid"></div>
+        </div>
+      </div>
+      
+      <!-- Resources Tab -->
+      <div class="tab-content" id="resources-tab">
+        <div class="content-section">
+          <h2>📚 Manage Resources</h2>
+          <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+            Add, edit, or remove community resources. These appear on the Resources page for families to find support services.
+          </p>
+          
+          <div class="success-message" id="resourcesSuccess">Changes saved successfully!</div>
+          
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <button class="btn-add-person" onclick="openResourceModal()">+ Add Resource</button>
+            <input type="text" id="resourceSearch" placeholder="🔍 Search resources..." 
+                   style="padding: 0.75rem 1rem; border: 2px solid #ddd; border-radius: 8px; flex: 1; min-width: 200px;"
+                   oninput="filterResourcesList()">
+          </div>
+          
+          <div id="resourcesLoading" class="loading-spinner">Loading resources...</div>
+          <div id="resourcesEmpty" class="empty-state" style="display:none;">
+            <p>No resources yet.</p>
+            <button class="btn-add-person" onclick="openResourceModal()">+ Add Your First Resource</button>
+          </div>
+          <div id="resourcesCount" style="color: var(--text-light); margin-bottom: 1rem;"></div>
+          <div class="resources-grid" id="resourcesGrid"></div>
         </div>
       </div>
     </div>
@@ -737,6 +863,141 @@
     </div>
   </div>
 
+  <!-- Add/Edit Resource Modal -->
+  <div class="modal-overlay" id="resourceModal">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 id="resourceModalTitle">Add Resource</h3>
+        <button class="modal-close" onclick="closeResourceModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <input type="hidden" id="resourceId">
+        <input type="hidden" id="resourceLogoUrl">
+        
+        <div class="form-group">
+          <label>Organization Name *</label>
+          <input type="text" id="resourceName" placeholder="e.g., Hawaii Centers for Independent Living" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Resource Type *</label>
+          <select id="resourceType" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+            <option value="Specialized Resources">Specialized Resources</option>
+            <option value="Educational Testing Resources">Educational Testing Resources</option>
+            <option value="Private School Resources">Private School Resources</option>
+            <option value="Special Education Tutoring Resources">Special Education Tutoring Resources</option>
+            <option value="Transition Resources">Transition Resources</option>
+            <option value="Mental Health Therapist">Mental Health Therapist</option>
+            <option value="Medical Doctor">Medical Doctor</option>
+            <option value="Support Services">Support Services</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Contact Person</label>
+          <input type="text" id="resourcePerson" placeholder="e.g., Dr. Jane Smith">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="resourcePhone" placeholder="(808) 555-1234">
+          </div>
+          <div class="form-group">
+            <label>Fax</label>
+            <input type="tel" id="resourceFax" placeholder="(808) 555-1235">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="resourceEmail" placeholder="info@example.org">
+        </div>
+        
+        <div class="form-group">
+          <label>Website</label>
+          <input type="url" id="resourceWebsite" placeholder="https://www.example.org">
+        </div>
+        
+        <div class="form-group">
+          <label>Street Address</label>
+          <input type="text" id="resourceAddress" placeholder="123 Main Street, Suite 100">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="resourceCity" placeholder="Honolulu">
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" id="resourceState" placeholder="HI" value="HI" maxlength="2">
+          </div>
+          <div class="form-group">
+            <label>Zip</label>
+            <input type="text" id="resourceZip" placeholder="96813" maxlength="10">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Island</label>
+          <select id="resourceIsland" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+            <option value="">-- Select Island --</option>
+            <option value="Oahu">Oahu</option>
+            <option value="Hawaii">Hawaii (Big Island)</option>
+            <option value="Maui">Maui</option>
+            <option value="Kauai">Kauai</option>
+            <option value="Molokai">Molokai</option>
+            <option value="Lanai">Lanai</option>
+            <option value="Statewide">Statewide</option>
+            <option value="Off Island">Off Island</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Services Offered</label>
+          <textarea id="resourceServices" rows="4" placeholder="Describe the services this organization provides..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Notes (internal)</label>
+          <input type="text" id="resourceNotes" placeholder="e.g., Rev. 8/25, Contact updated">
+        </div>
+        
+        <div class="form-group">
+          <label>Logo URL (optional)</label>
+          <input type="url" id="resourceLogoInput" placeholder="https://example.com/logo.png">
+          <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">
+            Paste a direct link to the organization's logo image
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeResourceModal()">Cancel</button>
+        <button class="btn-save" id="saveResourceBtn" onclick="saveResource()">Save Resource</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Resource Confirmation Modal -->
+  <div class="modal-overlay" id="deleteResourceModal">
+    <div class="modal-box" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>Confirm Delete</h3>
+        <button class="modal-close" onclick="closeDeleteResourceModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to remove <strong id="deleteResourceName"></strong>?</p>
+        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This action cannot be undone.</p>
+        <input type="hidden" id="deleteResourceId">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeDeleteResourceModal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDeleteResource()" style="flex: none; padding: 0.75rem 1.5rem;">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Firebase Configuration
     const firebaseConfig = {
@@ -798,6 +1059,7 @@
         await auth.signInAnonymously();
         loadTeamMembers();
         loadBoardMembers();
+        loadResources();
       } catch (error) {
         console.error('Firebase auth error:', error);
       }
@@ -827,16 +1089,13 @@
       try {
         let snapshot;
         try {
-          // Try with orderBy first (requires index)
           snapshot = await db.collection('teamMembers').orderBy('order').get();
         } catch (indexError) {
-          // If index doesn't exist, fall back to simple query and sort client-side
           console.log('Index not available, falling back to client-side sort');
           snapshot = await db.collection('teamMembers').get();
         }
         
         teamMembers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        // Sort by order field (client-side fallback)
         teamMembers.sort((a, b) => (a.order || 0) - (b.order || 0));
         
         loading.style.display = 'none';
@@ -866,16 +1125,13 @@
       try {
         let snapshot;
         try {
-          // Try with orderBy first (requires index)
           snapshot = await db.collection('boardMembers').orderBy('order').get();
         } catch (indexError) {
-          // If index doesn't exist, fall back to simple query and sort client-side
           console.log('Index not available, falling back to client-side sort');
           snapshot = await db.collection('boardMembers').get();
         }
         
         boardMembers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        // Sort by order field (client-side fallback)
         boardMembers.sort((a, b) => (a.order || 0) - (b.order || 0));
         
         loading.style.display = 'none';
@@ -1250,6 +1506,253 @@
       } catch (error) {
         console.error('Error deleting person:', error);
         alert('Failed to delete. Please try again.');
+      }
+    }
+
+    // ===== RESOURCES MANAGEMENT =====
+    let resources = [];
+    let filteredResources = [];
+
+    // Load resources from Firebase
+    async function loadResources() {
+      const loading = document.getElementById('resourcesLoading');
+      const empty = document.getElementById('resourcesEmpty');
+      const grid = document.getElementById('resourcesGrid');
+      const countEl = document.getElementById('resourcesCount');
+      
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+      
+      try {
+        let snapshot;
+        try {
+          snapshot = await db.collection('resources').orderBy('name').get();
+        } catch (indexError) {
+          console.log('Index not available, using unordered query');
+          snapshot = await db.collection('resources').get();
+        }
+        
+        resources = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        resources.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        
+        loading.style.display = 'none';
+        
+        if (resources.length === 0) {
+          empty.style.display = 'block';
+          countEl.textContent = '';
+        } else {
+          countEl.textContent = `Showing ${resources.length} resources`;
+          filteredResources = [...resources];
+          renderResourcesGrid();
+        }
+      } catch (error) {
+        console.error('Error loading resources:', error);
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        empty.innerHTML = '<p>Error loading resources. Please refresh.</p>';
+      }
+    }
+
+    // Filter resources list
+    function filterResourcesList() {
+      const searchTerm = document.getElementById('resourceSearch').value.toLowerCase();
+      const countEl = document.getElementById('resourcesCount');
+      
+      if (!searchTerm) {
+        filteredResources = [...resources];
+      } else {
+        filteredResources = resources.filter(r => 
+          (r.name || '').toLowerCase().includes(searchTerm) ||
+          (r.services || '').toLowerCase().includes(searchTerm) ||
+          (r.city || '').toLowerCase().includes(searchTerm) ||
+          (r.type || '').toLowerCase().includes(searchTerm) ||
+          (r.person || '').toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      countEl.textContent = `Showing ${filteredResources.length} of ${resources.length} resources`;
+      renderResourcesGrid();
+    }
+
+    // Render resources grid
+    function renderResourcesGrid() {
+      const grid = document.getElementById('resourcesGrid');
+      grid.innerHTML = '';
+      
+      if (filteredResources.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><p>No matching resources found.</p></div>';
+        return;
+      }
+      
+      filteredResources.forEach(resource => {
+        const card = document.createElement('div');
+        card.className = 'resource-card';
+        
+        const logoHtml = resource.logo 
+          ? `<img src="${resource.logo}" alt="${resource.name}" class="resource-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+             <div class="resource-logo-placeholder" style="display:none;">🏢</div>`
+          : `<div class="resource-logo-placeholder">🏢</div>`;
+        
+        const island = resource.island || 'Statewide';
+        const phone = resource.phone || '';
+        const email = resource.email || '';
+        
+        card.innerHTML = `
+          ${logoHtml}
+          <div class="resource-info">
+            <div class="resource-type-badge">${resource.type || 'Specialized Resources'}</div>
+            <h4>${resource.name || 'Unnamed Resource'}</h4>
+            <div class="resource-meta">
+              <span>📍 ${island}</span>
+              ${phone ? `<span>📞 ${phone}</span>` : ''}
+              ${email ? `<span>✉️ ${email}</span>` : ''}
+            </div>
+          </div>
+          <div class="resource-actions">
+            <button class="btn-edit" onclick="editResource('${resource.id}')">✏️ Edit</button>
+            <button class="btn-delete" onclick="deleteResource('${resource.id}', '${(resource.name || '').replace(/'/g, "\\'")}')">🗑️</button>
+          </div>
+        `;
+        
+        grid.appendChild(card);
+      });
+    }
+
+    // Open resource modal for add/edit
+    function openResourceModal(resource = null) {
+      document.getElementById('resourceModal').classList.add('active');
+      
+      if (resource) {
+        document.getElementById('resourceModalTitle').textContent = 'Edit Resource';
+        document.getElementById('resourceId').value = resource.id;
+        document.getElementById('resourceName').value = resource.name || '';
+        document.getElementById('resourceType').value = resource.type || 'Specialized Resources';
+        document.getElementById('resourcePerson').value = resource.person || '';
+        document.getElementById('resourcePhone').value = resource.phone || '';
+        document.getElementById('resourceFax').value = resource.fax || '';
+        document.getElementById('resourceEmail').value = resource.email || '';
+        document.getElementById('resourceWebsite').value = resource.website || '';
+        document.getElementById('resourceAddress').value = resource.address || '';
+        document.getElementById('resourceCity').value = resource.city || '';
+        document.getElementById('resourceState').value = resource.state || 'HI';
+        document.getElementById('resourceZip').value = resource.zip || '';
+        document.getElementById('resourceIsland').value = resource.island || '';
+        document.getElementById('resourceServices').value = resource.services || '';
+        document.getElementById('resourceNotes').value = resource.notes || '';
+        document.getElementById('resourceLogoInput').value = resource.logo || '';
+        document.getElementById('resourceLogoUrl').value = resource.logo || '';
+      } else {
+        document.getElementById('resourceModalTitle').textContent = 'Add Resource';
+        document.getElementById('resourceId').value = '';
+        document.getElementById('resourceName').value = '';
+        document.getElementById('resourceType').value = 'Specialized Resources';
+        document.getElementById('resourcePerson').value = '';
+        document.getElementById('resourcePhone').value = '';
+        document.getElementById('resourceFax').value = '';
+        document.getElementById('resourceEmail').value = '';
+        document.getElementById('resourceWebsite').value = '';
+        document.getElementById('resourceAddress').value = '';
+        document.getElementById('resourceCity').value = '';
+        document.getElementById('resourceState').value = 'HI';
+        document.getElementById('resourceZip').value = '';
+        document.getElementById('resourceIsland').value = '';
+        document.getElementById('resourceServices').value = '';
+        document.getElementById('resourceNotes').value = '';
+        document.getElementById('resourceLogoInput').value = '';
+        document.getElementById('resourceLogoUrl').value = '';
+      }
+    }
+
+    function closeResourceModal() {
+      document.getElementById('resourceModal').classList.remove('active');
+    }
+
+    function editResource(id) {
+      const resource = resources.find(r => r.id === id);
+      if (resource) {
+        openResourceModal(resource);
+      }
+    }
+
+    // Save resource
+    async function saveResource() {
+      const name = document.getElementById('resourceName').value.trim();
+      const type = document.getElementById('resourceType').value;
+      const existingId = document.getElementById('resourceId').value;
+      
+      if (!name) {
+        alert('Please enter an organization name.');
+        return;
+      }
+      
+      const saveBtn = document.getElementById('saveResourceBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+      
+      try {
+        const resourceData = {
+          name,
+          type,
+          person: document.getElementById('resourcePerson').value.trim(),
+          phone: document.getElementById('resourcePhone').value.trim(),
+          fax: document.getElementById('resourceFax').value.trim(),
+          email: document.getElementById('resourceEmail').value.trim(),
+          website: document.getElementById('resourceWebsite').value.trim(),
+          address: document.getElementById('resourceAddress').value.trim(),
+          city: document.getElementById('resourceCity').value.trim(),
+          state: document.getElementById('resourceState').value.trim() || 'HI',
+          zip: document.getElementById('resourceZip').value.trim(),
+          island: document.getElementById('resourceIsland').value,
+          services: document.getElementById('resourceServices').value.trim(),
+          notes: document.getElementById('resourceNotes').value.trim(),
+          logo: document.getElementById('resourceLogoInput').value.trim(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (existingId) {
+          await db.collection('resources').doc(existingId).update(resourceData);
+        } else {
+          resourceData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          resourceData.order = resources.length;
+          await db.collection('resources').add(resourceData);
+        }
+        
+        closeResourceModal();
+        await loadResources();
+        showSuccess('resources');
+        
+      } catch (error) {
+        console.error('Error saving resource:', error);
+        alert('Failed to save resource. Please try again.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Resource';
+      }
+    }
+
+    // Delete resource
+    function deleteResource(id, name) {
+      document.getElementById('deleteResourceId').value = id;
+      document.getElementById('deleteResourceName').textContent = name;
+      document.getElementById('deleteResourceModal').classList.add('active');
+    }
+
+    function closeDeleteResourceModal() {
+      document.getElementById('deleteResourceModal').classList.remove('active');
+    }
+
+    async function confirmDeleteResource() {
+      const id = document.getElementById('deleteResourceId').value;
+      
+      try {
+        await db.collection('resources').doc(id).delete();
+        closeDeleteResourceModal();
+        await loadResources();
+        showSuccess('resources');
+      } catch (error) {
+        console.error('Error deleting resource:', error);
+        alert('Failed to delete resource. Please try again.');
       }
     }
 
