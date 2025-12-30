@@ -1656,10 +1656,17 @@
             const isRequest = event.isEventRequest === true;
             // Add different class for event requests vs regular events
             const eventClass = isRequest ? 'event-request' : '';
-            html += `<div class="day-event${isPast ? ' past-event' : ''} ${eventClass}" onclick="showCalendarEventDetail('${event.id}', ${isRequest})" title="${event.title}">${event.title}</div>`;
+            
+            if (isRequest) {
+              // Event requests open modal
+              html += `<div class="day-event${isPast ? ' past-event' : ''} ${eventClass}" onclick="showCalendarEventDetail('${event.id}', true)" title="${event.title}">${event.title}</div>`;
+            } else {
+              // Regular events scroll to current events section
+              html += `<div class="day-event${isPast ? ' past-event' : ''}" onclick="scrollToCurrentEvents()" title="${event.title}">${event.title}</div>`;
+            }
           });
           if (dayEvents.length > 2) {
-            html += `<div class="day-event more-events">+${dayEvents.length - 2} more</div>`;
+            html += `<div class="day-event more-events" onclick="scrollToCurrentEvents()">+${dayEvents.length - 2} more</div>`;
           }
           html += '</div>';
         }
@@ -1825,6 +1832,13 @@
     function goToToday() {
       currentCalendarDate = new Date();
       renderCalendar();
+    }
+    
+    function scrollToCurrentEvents() {
+      const currentEventsSection = document.getElementById('currentEventsSection');
+      if (currentEventsSection) {
+        currentEventsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
     
     // Close modal on escape key
