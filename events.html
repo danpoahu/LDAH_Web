@@ -1182,7 +1182,7 @@
   <!-- Firebase Init -->
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
+      apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk",
       authDomain: "ldah-932d5.firebaseapp.com",
       projectId: "ldah-932d5",
       storageBucket: "ldah-932d5.firebasestorage.app",
@@ -1303,10 +1303,16 @@
           renderPastEvents(pastEvents);
           
           // Load approved event requests and merge with events for calendar
-          loadApprovedEventRequests().then(() => {
-            // Render calendar with all events (including approved requests)
-            renderCalendar();
-          });
+          // Use setTimeout to ensure the global function is available
+          setTimeout(async () => {
+            try {
+              await loadApprovedEventRequests();
+              renderCalendar();
+            } catch (err) {
+              console.error('Error loading event requests for calendar:', err);
+              renderCalendar(); // Still render calendar even if requests fail
+            }
+          }, 100);
           
         } catch (error) {
           console.error('❌ Error loading events:', error);
@@ -1548,28 +1554,51 @@
     
     // Load approved/scheduled event requests from Firebase
     async function loadApprovedEventRequests() {
+      console.log('📅 Starting to load approved event requests...');
       try {
-        const snapshot = await db.collection('eventRequests')
-          .where('status', 'in', ['approved', 'scheduled'])
-          .get();
+        // Check if db is available
+        if (typeof db === 'undefined') {
+          console.error('❌ Firebase db is not defined!');
+          return;
+        }
         
-        window.approvedEventRequests = snapshot.docs.map(doc => {
+        // Sign in anonymously to get read access
+        const auth = firebase.auth();
+        if (!auth.currentUser) {
+          console.log('📅 Signing in anonymously for eventRequests access...');
+          await auth.signInAnonymously();
+        }
+        
+        // Get all event requests and filter client-side (avoids needing composite index)
+        const snapshot = await db.collection('eventRequests').get();
+        console.log('📅 Total event requests in collection:', snapshot.size);
+        
+        // Log all docs for debugging
+        snapshot.docs.forEach(doc => {
           const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.eventInfo ? (data.eventInfo.substring(0, 50) + (data.eventInfo.length > 50 ? '...' : '')) : 'Community Event',
-            eventDate: data.preferredDate,
-            time: data.preferredTime,
-            description: data.eventInfo,
-            location: data.sponsor || 'TBD',
-            requesterName: data.name,
-            requesterEmail: data.email,
-            isEventRequest: true, // Flag to identify this as a request vs regular event
-            status: data.status
-          };
+          console.log('📋 Event request:', doc.id, 'status:', data.status, 'date:', data.preferredDate);
         });
         
-        console.log('📅 Loaded approved event requests:', window.approvedEventRequests.length);
+        window.approvedEventRequests = snapshot.docs
+          .map(doc => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              title: data.eventInfo ? (data.eventInfo.substring(0, 50) + (data.eventInfo.length > 50 ? '...' : '')) : 'Community Event',
+              eventDate: data.preferredDate,
+              time: data.preferredTime,
+              description: data.eventInfo,
+              location: data.sponsor || 'TBD',
+              requesterName: data.name,
+              requesterEmail: data.email,
+              isEventRequest: true,
+              status: data.status
+            };
+          })
+          .filter(request => request.status === 'approved' || request.status === 'scheduled' || request.status === 'completed');
+        
+        console.log('📅 Filtered approved/scheduled event requests:', window.approvedEventRequests.length);
+        console.log('📅 Event requests:', window.approvedEventRequests);
       } catch (error) {
         console.error('Error loading approved event requests:', error);
         window.approvedEventRequests = [];
