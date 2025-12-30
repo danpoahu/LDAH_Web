@@ -703,6 +703,16 @@
       background: linear-gradient(135deg, #9ca3af, #6b7280);
     }
     
+    .day-event.event-request {
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      border-left: 3px solid #0f766e;
+    }
+    
+    .day-event.event-request.past-event {
+      background: linear-gradient(135deg, #5eead4, #99f6e4);
+      color: #0f766e;
+    }
+    
     .more-events {
       background: var(--accent-teal);
       color: var(--primary-blue);
@@ -1292,8 +1302,11 @@
           renderCurrentEvents(upcomingEvents);
           renderPastEvents(pastEvents);
           
-          // Render calendar with all events
-          renderCalendar();
+          // Load approved event requests and merge with events for calendar
+          loadApprovedEventRequests().then(() => {
+            // Render calendar with all events (including approved requests)
+            renderCalendar();
+          });
           
         } catch (error) {
           console.error('❌ Error loading events:', error);
@@ -1530,8 +1543,48 @@
     let currentCalendarDate = new Date();
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     
+    // Store approved event requests separately
+    window.approvedEventRequests = [];
+    
+    // Load approved/scheduled event requests from Firebase
+    async function loadApprovedEventRequests() {
+      try {
+        const snapshot = await db.collection('eventRequests')
+          .where('status', 'in', ['approved', 'scheduled'])
+          .get();
+        
+        window.approvedEventRequests = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.eventInfo ? (data.eventInfo.substring(0, 50) + (data.eventInfo.length > 50 ? '...' : '')) : 'Community Event',
+            eventDate: data.preferredDate,
+            time: data.preferredTime,
+            description: data.eventInfo,
+            location: data.sponsor || 'TBD',
+            requesterName: data.name,
+            requesterEmail: data.email,
+            isEventRequest: true, // Flag to identify this as a request vs regular event
+            status: data.status
+          };
+        });
+        
+        console.log('📅 Loaded approved event requests:', window.approvedEventRequests.length);
+      } catch (error) {
+        console.error('Error loading approved event requests:', error);
+        window.approvedEventRequests = [];
+      }
+    }
+    
+    // Get all calendar items (events + approved requests)
+    function getAllCalendarItems() {
+      const regularEvents = window.allEventsData || [];
+      const approvedRequests = window.approvedEventRequests || [];
+      return [...regularEvents, ...approvedRequests];
+    }
+    
     function renderCalendar() {
-      const allEvents = window.allEventsData || [];
+      const allCalendarItems = getAllCalendarItems();
       const year = currentCalendarDate.getFullYear();
       const month = currentCalendarDate.getMonth();
       
@@ -1561,7 +1614,7 @@
         currentDayDate.setHours(0, 0, 0, 0);
         
         const isToday = currentDayDate.getTime() === today.getTime();
-        const dayEvents = getEventsForDate(dateStr, allEvents);
+        const dayEvents = getEventsForDate(dateStr, allCalendarItems);
         
         html += `<div class="calendar-day${isToday ? ' today' : ''}">`;
         html += `<div class="day-number">${day}</div>`;
@@ -1571,7 +1624,10 @@
           const displayEvents = dayEvents.slice(0, 2);
           displayEvents.forEach(event => {
             const isPast = new Date(event.eventDate + 'T00:00:00') < today;
-            html += `<div class="day-event${isPast ? ' past-event' : ''}" onclick="showCalendarEventDetail('${event.id}')" title="${event.title}">${event.title}</div>`;
+            const isRequest = event.isEventRequest === true;
+            // Add different class for event requests vs regular events
+            const eventClass = isRequest ? 'event-request' : '';
+            html += `<div class="day-event${isPast ? ' past-event' : ''} ${eventClass}" onclick="showCalendarEventDetail('${event.id}', ${isRequest})" title="${event.title}">${event.title}</div>`;
           });
           if (dayEvents.length > 2) {
             html += `<div class="day-event more-events">+${dayEvents.length - 2} more</div>`;
@@ -1591,26 +1647,54 @@
       document.getElementById('calendarDays').innerHTML = html;
     }
     
-    function getEventsForDate(dateStr, allEvents) {
-      return allEvents.filter(event => {
-        if (!event.eventDate) return false;
-        return event.eventDate === dateStr;
+    function getEventsForDate(dateStr, allCalendarItems) {
+      return allCalendarItems.filter(item => {
+        if (!item.eventDate) return false;
+        return item.eventDate === dateStr;
       });
     }
     
-    function showCalendarEventDetail(eventId) {
-      const event = window.allEventsData.find(e => e.id === eventId);
+    function showCalendarEventDetail(eventId, isEventRequest = false) {
+      let event;
+      
+      if (isEventRequest) {
+        // Find in approved event requests
+        event = window.approvedEventRequests.find(e => e.id === eventId);
+      } else {
+        // Find in regular events
+        event = window.allEventsData.find(e => e.id === eventId);
+      }
+      
       if (!event) return;
       
       const eventDate = new Date(event.eventDate + 'T00:00:00');
       const formattedDate = eventDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
       
-      document.getElementById('eventDetailTitle').textContent = event.title;
+      document.getElementById('eventDetailTitle').textContent = isEventRequest ? 'Community Event Request' : event.title;
       
       let bodyHtml = '';
       
-      if (event.imageUrl && !event.imageUrl.toLowerCase().includes('.pdf')) {
-        bodyHtml += `<img src="${event.imageUrl}" alt="${event.title}" class="event-detail-image">`;
+      // For regular events, show the image/poster
+      if (!isEventRequest && event.imageUrl && !event.imageUrl.toLowerCase().includes('.pdf')) {
+        bodyHtml += `<img src="${event.imageUrl}" alt="${event.title}" class="event-detail-image" style="cursor: pointer;" onclick="window.open('${event.imageUrl}', '_blank')">`;
+      }
+      
+      // Event request badge
+      if (isEventRequest) {
+        bodyHtml += `
+          <div style="display: inline-block; padding: 0.5rem 1rem; background: linear-gradient(135deg, #4DD0E1, #26C6DA); color: #004E7C; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem;">
+            📋 Community Requested Event
+          </div>
+        `;
+      }
+      
+      // Title for event requests (since we use a generic modal title)
+      if (isEventRequest && event.description) {
+        bodyHtml += `
+          <div class="event-detail-item" style="margin-bottom: 0.5rem;">
+            <div style="font-weight: 700; color: #004E7C; font-size: 1.1rem;">${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}</div>
+          </div>
+        `;
       }
       
       bodyHtml += `
@@ -1638,7 +1722,8 @@
         `;
       }
       
-      if (event.description) {
+      // Show full description for regular events
+      if (!isEventRequest && event.description) {
         bodyHtml += `
           <div class="event-detail-item" style="margin-top: 1rem;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
@@ -1647,19 +1732,44 @@
         `;
       }
       
-      // Add sign up button if event has signup enabled
-      if (event.enableSignup) {
+      // Show requester info for event requests
+      if (isEventRequest) {
         bodyHtml += `
-          <div style="margin-top: 1.5rem; text-align: center;">
-            <button onclick="closeEventDetailModal(); openSignupModal('${event.id}');" style="display: inline-block; padding: 0.75rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Sign Up →</button>
+          <div class="event-detail-item" style="margin-top: 1rem; padding: 0.75rem; background: #f0fdfa; border-radius: 8px;">
+            <div style="font-size: 0.9rem; color: #666;">
+              <strong>Requested by:</strong> ${event.requesterName || 'Community Member'}
+            </div>
           </div>
         `;
-      } else if (event.registrationUrl) {
-        bodyHtml += `
-          <div style="margin-top: 1.5rem; text-align: center;">
-            <a href="${event.registrationUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 0.75rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; text-decoration: none; border-radius: 50px; font-weight: 600;">Register Now →</a>
-          </div>
-        `;
+      }
+      
+      // For regular events - add sign up or registration buttons
+      if (!isEventRequest) {
+        if (event.enableSignup) {
+          bodyHtml += `
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <button onclick="closeEventDetailModal(); openSignupModal('${event.id}');" style="display: inline-block; padding: 0.75rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">Sign Up →</button>
+            </div>
+          `;
+        } else if (event.registrationUrl) {
+          bodyHtml += `
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <a href="${event.registrationUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 0.75rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; text-decoration: none; border-radius: 50px; font-weight: 600;">Register Now →</a>
+            </div>
+          `;
+        }
+        
+        // Add "View Full Poster" button for events with images
+        if (event.imageUrl) {
+          const isPDF = event.imageUrl.toLowerCase().includes('.pdf');
+          bodyHtml += `
+            <div style="margin-top: ${event.enableSignup || event.registrationUrl ? '0.75rem' : '1.5rem'}; text-align: center;">
+              <a href="${event.imageUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 0.5rem 1.5rem; background: white; color: #004E7C; text-decoration: none; border-radius: 50px; font-weight: 600; border: 2px solid #004E7C; font-size: 0.9rem;">
+                ${isPDF ? '📄 View Event PDF' : '🖼️ View Full Poster'}
+              </a>
+            </div>
+          `;
+        }
       }
       
       document.getElementById('eventDetailBody').innerHTML = bodyHtml;
