@@ -1978,8 +1978,16 @@
       grid.innerHTML = '';
       
       try {
-        const snapshot = await db.collection('gallery').orderBy('order').get();
+        let snapshot;
+        try {
+          snapshot = await db.collection('gallery').orderBy('order').get();
+        } catch (indexError) {
+          console.log('Index not available, falling back to client-side sort');
+          snapshot = await db.collection('gallery').get();
+        }
+        
         galleryPhotos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        galleryPhotos.sort((a, b) => (a.order || 0) - (b.order || 0));
         
         loading.style.display = 'none';
         
@@ -1994,7 +2002,10 @@
         console.error('Error loading gallery:', error);
         loading.style.display = 'none';
         empty.style.display = 'block';
-        empty.innerHTML = '<p>Error loading gallery. Please refresh.</p>';
+        empty.innerHTML = `
+          <p>Error loading gallery. Make sure Firestore rules are deployed.</p>
+          <button class="btn-add-person" onclick="openGalleryModal()" style="background: linear-gradient(135deg, #10b981, #059669); margin-top: 1rem;">+ Add Your First Photo</button>
+        `;
       }
     }
     
