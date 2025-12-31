@@ -999,9 +999,6 @@
     </div>
   </div>
 
-  <!-- Add/Edit Resource Modal -->
-  <div class="modal-overlay" id="resourceModal">
-
   <!-- Add/Edit Gallery Photo Modal -->
   <div class="modal-overlay" id="galleryModal">
     <div class="modal-box" style="max-width: 500px;">
@@ -1021,7 +1018,7 @@
           <button type="button" class="btn-upload-photo" onclick="document.getElementById('galleryPhotoInput').click()" style="background: linear-gradient(135deg, #10b981, #059669);">
             📷 Choose Photo
           </button>
-          <p class="photo-hint">Max 2MB. JPG, PNG, or WebP.</p>
+          <p class="photo-hint">Max 5MB. JPG, PNG, or WebP.</p>
           <div class="upload-progress" id="galleryUploadProgress">
             <div class="upload-progress-bar" id="galleryUploadProgressBar"></div>
           </div>
@@ -1070,7 +1067,8 @@
     </div>
   </div>
 
-  <!-- Add/Edit Resource Modal (original) -->
+  <!-- Add/Edit Resource Modal -->
+  <div class="modal-overlay" id="resourceModal">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
         <h3 id="resourceModalTitle">Add Resource</h3>
@@ -1225,7 +1223,8 @@
 
     // Password
     const CMS_PASSWORD = 'ldah2024';
-    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB for team/board photos
+    const MAX_GALLERY_FILE_SIZE = 5 * 1024 * 1024; // 5MB for gallery photos
 
     // State
     let teamMembers = [];
@@ -2160,8 +2159,8 @@
       const file = event.target.files[0];
       if (!file) return;
       
-      if (file.size > MAX_FILE_SIZE) {
-        alert('Photo must be smaller than 2MB.');
+      if (file.size > MAX_GALLERY_FILE_SIZE) {
+        alert('Photo must be smaller than 5MB.');
         return;
       }
       
