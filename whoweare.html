@@ -961,48 +961,10 @@
             </div>
         </div>
 
-        <div class="gallery-grid">
-            <div class="gallery-item" onclick="openLightbox(0)">
-                <img src="assets/gallery/384419106_773304831474792_822951070977656541_n.jpg" alt="LDAH Community Event">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(1)">
-                <img src="assets/gallery/kosraekids.jpg" alt="Kosrae Kids">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(2)">
-                <img src="assets/gallery/366308606_737851391686803_4056530556721101084_n.jpg" alt="LDAH Event">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(3)">
-                <img src="assets/gallery/367978943_741945864610689_3526387872520216538_n.jpg" alt="Community Outreach">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(4)">
-                <img src="assets/gallery/361967783_722383963233546_4251162667766617022_n.jpg" alt="LDAH Workshop">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(5)">
-                <img src="assets/gallery/394705360_789016399903635_6323687903415276621_n.jpg" alt="Family Support Event">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(6)">
-                <img src="assets/gallery/395813424_790817796390162_8833441711604382934_n.jpg" alt="Training Session">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(7)">
-                <img src="assets/gallery/385815536_778018397670102_8084649761247443676_n.jpg" alt="Community Event">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(8)">
-                <img src="assets/gallery/400979273_803779668427308_6105668977447761562_n.jpg" alt="LDAH Activity">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(9)">
-                <img src="assets/gallery/tmc-kona-ldah.jpg" alt="Kona Event">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(10)">
-                <img src="assets/gallery/Outreach-4-2-23.jpg" alt="Outreach Event">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(11)">
-                <img src="assets/gallery/346633256_592880162814484_5264848762991946190_n.jpg" alt="LDAH Moment">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(12)">
-                <img src="assets/gallery/sw3.jpg" alt="Special Event">
-            </div>
-            <div class="gallery-item" onclick="openLightbox(13)">
-                <img src="assets/gallery/20231207_175409.jpg" alt="December Event">
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Gallery items will be loaded from Firebase -->
+            <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">
+                Loading gallery...
             </div>
         </div>
     </section>
@@ -1292,24 +1254,67 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Gallery images array
-        const galleryImages = [
-            'assets/gallery/384419106_773304831474792_822951070977656541_n.jpg',
-            'assets/gallery/kosraekids.jpg',
-            'assets/gallery/366308606_737851391686803_4056530556721101084_n.jpg',
-            'assets/gallery/367978943_741945864610689_3526387872520216538_n.jpg',
-            'assets/gallery/361967783_722383963233546_4251162667766617022_n.jpg',
-            'assets/gallery/394705360_789016399903635_6323687903415276621_n.jpg',
-            'assets/gallery/395813424_790817796390162_8833441711604382934_n.jpg',
-            'assets/gallery/385815536_778018397670102_8084649761247443676_n.jpg',
-            'assets/gallery/400979273_803779668427308_6105668977447761562_n.jpg',
-            'assets/gallery/tmc-kona-ldah.jpg',
-            'assets/gallery/Outreach-4-2-23.jpg',
-            'assets/gallery/346633256_592880162814484_5264848762991946190_n.jpg',
-            'assets/gallery/sw3.jpg',
-            'assets/gallery/20231207_175409.jpg'
-        ];
+        // Gallery images array - will be populated from Firebase or fallback
+        let galleryImages = [];
         let currentImageIndex = 0;
+        
+        // Fallback gallery images (used if Firebase collection is empty)
+        const fallbackGalleryImages = [
+            { imageUrl: 'assets/gallery/384419106_773304831474792_822951070977656541_n.jpg', caption: 'LDAH Community Event' },
+            { imageUrl: 'assets/gallery/kosraekids.jpg', caption: 'Kosrae Kids' },
+            { imageUrl: 'assets/gallery/366308606_737851391686803_4056530556721101084_n.jpg', caption: 'LDAH Event' },
+            { imageUrl: 'assets/gallery/367978943_741945864610689_3526387872520216538_n.jpg', caption: 'Community Outreach' },
+            { imageUrl: 'assets/gallery/361967783_722383963233546_4251162667766617022_n.jpg', caption: 'LDAH Workshop' },
+            { imageUrl: 'assets/gallery/394705360_789016399903635_6323687903415276621_n.jpg', caption: 'Family Support Event' },
+            { imageUrl: 'assets/gallery/395813424_790817796390162_8833441711604382934_n.jpg', caption: 'Training Session' },
+            { imageUrl: 'assets/gallery/385815536_778018397670102_8084649761247443676_n.jpg', caption: 'Community Event' },
+            { imageUrl: 'assets/gallery/400979273_803779668427308_6105668977447761562_n.jpg', caption: 'LDAH Activity' },
+            { imageUrl: 'assets/gallery/tmc-kona-ldah.jpg', caption: 'Kona Event' },
+            { imageUrl: 'assets/gallery/Outreach-4-2-23.jpg', caption: 'Outreach Event' },
+            { imageUrl: 'assets/gallery/346633256_592880162814484_5264848762991946190_n.jpg', caption: 'LDAH Moment' },
+            { imageUrl: 'assets/gallery/sw3.jpg', caption: 'Special Event' },
+            { imageUrl: 'assets/gallery/20231207_175409.jpg', caption: 'December Event' }
+        ];
+        
+        // Load gallery from Firebase
+        async function loadGallery() {
+            const grid = document.getElementById('galleryGrid');
+            
+            try {
+                const snapshot = await db.collection('gallery').orderBy('order').get();
+                
+                if (snapshot.empty) {
+                    // Use fallback images if Firebase collection is empty
+                    console.log('📷 Using fallback gallery images');
+                    galleryImages = fallbackGalleryImages;
+                } else {
+                    galleryImages = snapshot.docs.map(doc => doc.data());
+                    console.log('📷 Loaded', galleryImages.length, 'gallery images from Firebase');
+                }
+                
+                renderGallery();
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                // Use fallback on error
+                galleryImages = fallbackGalleryImages;
+                renderGallery();
+            }
+        }
+        
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            
+            if (galleryImages.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">No photos in gallery yet.</div>';
+                return;
+            }
+            
+            grid.innerHTML = galleryImages.map((photo, index) => `
+                <div class="gallery-item" onclick="openLightbox(${index})">
+                    <img src="${photo.imageUrl}" alt="${photo.caption || 'LDAH Gallery Photo'}">
+                </div>
+            `).join('');
+        }
 
         // Lightbox with carousel
         function openLightbox(index) {
@@ -1320,7 +1325,8 @@
         }
 
         function updateLightboxImage() {
-            document.getElementById('lightboxImg').src = galleryImages[currentImageIndex];
+            const photo = galleryImages[currentImageIndex];
+            document.getElementById('lightboxImg').src = photo.imageUrl;
             document.getElementById('lightboxCounter').textContent = (currentImageIndex + 1) + ' / ' + galleryImages.length;
         }
 
@@ -1558,9 +1564,13 @@
         }
         
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadHeaderFooter);
+            document.addEventListener('DOMContentLoaded', () => {
+                loadHeaderFooter();
+                loadGallery();
+            });
         } else {
             loadHeaderFooter();
+            loadGallery();
         }
     </script>
     <script src="modal.js"></script>

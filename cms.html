@@ -557,6 +557,119 @@
       margin-bottom: 1rem;
     }
     
+    /* Gallery CMS Grid */
+    .gallery-cms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .gallery-card {
+      background: #f8f9fa;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: grab;
+      position: relative;
+    }
+    
+    .gallery-card:hover {
+      border-color: var(--primary-blue);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .gallery-card.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+    
+    .gallery-card.drag-over {
+      border-color: var(--accent-teal);
+      background: #e8f4f8;
+    }
+    
+    .gallery-card-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .gallery-card-placeholder {
+      width: 100%;
+      height: 150px;
+      background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #999;
+    }
+    
+    .gallery-card-info {
+      padding: 1rem;
+    }
+    
+    .gallery-card-info h4 {
+      color: var(--primary-blue);
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .gallery-card-info .caption {
+      color: var(--text-light);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .gallery-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0 1rem 1rem;
+    }
+    
+    .gallery-card-actions button {
+      flex: 1;
+      padding: 0.4rem;
+      font-size: 0.8rem;
+    }
+    
+    .gallery-order-badge {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      background: var(--primary-blue);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      z-index: 1;
+    }
+    
+    .gallery-drag-handle {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      color: white;
+      background: rgba(0,0,0,0.4);
+      border-radius: 4px;
+      padding: 0.25rem 0.5rem;
+      cursor: grab;
+      font-size: 1rem;
+      z-index: 1;
+    }
+    
     /* Resources Grid */
     .resources-grid {
       display: flex;
@@ -715,6 +828,7 @@
       <div class="cms-tabs">
         <button class="tab active" data-tab="team">👥 Our Team</button>
         <button class="tab" data-tab="board">🏆 Board of Directors</button>
+        <button class="tab" data-tab="gallery">📸 Photo Gallery</button>
         <button class="tab" data-tab="resources">📚 Resources</button>
       </div>
       
@@ -757,6 +871,28 @@
             <button class="btn-add-person" onclick="openPersonModal('board')">+ Add Your First Board Member</button>
           </div>
           <div class="people-grid" id="boardGrid"></div>
+        </div>
+      </div>
+      
+      <!-- Gallery Tab -->
+      <div class="tab-content" id="gallery-tab">
+        <div class="content-section">
+          <h2>📸 Manage Photo Gallery</h2>
+          <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+            Add, edit, or remove photos from the gallery. Drag cards to reorder. Changes appear on the Who We Are page.
+          </p>
+          
+          <div class="success-message" id="gallerySuccess">Changes saved successfully!</div>
+          
+          <button class="btn-add-person" onclick="openGalleryModal()" style="background: linear-gradient(135deg, #10b981, #059669);">+ Add Photo</button>
+          
+          <div id="galleryLoading" class="loading-spinner">Loading gallery...</div>
+          <div id="galleryEmpty" class="empty-state" style="display:none;">
+            <p>No photos in gallery yet.</p>
+            <button class="btn-add-person" onclick="openGalleryModal()" style="background: linear-gradient(135deg, #10b981, #059669);">+ Add Your First Photo</button>
+          </div>
+          <div id="galleryCount" style="color: var(--text-light); margin-bottom: 1rem;"></div>
+          <div class="gallery-cms-grid" id="galleryGrid"></div>
         </div>
       </div>
       
@@ -865,6 +1001,76 @@
 
   <!-- Add/Edit Resource Modal -->
   <div class="modal-overlay" id="resourceModal">
+
+  <!-- Add/Edit Gallery Photo Modal -->
+  <div class="modal-overlay" id="galleryModal">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #10b981, #059669);">
+        <h3 id="galleryModalTitle" style="color: white;">Add Photo</h3>
+        <button class="modal-close" onclick="closeGalleryModal()" style="color: white;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="galleryPhotoId">
+        <input type="hidden" id="galleryPhotoUrl">
+        
+        <div class="photo-upload-area">
+          <div id="galleryPreviewContainer">
+            <div class="photo-preview-placeholder" id="galleryPlaceholder" style="width: 200px; height: 150px; border-radius: 8px; font-size: 3rem;">📷</div>
+          </div>
+          <input type="file" id="galleryPhotoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handleGalleryPhotoSelect(event)">
+          <button type="button" class="btn-upload-photo" onclick="document.getElementById('galleryPhotoInput').click()" style="background: linear-gradient(135deg, #10b981, #059669);">
+            📷 Choose Photo
+          </button>
+          <p class="photo-hint">Max 2MB. JPG, PNG, or WebP.</p>
+          <div class="upload-progress" id="galleryUploadProgress">
+            <div class="upload-progress-bar" id="galleryUploadProgressBar"></div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Photo Caption / Alt Text *</label>
+          <input type="text" id="galleryCaption" placeholder="e.g., LDAH Community Event 2024" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Or Enter Image URL</label>
+          <input type="url" id="galleryImageUrl" placeholder="https://example.com/photo.jpg" oninput="previewGalleryUrl()">
+          <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">
+            Tip: You can paste a URL from Firebase Storage, Instagram, or any public image.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeGalleryModal()">Cancel</button>
+        <button class="btn-save" id="saveGalleryBtn" onclick="saveGalleryPhoto()" style="background: linear-gradient(135deg, #10b981, #059669);">Save Photo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Gallery Photo Modal -->
+  <div class="modal-overlay" id="deleteGalleryModal">
+    <div class="modal-box" style="max-width: 400px;">
+      <div class="modal-header" style="background: var(--danger);">
+        <h3 style="color: white;">Delete Photo</h3>
+        <button class="modal-close" onclick="closeDeleteGalleryModal()" style="color: white;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <img id="deleteGalleryPreview" src="" alt="" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;">
+        </div>
+        <p>Are you sure you want to remove this photo?</p>
+        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This action cannot be undone.</p>
+        <input type="hidden" id="deleteGalleryId">
+        <input type="hidden" id="deleteGalleryPhotoUrl">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeDeleteGalleryModal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDeleteGallery()" style="flex: none; padding: 0.75rem 1.5rem;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Resource Modal (original) -->
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
         <h3 id="resourceModalTitle">Add Resource</h3>
@@ -1024,8 +1230,11 @@
     // State
     let teamMembers = [];
     let boardMembers = [];
+    let galleryPhotos = [];
     let selectedPhotoFile = null;
+    let selectedGalleryFile = null;
     let draggedItem = null;
+    let draggedGalleryItem = null;
 
     // ===== Authentication =====
     function handleLogin(event) {
@@ -1059,6 +1268,7 @@
         await auth.signInAnonymously();
         loadTeamMembers();
         loadBoardMembers();
+        loadGallery();
         loadResources();
       } catch (error) {
         console.error('Firebase auth error:', error);
@@ -1753,6 +1963,335 @@
       } catch (error) {
         console.error('Error deleting resource:', error);
         alert('Failed to delete resource. Please try again.');
+      }
+    }
+
+    // ===== Gallery Functions =====
+    async function loadGallery() {
+      const loading = document.getElementById('galleryLoading');
+      const empty = document.getElementById('galleryEmpty');
+      const grid = document.getElementById('galleryGrid');
+      const countEl = document.getElementById('galleryCount');
+      
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+      
+      try {
+        const snapshot = await db.collection('gallery').orderBy('order').get();
+        galleryPhotos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        loading.style.display = 'none';
+        
+        if (galleryPhotos.length === 0) {
+          empty.style.display = 'block';
+          countEl.textContent = '';
+        } else {
+          countEl.textContent = `${galleryPhotos.length} photos in gallery`;
+          renderGalleryGrid();
+        }
+      } catch (error) {
+        console.error('Error loading gallery:', error);
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        empty.innerHTML = '<p>Error loading gallery. Please refresh.</p>';
+      }
+    }
+    
+    function renderGalleryGrid() {
+      const grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '';
+      
+      galleryPhotos.forEach((photo, index) => {
+        const card = document.createElement('div');
+        card.className = 'gallery-card';
+        card.draggable = true;
+        card.dataset.id = photo.id;
+        card.dataset.index = index;
+        
+        // Drag events
+        card.addEventListener('dragstart', handleGalleryDragStart);
+        card.addEventListener('dragend', handleGalleryDragEnd);
+        card.addEventListener('dragover', handleGalleryDragOver);
+        card.addEventListener('dragleave', handleGalleryDragLeave);
+        card.addEventListener('drop', handleGalleryDrop);
+        
+        card.innerHTML = `
+          <div class="gallery-order-badge">${index + 1}</div>
+          <div class="gallery-drag-handle">⋮⋮</div>
+          ${photo.imageUrl 
+            ? `<img src="${photo.imageUrl}" alt="${photo.caption || 'Gallery photo'}" class="gallery-card-image" onerror="this.onerror=null; this.parentElement.innerHTML = this.parentElement.innerHTML.replace(/<img[^>]*>/, '<div class=\\'gallery-card-placeholder\\'>📷</div>');">`
+            : '<div class="gallery-card-placeholder">📷</div>'
+          }
+          <div class="gallery-card-info">
+            <h4>${photo.caption || 'Untitled'}</h4>
+          </div>
+          <div class="gallery-card-actions">
+            <button class="btn-edit" onclick="editGalleryPhoto('${photo.id}')">✏️ Edit</button>
+            <button class="btn-delete" onclick="deleteGalleryPhoto('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', '${photo.imageUrl || ''}')">🗑️</button>
+          </div>
+        `;
+        
+        grid.appendChild(card);
+      });
+    }
+    
+    // Gallery Drag and Drop
+    function handleGalleryDragStart(e) {
+      draggedGalleryItem = e.target.closest('.gallery-card');
+      draggedGalleryItem.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    
+    function handleGalleryDragEnd(e) {
+      if (draggedGalleryItem) {
+        draggedGalleryItem.classList.remove('dragging');
+      }
+      document.querySelectorAll('.gallery-card').forEach(card => {
+        card.classList.remove('drag-over');
+      });
+      draggedGalleryItem = null;
+    }
+    
+    function handleGalleryDragOver(e) {
+      e.preventDefault();
+      const card = e.target.closest('.gallery-card');
+      if (card && card !== draggedGalleryItem) {
+        card.classList.add('drag-over');
+      }
+    }
+    
+    function handleGalleryDragLeave(e) {
+      const card = e.target.closest('.gallery-card');
+      if (card) {
+        card.classList.remove('drag-over');
+      }
+    }
+    
+    async function handleGalleryDrop(e) {
+      e.preventDefault();
+      const targetCard = e.target.closest('.gallery-card');
+      
+      if (!targetCard || !draggedGalleryItem || targetCard === draggedGalleryItem) return;
+      
+      targetCard.classList.remove('drag-over');
+      
+      const draggedId = draggedGalleryItem.dataset.id;
+      const targetId = targetCard.dataset.id;
+      
+      const draggedIndex = galleryPhotos.findIndex(p => p.id === draggedId);
+      const targetIndex = galleryPhotos.findIndex(p => p.id === targetId);
+      
+      // Reorder array
+      const [removed] = galleryPhotos.splice(draggedIndex, 1);
+      galleryPhotos.splice(targetIndex, 0, removed);
+      
+      // Update order in Firebase
+      const batch = db.batch();
+      galleryPhotos.forEach((photo, index) => {
+        const ref = db.collection('gallery').doc(photo.id);
+        batch.update(ref, { order: index });
+      });
+      
+      try {
+        await batch.commit();
+        renderGalleryGrid();
+        showSuccess('gallery');
+      } catch (error) {
+        console.error('Error reordering gallery:', error);
+        loadGallery(); // Reload on error
+      }
+    }
+    
+    // Gallery Modal Functions
+    function openGalleryModal(photo = null) {
+      document.getElementById('galleryModal').classList.add('active');
+      selectedGalleryFile = null;
+      
+      // Reset preview
+      document.getElementById('galleryPreviewContainer').innerHTML = 
+        '<div class="photo-preview-placeholder" id="galleryPlaceholder" style="width: 200px; height: 150px; border-radius: 8px; font-size: 3rem;">📷</div>';
+      document.getElementById('galleryUploadProgress').style.display = 'none';
+      
+      if (photo) {
+        document.getElementById('galleryModalTitle').textContent = 'Edit Photo';
+        document.getElementById('galleryPhotoId').value = photo.id;
+        document.getElementById('galleryPhotoUrl').value = photo.imageUrl || '';
+        document.getElementById('galleryCaption').value = photo.caption || '';
+        document.getElementById('galleryImageUrl').value = photo.imageUrl || '';
+        
+        if (photo.imageUrl) {
+          document.getElementById('galleryPreviewContainer').innerHTML = 
+            `<img src="${photo.imageUrl}" style="width: 200px; height: 150px; object-fit: cover; border-radius: 8px;">`;
+        }
+      } else {
+        document.getElementById('galleryModalTitle').textContent = 'Add Photo';
+        document.getElementById('galleryPhotoId').value = '';
+        document.getElementById('galleryPhotoUrl').value = '';
+        document.getElementById('galleryCaption').value = '';
+        document.getElementById('galleryImageUrl').value = '';
+      }
+    }
+    
+    function closeGalleryModal() {
+      document.getElementById('galleryModal').classList.remove('active');
+      selectedGalleryFile = null;
+    }
+    
+    function editGalleryPhoto(id) {
+      const photo = galleryPhotos.find(p => p.id === id);
+      if (photo) {
+        openGalleryModal(photo);
+      }
+    }
+    
+    function handleGalleryPhotoSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (file.size > MAX_FILE_SIZE) {
+        alert('Photo must be smaller than 2MB.');
+        return;
+      }
+      
+      if (!file.type.match(/^image\/(jpeg|png|webp)$/)) {
+        alert('Please select a JPG, PNG, or WebP image.');
+        return;
+      }
+      
+      selectedGalleryFile = file;
+      
+      // Preview
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('galleryPreviewContainer').innerHTML = 
+          `<img src="${e.target.result}" style="width: 200px; height: 150px; object-fit: cover; border-radius: 8px;">`;
+        document.getElementById('galleryImageUrl').value = ''; // Clear URL input
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    function previewGalleryUrl() {
+      const url = document.getElementById('galleryImageUrl').value.trim();
+      if (url) {
+        document.getElementById('galleryPreviewContainer').innerHTML = 
+          `<img src="${url}" style="width: 200px; height: 150px; object-fit: cover; border-radius: 8px;" onerror="this.parentElement.innerHTML = '<div class=\\'photo-preview-placeholder\\' style=\\'width: 200px; height: 150px; border-radius: 8px; font-size: 3rem;\\'>❌</div>';">`;
+        selectedGalleryFile = null; // Clear file selection
+      }
+    }
+    
+    async function saveGalleryPhoto() {
+      const caption = document.getElementById('galleryCaption').value.trim();
+      const urlInput = document.getElementById('galleryImageUrl').value.trim();
+      const existingId = document.getElementById('galleryPhotoId').value;
+      const existingUrl = document.getElementById('galleryPhotoUrl').value;
+      
+      if (!caption) {
+        alert('Please enter a caption for the photo.');
+        return;
+      }
+      
+      if (!selectedGalleryFile && !urlInput && !existingUrl) {
+        alert('Please select a photo or enter an image URL.');
+        return;
+      }
+      
+      const saveBtn = document.getElementById('saveGalleryBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+      
+      try {
+        let imageUrl = urlInput || existingUrl;
+        
+        // Upload new file if selected
+        if (selectedGalleryFile) {
+          const progressBar = document.getElementById('galleryUploadProgress');
+          const progressFill = document.getElementById('galleryUploadProgressBar');
+          progressBar.style.display = 'block';
+          
+          const fileName = `gallery/${Date.now()}_${selectedGalleryFile.name}`;
+          const storageRef = storage.ref(fileName);
+          const uploadTask = storageRef.put(selectedGalleryFile);
+          
+          imageUrl = await new Promise((resolve, reject) => {
+            uploadTask.on('state_changed',
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressFill.style.width = progress + '%';
+              },
+              reject,
+              async () => {
+                const url = await uploadTask.snapshot.ref.getDownloadURL();
+                resolve(url);
+              }
+            );
+          });
+          
+          progressBar.style.display = 'none';
+        }
+        
+        const photoData = {
+          caption,
+          imageUrl,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (existingId) {
+          await db.collection('gallery').doc(existingId).update(photoData);
+        } else {
+          photoData.order = galleryPhotos.length;
+          photoData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          await db.collection('gallery').add(photoData);
+        }
+        
+        closeGalleryModal();
+        await loadGallery();
+        showSuccess('gallery');
+        
+      } catch (error) {
+        console.error('Error saving photo:', error);
+        alert('Failed to save photo. Please try again.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Photo';
+      }
+    }
+    
+    function deleteGalleryPhoto(id, caption, imageUrl) {
+      document.getElementById('deleteGalleryId').value = id;
+      document.getElementById('deleteGalleryPhotoUrl').value = imageUrl;
+      document.getElementById('deleteGalleryPreview').src = imageUrl;
+      document.getElementById('deleteGalleryModal').classList.add('active');
+    }
+    
+    function closeDeleteGalleryModal() {
+      document.getElementById('deleteGalleryModal').classList.remove('active');
+    }
+    
+    async function confirmDeleteGallery() {
+      const id = document.getElementById('deleteGalleryId').value;
+      const photoUrl = document.getElementById('deleteGalleryPhotoUrl').value;
+      
+      try {
+        // Delete from Firestore
+        await db.collection('gallery').doc(id).delete();
+        
+        // Try to delete from Storage if it's a Firebase Storage URL
+        if (photoUrl && photoUrl.includes('firebasestorage.googleapis.com')) {
+          try {
+            const storageRef = storage.refFromURL(photoUrl);
+            await storageRef.delete();
+          } catch (e) {
+            console.log('Could not delete from storage:', e);
+          }
+        }
+        
+        closeDeleteGalleryModal();
+        await loadGallery();
+        showSuccess('gallery');
+      } catch (error) {
+        console.error('Error deleting photo:', error);
+        alert('Failed to delete photo. Please try again.');
       }
     }
 
