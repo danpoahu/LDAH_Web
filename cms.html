@@ -1563,48 +1563,61 @@
         <div class="content-section">
           <h2>📄 Edit Page Content</h2>
           <p style="color: var(--text-light); margin-bottom: 1.5rem;">
-            Click on any text to edit it directly. Changes save automatically.
+            Edit website page content using our visual page editor.
           </p>
           
-          <div class="success-message" id="pagesSuccess">Changes saved successfully!</div>
-          
-          <!-- Page Sub-tabs -->
-          <div class="sub-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-            <button class="sub-tab active" data-subtab="home" onclick="switchPageSubTab('home')">🏠 Home</button>
-            <button class="sub-tab" data-subtab="whoweare" onclick="switchPageSubTab('whoweare')">👥 Who We Are</button>
-            <button class="sub-tab" data-subtab="whatwedo" onclick="switchPageSubTab('whatwedo')">💼 What We Do</button>
-            <button class="sub-tab" data-subtab="events" onclick="switchPageSubTab('events')">📅 Events</button>
-            <button class="sub-tab" data-subtab="volunteers" onclick="switchPageSubTab('volunteers')">🤝 Volunteers</button>
-            <button class="sub-tab" data-subtab="resources" onclick="switchPageSubTab('resources')">📚 Resources</button>
-            <button class="sub-tab" data-subtab="contact" onclick="switchPageSubTab('contact')">📧 Contact</button>
+          <div style="background: linear-gradient(135deg, var(--primary-blue), #1A8FC4); border-radius: 16px; padding: 2.5rem; color: white; text-align: center; margin-bottom: 2rem;">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">✨ Visual Page Editor</h3>
+            <p style="opacity: 0.9; margin-bottom: 1.5rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+              Edit pages visually - see exactly how they look while you edit. Click any text to change it instantly.
+            </p>
+            <a href="page-admin.html" class="btn-add-person" style="display: inline-block; background: white; color: var(--primary-blue); padding: 1rem 2rem; font-size: 1.1rem; text-decoration: none; border-radius: 12px; font-weight: 600;">
+              🖥️ Open Page Editor
+            </a>
           </div>
           
-          <!-- What We Do Sub-pages -->
-          <div id="whatwedo-subpages" style="display: none; margin-bottom: 1.5rem;">
-            <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.5rem;">What We Do Sections:</p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button class="sub-tab small active" data-subpage="advocacy" onclick="switchWhatWeDoPage('advocacy')">Advocacy</button>
-              <button class="sub-tab small" data-subpage="education" onclick="switchWhatWeDoPage('education')">Education</button>
-              <button class="sub-tab small" data-subpage="antibullying" onclick="switchWhatWeDoPage('antibullying')">Anti-Bullying</button>
-              <button class="sub-tab small" data-subpage="programs" onclick="switchWhatWeDoPage('programs')">Programs</button>
-              <button class="sub-tab small" data-subpage="events-section" onclick="switchWhatWeDoPage('events-section')">Events</button>
-              <button class="sub-tab small" data-subpage="volunteerism" onclick="switchWhatWeDoPage('volunteerism')">Volunteerism</button>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div style="background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <span style="font-size: 2rem;">🏠</span>
+              <h4 style="color: var(--primary-blue); margin: 0.5rem 0;">Home</h4>
+              <p style="font-size: 0.85rem; color: var(--text-light);">Hero, mission, services</p>
+            </div>
+            <div style="background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <span style="font-size: 2rem;">👥</span>
+              <h4 style="color: var(--primary-blue); margin: 0.5rem 0;">Who We Are</h4>
+              <p style="font-size: 0.85rem; color: var(--text-light);">History, values, team</p>
+            </div>
+            <div style="background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <span style="font-size: 2rem;">💼</span>
+              <h4 style="color: var(--primary-blue); margin: 0.5rem 0;">What We Do</h4>
+              <p style="font-size: 0.85rem; color: var(--text-light);">Programs & services</p>
+            </div>
+            <div style="background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <span style="font-size: 2rem;">📅</span>
+              <h4 style="color: var(--primary-blue); margin: 0.5rem 0;">Events</h4>
+              <p style="font-size: 0.85rem; color: var(--text-light);">Event page content</p>
+            </div>
+            <div style="background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <span style="font-size: 2rem;">🤝</span>
+              <h4 style="color: var(--primary-blue); margin: 0.5rem 0;">Volunteer</h4>
+              <p style="font-size: 0.85rem; color: var(--text-light);">Volunteer page content</p>
+            </div>
+            <div style="background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <span style="font-size: 2rem;">📚</span>
+              <h4 style="color: var(--primary-blue); margin: 0.5rem 0;">Resources</h4>
+              <p style="font-size: 0.85rem; color: var(--text-light);">Resource directory</p>
+            </div>
+            <div style="background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; text-align: center;">
+              <span style="font-size: 2rem;">📧</span>
+              <h4 style="color: var(--primary-blue); margin: 0.5rem 0;">Contact</h4>
+              <p style="font-size: 0.85rem; color: var(--text-light);">Contact info & form</p>
             </div>
           </div>
           
-          <div id="pageEditorLoading" class="loading-spinner" style="display: none;">Loading page content...</div>
-          
-          <!-- Page Editor Container -->
-          <div id="pageEditorContainer" style="background: white; border-radius: 12px; padding: 2rem; border: 2px solid #e2e8f0;">
-            <div id="pageEditorContent">
-              <p style="color: var(--text-light); text-align: center;">Select a page to edit</p>
-            </div>
-          </div>
-          
-          <div style="margin-top: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 8px; border-left: 4px solid var(--primary-blue);">
-            <p style="font-size: 0.9rem; color: var(--text-dark);">
-              <strong>💡 Tips:</strong> Click any blue-bordered text area to edit. Press Tab or click outside to save. 
-              Use the preview buttons in the header to see your changes on the live site.
+          <div style="margin-top: 2rem; padding: 1rem; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <p style="font-size: 0.9rem; color: #92400e;">
+              <strong>💡 How it works:</strong> The Page Editor shows a preview of each page. Click any text with a dashed border to edit it. 
+              Changes save to Firebase and will appear on your live website (once your pages are connected to Firebase).
             </p>
           </div>
         </div>
@@ -2306,11 +2319,6 @@
         
         tab.classList.add('active');
         document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
-        
-        // Load pages content when Pages tab is clicked
-        if (tab.dataset.tab === 'pages') {
-          loadPageContent(currentPage === 'whatwedo' ? currentWhatWeDoPage : currentPage);
-        }
       });
     });
 
@@ -4935,306 +4943,6 @@
       a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
-    }
-
-    // ===== Pages Functions =====
-    let pageContent = {};
-    let currentPage = 'home';
-    let currentWhatWeDoPage = 'advocacy';
-    
-    // Page structure definitions
-    const pageStructure = {
-      home: {
-        title: 'Home Page',
-        sections: [
-          { id: 'hero', title: '🏠 Hero Section', fields: [
-            { key: 'heroTitle', label: 'Main Title', type: 'text' },
-            { key: 'heroSubtitle', label: 'Subtitle', type: 'textarea' },
-            { key: 'heroCTA', label: 'Call to Action Button Text', type: 'text' }
-          ]},
-          { id: 'mission', title: '🎯 Mission Statement', fields: [
-            { key: 'missionTitle', label: 'Section Title', type: 'text' },
-            { key: 'missionText', label: 'Mission Text', type: 'textarea' }
-          ]},
-          { id: 'impact', title: '📊 Impact Numbers', fields: [
-            { key: 'impactYears', label: 'Years of Service', type: 'text' },
-            { key: 'impactFamilies', label: 'Families Served', type: 'text' },
-            { key: 'impactVolunteers', label: 'Volunteers', type: 'text' }
-          ]}
-        ]
-      },
-      whoweare: {
-        title: 'Who We Are',
-        sections: [
-          { id: 'intro', title: '👋 Introduction', fields: [
-            { key: 'whoTitle', label: 'Page Title', type: 'text' },
-            { key: 'whoIntro', label: 'Introduction Text', type: 'textarea' }
-          ]},
-          { id: 'history', title: '📜 Our History', fields: [
-            { key: 'historyTitle', label: 'Section Title', type: 'text' },
-            { key: 'historyText', label: 'History Text', type: 'textarea' }
-          ]},
-          { id: 'values', title: '💎 Our Values', fields: [
-            { key: 'valuesTitle', label: 'Section Title', type: 'text' },
-            { key: 'valuesText', label: 'Values Description', type: 'textarea' }
-          ]}
-        ]
-      },
-      whatwedo: {
-        title: 'What We Do - Overview',
-        sections: [
-          { id: 'overview', title: '💼 Overview', fields: [
-            { key: 'whatTitle', label: 'Page Title', type: 'text' },
-            { key: 'whatIntro', label: 'Introduction', type: 'textarea' }
-          ]}
-        ]
-      },
-      events: {
-        title: 'Events Page',
-        sections: [
-          { id: 'header', title: '📅 Page Header', fields: [
-            { key: 'eventsTitle', label: 'Page Title', type: 'text' },
-            { key: 'eventsSubtitle', label: 'Subtitle', type: 'textarea' }
-          ]},
-          { id: 'cta', title: '📣 Call to Action', fields: [
-            { key: 'eventsCTATitle', label: 'CTA Title', type: 'text' },
-            { key: 'eventsCTAText', label: 'CTA Text', type: 'textarea' }
-          ]}
-        ]
-      },
-      volunteers: {
-        title: 'Volunteers Page',
-        sections: [
-          { id: 'header', title: '🤝 Page Header', fields: [
-            { key: 'volunteersTitle', label: 'Page Title', type: 'text' },
-            { key: 'volunteersSubtitle', label: 'Subtitle', type: 'textarea' }
-          ]},
-          { id: 'why', title: '❤️ Why Volunteer', fields: [
-            { key: 'whyVolunteerTitle', label: 'Section Title', type: 'text' },
-            { key: 'whyVolunteerText', label: 'Description', type: 'textarea' }
-          ]}
-        ]
-      },
-      resources: {
-        title: 'Resources Page',
-        sections: [
-          { id: 'header', title: '📚 Page Header', fields: [
-            { key: 'resourcesTitle', label: 'Page Title', type: 'text' },
-            { key: 'resourcesSubtitle', label: 'Subtitle', type: 'textarea' }
-          ]},
-          { id: 'intro', title: '📝 Introduction', fields: [
-            { key: 'resourcesIntro', label: 'Introduction Text', type: 'textarea' }
-          ]}
-        ]
-      },
-      contact: {
-        title: 'Contact Page',
-        sections: [
-          { id: 'header', title: '📧 Page Header', fields: [
-            { key: 'contactTitle', label: 'Page Title', type: 'text' },
-            { key: 'contactSubtitle', label: 'Subtitle', type: 'textarea' }
-          ]},
-          { id: 'info', title: '📍 Contact Information', fields: [
-            { key: 'contactAddress', label: 'Address', type: 'textarea' },
-            { key: 'contactPhone', label: 'Phone', type: 'text' },
-            { key: 'contactEmail', label: 'Email', type: 'text' },
-            { key: 'contactHours', label: 'Office Hours', type: 'text' }
-          ]}
-        ]
-      },
-      // What We Do sub-pages
-      advocacy: {
-        title: 'Advocacy',
-        sections: [
-          { id: 'main', title: '📢 Advocacy', fields: [
-            { key: 'advocacyTitle', label: 'Section Title', type: 'text' },
-            { key: 'advocacyIntro', label: 'Introduction', type: 'textarea' },
-            { key: 'advocacyDetails', label: 'Details', type: 'textarea' }
-          ]}
-        ]
-      },
-      education: {
-        title: 'Education',
-        sections: [
-          { id: 'main', title: '🎓 Education', fields: [
-            { key: 'educationTitle', label: 'Section Title', type: 'text' },
-            { key: 'educationIntro', label: 'Introduction', type: 'textarea' },
-            { key: 'educationDetails', label: 'Details', type: 'textarea' }
-          ]}
-        ]
-      },
-      antibullying: {
-        title: 'Anti-Bullying',
-        sections: [
-          { id: 'main', title: '🛡️ Anti-Bullying', fields: [
-            { key: 'antibullyingTitle', label: 'Section Title', type: 'text' },
-            { key: 'antibullyingIntro', label: 'Introduction', type: 'textarea' },
-            { key: 'antibullyingDetails', label: 'Details', type: 'textarea' }
-          ]}
-        ]
-      },
-      programs: {
-        title: 'Programs',
-        sections: [
-          { id: 'main', title: '🎯 Programs', fields: [
-            { key: 'programsTitle', label: 'Section Title', type: 'text' },
-            { key: 'programsIntro', label: 'Introduction', type: 'textarea' },
-            { key: 'programsDetails', label: 'Details', type: 'textarea' }
-          ]}
-        ]
-      },
-      'events-section': {
-        title: 'Events (What We Do)',
-        sections: [
-          { id: 'main', title: '🎉 Events', fields: [
-            { key: 'eventsSectionTitle', label: 'Section Title', type: 'text' },
-            { key: 'eventsSectionIntro', label: 'Introduction', type: 'textarea' },
-            { key: 'eventsSectionDetails', label: 'Details', type: 'textarea' }
-          ]}
-        ]
-      },
-      volunteerism: {
-        title: 'Volunteerism',
-        sections: [
-          { id: 'main', title: '🤲 Volunteerism', fields: [
-            { key: 'volunteerismTitle', label: 'Section Title', type: 'text' },
-            { key: 'volunteerismIntro', label: 'Introduction', type: 'textarea' },
-            { key: 'volunteerismDetails', label: 'Details', type: 'textarea' }
-          ]}
-        ]
-      }
-    };
-    
-    function switchPageSubTab(page) {
-      currentPage = page;
-      document.querySelectorAll('#pages-tab > .content-section > .sub-tabs > .sub-tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`#pages-tab .sub-tab[data-subtab="${page}"]`).classList.add('active');
-      
-      // Show/hide What We Do sub-pages
-      const subpages = document.getElementById('whatwedo-subpages');
-      if (page === 'whatwedo') {
-        subpages.style.display = 'block';
-        loadPageContent(currentWhatWeDoPage);
-      } else {
-        subpages.style.display = 'none';
-        loadPageContent(page);
-      }
-    }
-    
-    function switchWhatWeDoPage(subpage) {
-      currentWhatWeDoPage = subpage;
-      document.querySelectorAll('#whatwedo-subpages .sub-tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`#whatwedo-subpages .sub-tab[data-subpage="${subpage}"]`).classList.add('active');
-      loadPageContent(subpage);
-    }
-    
-    async function loadPageContent(pageId) {
-      const loading = document.getElementById('pageEditorLoading');
-      const container = document.getElementById('pageEditorContent');
-      
-      loading.style.display = 'block';
-      container.innerHTML = '';
-      
-      try {
-        // Load content from Firebase
-        const doc = await db.collection('pageContent').doc(pageId).get();
-        pageContent[pageId] = doc.exists ? doc.data() : {};
-        
-        loading.style.display = 'none';
-        renderPageEditor(pageId);
-      } catch (error) {
-        console.error('Error loading page content:', error);
-        loading.style.display = 'none';
-        container.innerHTML = '<p style="color: var(--danger);">Error loading content. Please try again.</p>';
-      }
-    }
-    
-    function renderPageEditor(pageId) {
-      const container = document.getElementById('pageEditorContent');
-      const structure = pageStructure[pageId];
-      
-      if (!structure) {
-        container.innerHTML = '<p style="color: var(--text-light);">Page structure not defined.</p>';
-        return;
-      }
-      
-      const content = pageContent[pageId] || {};
-      
-      let html = `<h3 style="color: var(--primary-blue); margin-bottom: 1.5rem;">${structure.title}</h3>`;
-      
-      structure.sections.forEach(section => {
-        html += `<div class="page-section">`;
-        html += `<div class="page-section-title">${section.title}</div>`;
-        
-        section.fields.forEach(field => {
-          const value = content[field.key] || '';
-          const isTextarea = field.type === 'textarea';
-          
-          html += `
-            <div class="editable-field" onclick="focusField('${pageId}', '${field.key}')">
-              <label>${field.label}</label>
-              ${isTextarea 
-                ? `<textarea class="field-content" id="field-${field.key}" 
-                     onblur="saveField('${pageId}', '${field.key}')" 
-                     placeholder="Click to add ${field.label.toLowerCase()}...">${value}</textarea>`
-                : `<input type="text" class="field-content" id="field-${field.key}" 
-                     value="${value.replace(/"/g, '&quot;')}"
-                     onblur="saveField('${pageId}', '${field.key}')"
-                     placeholder="Click to add ${field.label.toLowerCase()}...">`
-              }
-            </div>
-          `;
-        });
-        
-        html += `</div>`;
-      });
-      
-      container.innerHTML = html;
-    }
-    
-    function focusField(pageId, fieldKey) {
-      const field = document.getElementById(`field-${fieldKey}`);
-      if (field) field.focus();
-    }
-    
-    async function saveField(pageId, fieldKey) {
-      const field = document.getElementById(`field-${fieldKey}`);
-      if (!field) return;
-      
-      const value = field.value.trim();
-      const oldValue = pageContent[pageId]?.[fieldKey] || '';
-      
-      // Only save if changed
-      if (value === oldValue) return;
-      
-      try {
-        // Update local state
-        if (!pageContent[pageId]) pageContent[pageId] = {};
-        pageContent[pageId][fieldKey] = value;
-        
-        // Save to Firebase
-        await db.collection('pageContent').doc(pageId).set(
-          { [fieldKey]: value, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
-          { merge: true }
-        );
-        
-        // Visual feedback
-        const wrapper = field.closest('.editable-field');
-        wrapper.classList.add('field-saved');
-        setTimeout(() => wrapper.classList.remove('field-saved'), 500);
-        
-        showSuccess('pages');
-      } catch (error) {
-        console.error('Error saving field:', error);
-        alert('Failed to save. Please try again.');
-      }
-    }
-    
-    async function loadAllPageContent() {
-      // Initial load of home page when Pages tab is shown
-      if (currentPage === 'home') {
-        loadPageContent('home');
-      }
     }
 
     // ===== Analytics Functions =====
