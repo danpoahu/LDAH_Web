@@ -2011,6 +2011,75 @@
     </div>
   </div>
 
+  <!-- Category Editor Modal -->
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal-box" style="max-width: 450px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+        <h3 id="categoryModalTitle" style="color: white;">Add Category</h3>
+        <button class="modal-close" onclick="closeCategoryModal()" style="color: white;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="categoryId">
+        <div class="form-group">
+          <label>Category Name *</label>
+          <input type="text" id="categoryName" placeholder="e.g., Getting Started" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeCategoryModal()">Cancel</button>
+        <button class="btn-save" onclick="saveCategory()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">Save Category</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Editor Modal -->
+  <div class="modal-overlay" id="faqModal">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+        <h3 id="faqModalTitle" style="color: white;">Add FAQ</h3>
+        <button class="modal-close" onclick="closeFaqModal()" style="color: white;">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <input type="hidden" id="faqId">
+        
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="faqCategoryId" required>
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Question *</label>
+          <input type="text" id="faqQuestion" placeholder="Enter the question" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Summary</label>
+          <textarea id="faqSummary" rows="3" placeholder="Brief summary or preview"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Action Steps</label>
+          <div id="faqStepsList" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem;"></div>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="newFaqStep" placeholder="Add a new step" style="flex: 1;">
+            <button type="button" class="btn-edit" onclick="addFaqStep()">Add</button>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Contact Info</label>
+          <input type="text" id="faqContact" placeholder="Phone, email, or contact info" value="(808) 532-5364">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeFaqModal()">Cancel</button>
+        <button class="btn-save" onclick="saveFaq()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">Save FAQ</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Firebase Configuration
     const firebaseConfig = {
@@ -3128,6 +3197,9 @@
     // ===== FAQ Functions =====
     let categories = [];
     let faqs = [];
+    let currentFaqSteps = [];
+    let draggedCategoryItem = null;
+    let draggedFaqItem = null;
     
     function switchFaqSubTab(subtab) {
       document.querySelectorAll('#faq-tab .sub-tab').forEach(t => t.classList.remove('active'));
@@ -3151,10 +3223,19 @@
         categories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         loading.style.display = 'none';
         
+        // Update filter dropdown
         const filter = document.getElementById('faqCategoryFilter');
         if (filter) {
           filter.innerHTML = '<option value="all">All Categories</option>' +
             categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+        
+        // Update modal dropdown
+        const modalSelect = document.getElementById('faqCategoryId');
+        if (modalSelect) {
+          modalSelect.innerHTML = categories.length === 0 
+            ? '<option value="">No categories - create one first</option>'
+            : categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
         }
         
         if (categories.length === 0) {
@@ -3171,13 +3252,18 @@
     function renderCategories() {
       const list = document.getElementById('categoriesList');
       if (!list) return;
-      list.innerHTML = categories.map(cat => `
-        <div class="category-card">
-          <div>
-            <strong style="color: var(--primary-blue);">${cat.name}</strong>
-            <span style="color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;">
-              (${faqs.filter(f => f.categoryId === cat.id).length} FAQs)
-            </span>
+      list.innerHTML = categories.map((cat, index) => `
+        <div class="category-card" draggable="true" data-id="${cat.id}" data-index="${index}"
+             ondragstart="handleCategoryDragStart(event)" ondragover="handleCategoryDragOver(event)" 
+             ondrop="handleCategoryDrop(event)" ondragend="handleCategoryDragEnd(event)">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="cursor: grab; color: var(--text-light);">☰</span>
+            <div>
+              <strong style="color: var(--primary-blue);">${cat.name}</strong>
+              <span style="color: var(--text-light); font-size: 0.8rem; margin-left: 0.5rem;">
+                (${faqs.filter(f => f.categoryId === cat.id).length} FAQs)
+              </span>
+            </div>
           </div>
           <div style="display: flex; gap: 0.5rem;">
             <button class="btn-edit" onclick="editCategory('${cat.id}')">✏️</button>
@@ -3185,6 +3271,57 @@
           </div>
         </div>
       `).join('');
+    }
+    
+    // Category drag and drop
+    function handleCategoryDragStart(e) {
+      draggedCategoryItem = e.target.closest('.category-card');
+      draggedCategoryItem.style.opacity = '0.5';
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    
+    function handleCategoryDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const target = e.target.closest('.category-card');
+      if (target && target !== draggedCategoryItem) {
+        target.style.borderTop = '3px solid var(--primary-blue)';
+      }
+    }
+    
+    function handleCategoryDrop(e) {
+      e.preventDefault();
+      const target = e.target.closest('.category-card');
+      if (target && target !== draggedCategoryItem) {
+        const fromIndex = parseInt(draggedCategoryItem.dataset.index);
+        const toIndex = parseInt(target.dataset.index);
+        reorderCategories(fromIndex, toIndex);
+      }
+      document.querySelectorAll('.category-card').forEach(c => c.style.borderTop = '');
+    }
+    
+    function handleCategoryDragEnd(e) {
+      if (draggedCategoryItem) draggedCategoryItem.style.opacity = '1';
+      draggedCategoryItem = null;
+      document.querySelectorAll('.category-card').forEach(c => c.style.borderTop = '');
+    }
+    
+    async function reorderCategories(fromIndex, toIndex) {
+      const item = categories.splice(fromIndex, 1)[0];
+      categories.splice(toIndex, 0, item);
+      
+      const batch = db.batch();
+      categories.forEach((cat, i) => {
+        batch.update(db.collection('categories').doc(cat.id), { order: i });
+      });
+      
+      try {
+        await batch.commit();
+        renderCategories();
+      } catch (err) {
+        console.error('Error reordering:', err);
+        await loadCategories();
+      }
     }
     
     async function loadFaqs() {
@@ -3229,26 +3366,35 @@
         return;
       }
       
-      list.innerHTML = filtered.map(faq => {
+      list.innerHTML = filtered.map((faq, index) => {
         const cat = categories.find(c => c.id === faq.categoryId);
         return `
-          <div class="faq-card">
-            <div class="faq-card-header" onclick="toggleDataExpand('faq-${faq.id}')">
-              <div class="faq-category-badge">${cat?.name || 'Uncategorized'}</div>
-              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <strong style="color: var(--text-dark);">${faq.question}</strong>
-                <span id="faq-${faq.id}-arrow">▶</span>
+          <div class="faq-card" draggable="true" data-id="${faq.id}" data-index="${index}"
+               ondragstart="handleFaqDragStart(event)" ondragover="handleFaqDragOver(event)" 
+               ondrop="handleFaqDrop(event)" ondragend="handleFaqDragEnd(event)">
+            <div class="faq-card-header" style="cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="cursor: grab; color: var(--text-light);" onclick="event.stopPropagation()">☰</span>
+                <span class="faq-category-badge">${cat?.name || 'Uncategorized'}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;" onclick="toggleDataExpand('faq-${faq.id}')">
+                <strong style="color: var(--text-dark); flex: 1;">${faq.question}</strong>
+                <span id="faq-${faq.id}-arrow" style="margin-left: 0.5rem;">▶</span>
               </div>
             </div>
             <div id="faq-${faq.id}-body" class="data-card-body" style="display: none;">
-              ${faq.summary ? `<p style="margin-bottom: 1rem;">${faq.summary}</p>` : ''}
+              ${faq.summary ? `<p style="margin-bottom: 1rem; color: var(--text-light);">${faq.summary}</p>` : ''}
               ${faq.steps && faq.steps.length > 0 ? `
-                <h4 style="margin-bottom: 0.5rem;">Steps:</h4>
-                <ol style="margin-left: 1.5rem; margin-bottom: 1rem;">
-                  ${faq.steps.map(s => `<li style="margin-bottom: 0.25rem;">${s}</li>`).join('')}
-                </ol>
+                <div style="margin-bottom: 1rem;">
+                  <strong>Action Steps:</strong>
+                  <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    ${faq.steps.map(s => `<li style="margin-bottom: 0.25rem;">${s}</li>`).join('')}
+                  </ol>
+                </div>
               ` : ''}
+              ${faq.contact ? `<p style="margin-bottom: 1rem;"><strong>Contact:</strong> ${faq.contact}</p>` : ''}
               <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button class="btn-edit" onclick="editFaq('${faq.id}')">✏️ Edit</button>
                 <button class="btn-delete" onclick="deleteFaq('${faq.id}')">🗑️ Delete</button>
               </div>
             </div>
@@ -3257,21 +3403,100 @@
       }).join('');
     }
     
-    function openCategoryModal(category = null) {
-      const name = category ? category.name : '';
-      const result = prompt('Category Name:', name);
-      if (result !== null && result.trim()) {
-        saveCategory(category?.id, result.trim());
+    // FAQ drag and drop
+    function handleFaqDragStart(e) {
+      draggedFaqItem = e.target.closest('.faq-card');
+      draggedFaqItem.style.opacity = '0.5';
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    
+    function handleFaqDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const target = e.target.closest('.faq-card');
+      if (target && target !== draggedFaqItem) {
+        target.style.borderTop = '3px solid var(--primary-blue)';
       }
     }
     
-    async function saveCategory(id, name) {
+    function handleFaqDrop(e) {
+      e.preventDefault();
+      const target = e.target.closest('.faq-card');
+      if (target && target !== draggedFaqItem) {
+        const fromId = draggedFaqItem.dataset.id;
+        const toId = target.dataset.id;
+        reorderFaqs(fromId, toId);
+      }
+      document.querySelectorAll('.faq-card').forEach(c => c.style.borderTop = '');
+    }
+    
+    function handleFaqDragEnd(e) {
+      if (draggedFaqItem) draggedFaqItem.style.opacity = '1';
+      draggedFaqItem = null;
+      document.querySelectorAll('.faq-card').forEach(c => c.style.borderTop = '');
+    }
+    
+    async function reorderFaqs(fromId, toId) {
+      const fromIndex = faqs.findIndex(f => f.id === fromId);
+      const toIndex = faqs.findIndex(f => f.id === toId);
+      
+      const item = faqs.splice(fromIndex, 1)[0];
+      faqs.splice(toIndex, 0, item);
+      
+      const batch = db.batch();
+      faqs.forEach((faq, i) => {
+        batch.update(db.collection('faqs').doc(faq.id), { order: i });
+      });
+      
+      try {
+        await batch.commit();
+        renderFaqs();
+      } catch (err) {
+        console.error('Error reordering:', err);
+        await loadFaqs();
+      }
+    }
+    
+    // Category Modal
+    function openCategoryModal(category = null) {
+      document.getElementById('categoryId').value = category?.id || '';
+      document.getElementById('categoryName').value = category?.name || '';
+      document.getElementById('categoryModalTitle').textContent = category ? 'Edit Category' : 'Add Category';
+      document.getElementById('categoryModal').classList.add('active');
+    }
+    
+    function closeCategoryModal() {
+      document.getElementById('categoryModal').classList.remove('active');
+    }
+    
+    function editCategory(id) {
+      const cat = categories.find(c => c.id === id);
+      if (cat) openCategoryModal(cat);
+    }
+    
+    async function saveCategory() {
+      const id = document.getElementById('categoryId').value;
+      const name = document.getElementById('categoryName').value.trim();
+      
+      if (!name) {
+        alert('Category name is required');
+        return;
+      }
+      
       try {
         if (id) {
-          await db.collection('categories').doc(id).update({ name, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+          await db.collection('categories').doc(id).update({ 
+            name, 
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp() 
+          });
         } else {
-          await db.collection('categories').add({ name, order: categories.length, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+          await db.collection('categories').add({ 
+            name, 
+            order: categories.length, 
+            createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+          });
         }
+        closeCategoryModal();
         await loadCategories();
         showSuccess('faq');
       } catch (error) {
@@ -3280,24 +3505,122 @@
       }
     }
     
-    function editCategory(id) {
-      const cat = categories.find(c => c.id === id);
-      if (cat) openCategoryModal(cat);
-    }
-    
     async function deleteCategory(id, name) {
+      const faqCount = faqs.filter(f => f.categoryId === id).length;
+      if (faqCount > 0) {
+        alert(`Cannot delete "${name}" - it has ${faqCount} FAQ(s). Delete or reassign them first.`);
+        return;
+      }
       if (!confirm(`Delete category "${name}"?`)) return;
       try {
         await db.collection('categories').doc(id).delete();
         await loadCategories();
-        await loadFaqs();
         showSuccess('faq');
       } catch (error) {
         console.error('Error deleting category:', error);
       }
     }
     
-    function openFaqModal() { alert('For complex FAQ editing, please use Firebase Console.'); }
+    // FAQ Modal
+    function openFaqModal(faq = null) {
+      currentFaqSteps = faq?.steps ? [...faq.steps] : [];
+      
+      document.getElementById('faqId').value = faq?.id || '';
+      document.getElementById('faqQuestion').value = faq?.question || '';
+      document.getElementById('faqSummary').value = faq?.summary || '';
+      document.getElementById('faqContact').value = faq?.contact || '(808) 532-5364';
+      
+      // Update category dropdown
+      const select = document.getElementById('faqCategoryId');
+      select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      if (faq?.categoryId) select.value = faq.categoryId;
+      
+      document.getElementById('faqModalTitle').textContent = faq ? 'Edit FAQ' : 'Add FAQ';
+      
+      renderFaqSteps();
+      document.getElementById('faqModal').classList.add('active');
+    }
+    
+    function closeFaqModal() {
+      document.getElementById('faqModal').classList.remove('active');
+    }
+    
+    function editFaq(id) {
+      const faq = faqs.find(f => f.id === id);
+      if (faq) openFaqModal(faq);
+    }
+    
+    function addFaqStep() {
+      const input = document.getElementById('newFaqStep');
+      if (input.value.trim()) {
+        currentFaqSteps.push(input.value.trim());
+        input.value = '';
+        renderFaqSteps();
+      }
+    }
+    
+    function removeFaqStep(index) {
+      currentFaqSteps.splice(index, 1);
+      renderFaqSteps();
+    }
+    
+    function editFaqStep(index) {
+      const newText = prompt('Edit step:', currentFaqSteps[index]);
+      if (newText !== null && newText.trim()) {
+        currentFaqSteps[index] = newText.trim();
+        renderFaqSteps();
+      }
+    }
+    
+    function renderFaqSteps() {
+      const list = document.getElementById('faqStepsList');
+      list.innerHTML = currentFaqSteps.map((step, i) => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid var(--primary-blue);">
+          <span style="flex: 1;"><strong>${i + 1}.</strong> ${step}</span>
+          <div style="display: flex; gap: 0.25rem;">
+            <button type="button" onclick="editFaqStep(${i})" style="background: none; border: none; cursor: pointer; color: var(--primary-blue);">✏️</button>
+            <button type="button" onclick="removeFaqStep(${i})" style="background: none; border: none; cursor: pointer; color: var(--danger);">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    async function saveFaq() {
+      const id = document.getElementById('faqId').value;
+      const data = {
+        categoryId: document.getElementById('faqCategoryId').value,
+        question: document.getElementById('faqQuestion').value.trim(),
+        summary: document.getElementById('faqSummary').value.trim(),
+        steps: currentFaqSteps,
+        contact: document.getElementById('faqContact').value.trim(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      
+      if (!data.question) {
+        alert('Question is required');
+        return;
+      }
+      if (!data.categoryId) {
+        alert('Please select a category');
+        return;
+      }
+      
+      try {
+        if (id) {
+          await db.collection('faqs').doc(id).update(data);
+        } else {
+          data.order = faqs.length;
+          data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          await db.collection('faqs').add(data);
+        }
+        closeFaqModal();
+        await loadFaqs();
+        showSuccess('faq');
+      } catch (error) {
+        console.error('Error saving FAQ:', error);
+        alert('Failed to save FAQ.');
+      }
+    }
     
     async function deleteFaq(id) {
       if (!confirm('Delete this FAQ?')) return;
