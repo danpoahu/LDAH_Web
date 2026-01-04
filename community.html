@@ -1024,5 +1024,70 @@
         }
     </script>
     <script src="modal.js"></script>
+    
+    <script>
+        // Firebase Configuration and Initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk",
+            authDomain: "ldah-932d5.firebaseapp.com",
+            projectId: "ldah-932d5",
+            storageBucket: "ldah-932d5.firebasestorage.app",
+            messagingSenderId: "662130454003",
+            appId: "1:662130454003:web:437576d5a5811ecd8df686"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Pledge Form Submission Handler
+        document.getElementById('pledgeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitPledgeBtn');
+            const originalText = submitBtn.textContent;
+            
+            // Get form values
+            const name = document.getElementById('pledgeName').value.trim();
+            const email = document.getElementById('pledgeEmail').value.trim();
+            const roleInput = document.querySelector('input[name="pledgeRole"]:checked');
+            const acceptPledge = document.getElementById('pledgeAccept').checked;
+            
+            // Validation
+            if (!name || !email || !roleInput || !acceptPledge) {
+                alert('Please fill in all required fields and accept the pledge.');
+                return;
+            }
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                // Submit to Firebase
+                await db.collection('pledges').add({
+                    name: name,
+                    email: email,
+                    role: roleInput.value,
+                    pledgeAccepted: true,
+                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'new'
+                });
+                
+                // Success - close modal and show confirmation
+                closePledgeModal();
+                document.getElementById('pledgeForm').reset();
+                
+                alert('🎉 Thank you for taking the pledge, ' + name + '! Together we can end bullying in our community.');
+                
+            } catch (error) {
+                console.error('Error submitting pledge:', error);
+                alert('Sorry, there was an error submitting your pledge. Please try again.');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    </script>
 </body>
 </html>
