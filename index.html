@@ -136,8 +136,8 @@
 
     <section class="hero">
         <div class="hero-content">
-            <h1>Empowering Families, <span class="highlight">Transforming Lives</span></h1>
-            <p>Supporting children and youth with disabilities across Hawai'i and the Pacific Islands through advocacy, education, and community partnerships.</p>
+            <h1 id="home-heroTitle">Empowering Families, <span class="highlight">Transforming Lives</span></h1>
+            <p id="home-heroSubtitle">Supporting children and youth with disabilities across Hawai'i and the Pacific Islands through advocacy, education, and community partnerships.</p>
             <div class="hero-buttons">
                 <a href="#services" class="btn-primary">Our Services</a>
                 <a href="volunteer.html" class="btn-secondary">Get Involved</a>
@@ -147,25 +147,25 @@
 
     <section class="stats-section">
         <div class="stats-container">
-            <div class="stat-card"><div class="stat-icon">👨‍👩‍👧‍👦</div><div class="stat-number">15,000+</div><div class="stat-label">Families Served</div></div>
-            <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-number">200+</div><div class="stat-label">Annual Events</div></div>
-            <div class="stat-card"><div class="stat-icon">🏫</div><div class="stat-number">50+</div><div class="stat-label">Years of Service</div></div>
-            <div class="stat-card"><div class="stat-icon">🌴</div><div class="stat-number">7</div><div class="stat-label">Pacific Islands</div></div>
+            <div class="stat-card"><div class="stat-icon">👨‍👩‍👧‍👦</div><div class="stat-number" id="home-stat1Number">15,000+</div><div class="stat-label" id="home-stat1Label">Families Served</div></div>
+            <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-number" id="home-stat2Number">200+</div><div class="stat-label" id="home-stat2Label">Annual Events</div></div>
+            <div class="stat-card"><div class="stat-icon">🏫</div><div class="stat-number" id="home-stat3Number">50+</div><div class="stat-label" id="home-stat3Label">Years of Service</div></div>
+            <div class="stat-card"><div class="stat-icon">🌴</div><div class="stat-number" id="home-stat4Number">7</div><div class="stat-label" id="home-stat4Label">Pacific Islands</div></div>
         </div>
     </section>
 
     <section class="services-section" id="services">
         <div class="section-header">
-            <h2 class="section-title">Comprehensive Support Services</h2>
-            <p class="section-description">We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.</p>
+            <h2 class="section-title" id="home-servicesTitle">Comprehensive Support Services</h2>
+            <p class="section-description" id="home-servicesSubtitle">We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.</p>
         </div>
         <div class="services-grid">
-            <div class="service-card" onclick="openIframeModal('Parent Training & Information Center', 'https://www.parentcenterhub.org/')" style="cursor: pointer;"><div class="service-icon">📚</div><h3 class="service-title">Parent Training & Information</h3><p class="service-description">Comprehensive training and resources to help parents navigate special education systems and advocate for their children.</p></div>
-            <div class="service-card" onclick="window.location.href='readiness.html'" style="cursor: pointer;"><div class="service-icon">🎓</div><h3 class="service-title">School Readiness Project</h3><p class="service-description">Early intervention programs helping children with disabilities prepare for successful school experiences.</p></div>
-            <div class="service-card" onclick="window.location.href='specialed.html'" style="cursor: pointer;"><div class="service-icon">⚖️</div><h3 class="service-title">Special Education Advocacy</h3><p class="service-description">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p></div>
-            <div class="service-card" onclick="window.location.href='military.html'" style="cursor: pointer;"><div class="service-icon">🇺🇸</div><h3 class="service-title">Military Family Support</h3><p class="service-description">Specialized assistance for military families navigating relocations and IEP transitions across installations.</p></div>
-            <div class="service-card" onclick="window.location.href='pacific.html'" style="cursor: pointer;"><div class="service-icon">🏝️</div><h3 class="service-title">Pacific Islands Outreach</h3><p class="service-description">Extending support to families across American Samoa, CNMI, FSM, Guam, Marshall Islands, and Palau.</p></div>
-            <div class="service-card" onclick="window.location.href='community.html'" style="cursor: pointer;"><div class="service-icon">✊</div><h3 class="service-title">Stand Up to Bullying</h3><p class="service-description">Resources and support to help prevent bullying and protect children. Take the pledge to end bullying in our community.</p></div>
+            <div class="service-card" onclick="openIframeModal('Parent Training & Information Center', 'https://www.parentcenterhub.org/')" style="cursor: pointer;"><div class="service-icon">📚</div><h3 class="service-title" id="home-service1Title">Parent Training & Information</h3><p class="service-description" id="home-service1Desc">Comprehensive training and resources to help parents navigate special education systems and advocate for their children.</p></div>
+            <div class="service-card" onclick="window.location.href='readiness.html'" style="cursor: pointer;"><div class="service-icon">🎓</div><h3 class="service-title" id="home-service2Title">School Readiness Project</h3><p class="service-description" id="home-service2Desc">Early intervention programs helping children with disabilities prepare for successful school experiences.</p></div>
+            <div class="service-card" onclick="window.location.href='specialed.html'" style="cursor: pointer;"><div class="service-icon">⚖️</div><h3 class="service-title" id="home-service3Title">Special Education Advocacy</h3><p class="service-description" id="home-service3Desc">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p></div>
+            <div class="service-card" onclick="window.location.href='military.html'" style="cursor: pointer;"><div class="service-icon">🇺🇸</div><h3 class="service-title" id="home-service4Title">Military Family Support</h3><p class="service-description" id="home-service4Desc">Specialized assistance for military families navigating relocations and IEP transitions across installations.</p></div>
+            <div class="service-card" onclick="window.location.href='pacific.html'" style="cursor: pointer;"><div class="service-icon">🏝️</div><h3 class="service-title" id="home-service5Title">Pacific Islands Outreach</h3><p class="service-description" id="home-service5Desc">Extending support to families across American Samoa, CNMI, FSM, Guam, Marshall Islands, and Palau.</p></div>
+            <div class="service-card" onclick="window.location.href='community.html'" style="cursor: pointer;"><div class="service-icon">✊</div><h3 class="service-title" id="home-service6Title">Stand Up to Bullying</h3><p class="service-description" id="home-service6Desc">Resources and support to help prevent bullying and protect children. Take the pledge to end bullying in our community.</p></div>
         </div>
     </section>
 
@@ -173,8 +173,8 @@
         <div style="max-width: 1400px; margin: 0 auto;">
             <div class="section-header">
                 <span style="display: inline-block; padding: 0.5rem 1.5rem; background: rgba(77, 208, 225, 0.1); color: var(--primary-blue); border-radius: 50px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem;">📅 What's Happening</span>
-                <h2 class="section-title">Upcoming Events</h2>
-                <p class="section-description">Join us for workshops, training sessions, and community events</p>
+                <h2 class="section-title" id="home-eventsTitle">Upcoming Events</h2>
+                <p class="section-description" id="home-eventsSubtitle">Join us for workshops, training sessions, and community events</p>
             </div>
             <div id="currentEventsGrid">
                 <div style="text-align: center; padding: 3rem;"><div style="display: inline-block; border: 4px solid rgba(0, 78, 124, 0.1); border-top-color: var(--primary-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div><p style="margin-top: 1rem; color: var(--text-light);">Loading events...</p></div>
@@ -185,8 +185,8 @@
 
     <section class="cta-banner">
         <div class="cta-content">
-            <h2>Ready to Make a Difference?</h2>
-            <p>Join our community of volunteers, supporters, and advocates working to create opportunities for children with disabilities.</p>
+            <h2 id="home-ctaTitle">Ready to Make a Difference?</h2>
+            <p id="home-ctaSubtitle">Join our community of volunteers, supporters, and advocates working to create opportunities for children with disabilities.</p>
             <div class="hero-buttons">
                 <a href="volunteer.html" class="btn-primary">Become a Volunteer</a>
                 <a href="https://www.paypal.com/donate?token=-3SrchOCsNsV6VF-BcN-0bh5HALSQJsUgSt_IiWbRPI42KYJ235c1wVffOfRnr6iYzeJlRyC-Mzhz7dy" target="_blank" rel="noopener noreferrer" class="btn-secondary">Support Us</a>
@@ -210,6 +210,26 @@
     <script>
     firebase.initializeApp({ apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5", storageBucket: "ldah-932d5.firebasestorage.app", messagingSenderId: "662130454003", appId: "1:662130454003:web:437576d5a5811ecd8df686" });
     const db = firebase.firestore();
+    
+    // Load page content from Firebase
+    async function loadPageContent() {
+        try {
+            const doc = await db.collection('pageContent').doc('home').get();
+            if (doc.exists) {
+                const content = doc.data();
+                // Update all elements that have matching IDs
+                Object.keys(content).forEach(key => {
+                    const el = document.getElementById(`home-${key}`);
+                    if (el && content[key]) {
+                        el.innerHTML = content[key];
+                    }
+                });
+            }
+        } catch (err) {
+            console.error('Error loading page content:', err);
+        }
+    }
+    
     async function loadCurrentEvents() {
         const container = document.getElementById('currentEventsGrid');
         try {
@@ -225,7 +245,10 @@
             container.innerHTML = '<div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">' + currentEvents.map(event => { const eventDate = new Date(event.eventDate + 'T00:00:00'); const formattedDate = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); const isPDF = event.imageUrl && event.imageUrl.toLowerCase().includes('.pdf'); return '<div class="event-card" onclick="window.location.href=\'events.html\'">' + (event.imageUrl ? (isPDF ? '<iframe src="' + event.imageUrl + '" style="width:100%; height:220px; display:block; border:none; overflow:hidden;"></iframe>' : '<img src="' + event.imageUrl + '" alt="' + event.title + '" style="width:100%; height:auto; display:block;">') : '<div style="width: 100%; height: 220px; background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);"></div>') + '<div style="padding: 2rem;"><div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(77, 208, 225, 0.1); border-radius: 20px; font-size: 0.9rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 1rem;">📅 ' + formattedDate + '</div><h3 style="font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 1rem; font-weight: 700; line-height: 1.3;">' + event.title + '</h3>' + (event.location ? '<div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-light); font-size: 0.95rem; margin-bottom: 0.75rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' + event.location + '</div>' : '') + '<div style="display: inline-block; padding: 0.35rem 1rem; background: linear-gradient(135deg, #4ade80, #22c55e); color: white; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-top: 1rem;">🎯 Upcoming</div></div></div>'; }).join('') + '</div>';
         } catch (error) { container.innerHTML = '<div style="text-align: center; padding: 3rem;"><p style="color: var(--text-light);">Unable to load events</p></div>'; }
     }
-    document.addEventListener('DOMContentLoaded', loadCurrentEvents);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPageContent();
+        loadCurrentEvents();
+    });
     </script>
     <script src="modal.js"></script>
 </body>

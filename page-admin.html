@@ -3,25 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LDAH Page Editor</title>
+    <title>LDAH Page Editor - Home</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary-blue: #004E7C;
-            --light-blue: #1A8FC4;
-            --accent-gold: #F5A623;
-            --dark-text: #333;
-            --light-text: #666;
+            --light-blue: #0066a1;
+            --accent-teal: #4DD0E1;
+            --text-dark: #1a1a1a;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; font-weight: 700; line-height: 1.2; }
         
         /* Admin Panel - slide in from right */
         .admin-panel {
@@ -60,16 +65,19 @@
             border: 2px dashed transparent;
             transition: all 0.3s ease;
             cursor: pointer;
+            border-radius: 8px;
+            padding: 4px;
+            margin: -4px;
         }
         .editable-section:hover {
-            border-color: var(--primary-blue);
-            background-color: rgba(0, 78, 124, 0.05);
+            border-color: var(--accent-teal);
+            background-color: rgba(77, 208, 225, 0.1);
         }
         .edit-indicator {
-            position: absolute; top: -10px; right: 5px;
-            background: var(--primary-blue); color: white;
-            padding: 2px 8px; font-size: 11px;
-            border-radius: 4px;
+            position: absolute; top: -12px; right: 5px;
+            background: var(--accent-teal); color: var(--primary-blue);
+            padding: 2px 10px; font-size: 11px;
+            border-radius: 4px; font-weight: 600;
             opacity: 0; transition: opacity 0.3s ease;
             pointer-events: none;
         }
@@ -105,6 +113,7 @@
             cursor: pointer;
             font-size: 0.85rem;
             transition: all 0.2s;
+            text-decoration: none;
         }
         .page-btn:hover, .page-btn.active {
             background: var(--primary-blue);
@@ -121,51 +130,210 @@
             min-height: calc(100vh - 60px);
         }
         
-        /* LDAH-style sections */
-        .hero-section {
-            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+        /* ========== HOME PAGE STYLES (matching index.html) ========== */
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
             color: white;
             padding: 4rem 2rem;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-        .hero-section h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-        .hero-section p { font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
-        
-        .content-section {
-            padding: 3rem 2rem;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 1;
+            background-image: 
+                linear-gradient(90deg, rgba(255, 255, 255, .08) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, .08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .12) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, .12) 1px, transparent 1px);
+            background-size: 30px 30px, 30px 30px, 60px 60px, 60px 60px;
+            background-position: 0 0, 0 0, -15px -15px, -15px -15px;
         }
-        .content-section.alt { background: #f8fafc; }
-        .content-section h2 {
-            color: var(--primary-blue);
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
         }
-        .content-section p {
-            color: var(--light-text);
-            line-height: 1.7;
-            margin-bottom: 1rem;
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
         }
-        
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+        .hero .highlight {
+            color: var(--accent-teal);
         }
-        .card {
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            padding: 1rem 2rem;
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            border: 1px solid #e2e8f0;
+            color: var(--primary-blue);
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
         }
-        .card h3 {
+        .btn-secondary {
+            padding: 1rem 2rem;
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: var(--bg-light);
+            padding: 4rem 2rem;
+        }
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 78, 124, 0.1);
+        }
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
             color: var(--primary-blue);
             margin-bottom: 0.5rem;
         }
-        .card p {
-            color: var(--light-text);
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        /* Services Section */
+        .services-section {
+            padding: 5rem 2rem;
+            background: white;
+        }
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+        .services-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .service-card {
+            background: var(--bg-light);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0, 78, 124, 0.15);
+        }
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .service-title {
+            font-size: 1.3rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.75rem;
+        }
+        .service-description {
+            color: var(--text-light);
+            line-height: 1.7;
             font-size: 0.95rem;
+        }
+        
+        /* Events Section */
+        .events-section {
+            padding: 5rem 2rem;
+            background: white;
+        }
+        .events-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(77, 208, 225, 0.1);
+            color: var(--primary-blue);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .events-placeholder {
+            background: var(--bg-light);
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            color: var(--text-light);
+        }
+        
+        /* CTA Banner */
+        .cta-banner {
+            background: linear-gradient(135deg, #004E7C, #0066a1);
+            padding: 5rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle, transparent 0, transparent 22px, rgba(255, 255, 255, 0.15) 22px, rgba(255, 255, 255, 0.15) 24px, transparent 24px);
+            background-size: 48px 48px;
+        }
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .cta-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
         }
         
         /* Edit Form in Panel */
@@ -178,7 +346,7 @@
             display: block;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: var(--dark-text);
+            color: var(--text-dark);
         }
         .edit-form input, .edit-form textarea {
             width: 100%;
@@ -215,7 +383,7 @@
         .btn-cancel {
             flex: 1;
             background: #e2e8f0;
-            color: var(--dark-text);
+            color: var(--text-dark);
             border: none;
             padding: 0.75rem;
             border-radius: 8px;
@@ -238,7 +406,7 @@
         }
         .welcome-panel li {
             padding: 0.5rem 0;
-            color: var(--light-text);
+            color: var(--text-light);
         }
         .welcome-panel li::before {
             content: "✓ ";
@@ -291,39 +459,19 @@
             cursor: pointer;
         }
         
-        /* Hide on mobile */
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-container { grid-template-columns: repeat(2, 1fr); }
+        }
         @media (max-width: 768px) {
             .admin-toggle, .admin-panel { display: none; }
             .page-nav { font-size: 0.8rem; }
             .page-btn { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
+            .hero h1 { font-size: 2rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            .stats-container { grid-template-columns: 1fr; }
         }
-        
-        /* Impact numbers */
-        .impact-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
-        .impact-item h3 {
-            font-size: 2.5rem;
-            color: var(--accent-gold);
-            margin-bottom: 0.25rem;
-        }
-        .impact-item p {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
-        }
-        
-        /* Footer */
-        .footer {
-            background: #1a1a2e;
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        .footer p { opacity: 0.7; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -331,14 +479,8 @@
     <nav class="page-nav">
         <div class="page-nav-inner">
             <h1>📄 LDAH Page Editor</h1>
-            <button class="page-btn active" onclick="showPage('home')">Home</button>
-            <button class="page-btn" onclick="showPage('whoweare')">Who We Are</button>
-            <button class="page-btn" onclick="showPage('whatwedo')">What We Do</button>
-            <button class="page-btn" onclick="showPage('events')">Events</button>
-            <button class="page-btn" onclick="showPage('volunteer')">Volunteer</button>
-            <button class="page-btn" onclick="showPage('resources')">Resources</button>
-            <button class="page-btn" onclick="showPage('contact')">Contact</button>
-            <a href="cms.html" class="page-btn" style="text-decoration: none;">← Back to CMS</a>
+            <span class="page-btn active">Home (index.html)</span>
+            <a href="cms.html" class="page-btn" style="margin-left: auto;">← Back to CMS</a>
         </div>
     </nav>
 
@@ -364,19 +506,21 @@
         <div class="welcome-panel" id="welcomePanel">
             <h3>👋 Welcome!</h3>
             <ul>
-                <li>Click any text with a blue border to edit</li>
+                <li>Click any text with a teal border to edit</li>
                 <li>Changes save to Firebase instantly</li>
                 <li>Content updates on the live site</li>
             </ul>
             
             <div class="login-box" id="loginBox">
-                <p style="font-size: 0.85rem; color: #666; margin-bottom: 0.75rem;">🔐 Enter password to edit:</p>
-                <input type="password" id="adminPassword" placeholder="Password">
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 0.75rem;">🔐 Login to edit content:</p>
+                <input type="email" id="adminEmail" placeholder="Email" style="margin-bottom: 0.5rem;">
+                <input type="password" id="adminPassword" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
                 <button onclick="login()">Login</button>
             </div>
             
             <div class="logged-in-box" id="loggedInBox">
-                <p>✅ <strong>Logged in!</strong> Click any text to edit.</p>
+                <p>✅ <strong>Logged in!</strong></p>
+                <p style="font-size: 0.85rem; color: #166534; margin-bottom: 1rem;" id="userEmail"></p>
                 <button class="btn-logout" onclick="logout()">🚪 Logout</button>
             </div>
         </div>
@@ -389,7 +533,200 @@
 
     <!-- Page Preview Container -->
     <div class="page-preview" id="pagePreview">
-        <!-- Content loads dynamically -->
+        
+        <!-- ========== HERO SECTION ========== -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="editable-section" onclick="editField('home', 'heroTitle', 'Hero Title (with highlight)')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <h1 id="home-heroTitle">Empowering Families, <span class="highlight">Transforming Lives</span></h1>
+                </div>
+                <div class="editable-section" onclick="editField('home', 'heroSubtitle', 'Hero Subtitle')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <p id="home-heroSubtitle">Supporting children and youth with disabilities across Hawai'i and the Pacific Islands through advocacy, education, and community partnerships.</p>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-primary">Our Services</a>
+                    <a href="#" class="btn-secondary">Get Involved</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== STATS SECTION ========== -->
+        <section class="stats-section">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon">👨‍👩‍👧‍👦</div>
+                    <div class="editable-section" onclick="editField('home', 'stat1Number', 'Stat 1: Number')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <div class="stat-number" id="home-stat1Number">15,000+</div>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'stat1Label', 'Stat 1: Label')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <div class="stat-label" id="home-stat1Label">Families Served</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="editable-section" onclick="editField('home', 'stat2Number', 'Stat 2: Number')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <div class="stat-number" id="home-stat2Number">200+</div>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'stat2Label', 'Stat 2: Label')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <div class="stat-label" id="home-stat2Label">Annual Events</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏫</div>
+                    <div class="editable-section" onclick="editField('home', 'stat3Number', 'Stat 3: Number')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <div class="stat-number" id="home-stat3Number">50+</div>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'stat3Label', 'Stat 3: Label')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <div class="stat-label" id="home-stat3Label">Years of Service</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌴</div>
+                    <div class="editable-section" onclick="editField('home', 'stat4Number', 'Stat 4: Number')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <div class="stat-number" id="home-stat4Number">7</div>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'stat4Label', 'Stat 4: Label')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <div class="stat-label" id="home-stat4Label">Pacific Islands</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== SERVICES SECTION ========== -->
+        <section class="services-section" id="services">
+            <div class="section-header">
+                <div class="editable-section" onclick="editField('home', 'servicesTitle', 'Services Section Title')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <h2 class="section-title" id="home-servicesTitle">Comprehensive Support Services</h2>
+                </div>
+                <div class="editable-section" onclick="editField('home', 'servicesSubtitle', 'Services Section Subtitle')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <p class="section-description" id="home-servicesSubtitle">We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.</p>
+                </div>
+            </div>
+            <div class="services-grid">
+                <!-- Service Card 1 -->
+                <div class="service-card">
+                    <div class="service-icon">📚</div>
+                    <div class="editable-section" onclick="editField('home', 'service1Title', 'Service 1: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service1Title">Parent Training & Information</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service1Desc', 'Service 1: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service1Desc">Comprehensive training and resources to help parents navigate special education systems and advocate for their children.</p>
+                    </div>
+                </div>
+                <!-- Service Card 2 -->
+                <div class="service-card">
+                    <div class="service-icon">🎓</div>
+                    <div class="editable-section" onclick="editField('home', 'service2Title', 'Service 2: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service2Title">School Readiness Project</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service2Desc', 'Service 2: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service2Desc">Early intervention programs helping children with disabilities prepare for successful school experiences.</p>
+                    </div>
+                </div>
+                <!-- Service Card 3 -->
+                <div class="service-card">
+                    <div class="service-icon">⚖️</div>
+                    <div class="editable-section" onclick="editField('home', 'service3Title', 'Service 3: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service3Title">Special Education Advocacy</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service3Desc', 'Service 3: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service3Desc">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p>
+                    </div>
+                </div>
+                <!-- Service Card 4 -->
+                <div class="service-card">
+                    <div class="service-icon">🇺🇸</div>
+                    <div class="editable-section" onclick="editField('home', 'service4Title', 'Service 4: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service4Title">Military Family Support</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service4Desc', 'Service 4: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service4Desc">Specialized assistance for military families navigating relocations and IEP transitions across installations.</p>
+                    </div>
+                </div>
+                <!-- Service Card 5 -->
+                <div class="service-card">
+                    <div class="service-icon">🏝️</div>
+                    <div class="editable-section" onclick="editField('home', 'service5Title', 'Service 5: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service5Title">Pacific Islands Outreach</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service5Desc', 'Service 5: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service5Desc">Extending support to families across American Samoa, CNMI, FSM, Guam, Marshall Islands, and Palau.</p>
+                    </div>
+                </div>
+                <!-- Service Card 6 -->
+                <div class="service-card">
+                    <div class="service-icon">✊</div>
+                    <div class="editable-section" onclick="editField('home', 'service6Title', 'Service 6: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service6Title">Stand Up to Bullying</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service6Desc', 'Service 6: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service6Desc">Resources and support to help prevent bullying and protect children. Take the pledge to end bullying in our community.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== EVENTS SECTION ========== -->
+        <section class="events-section">
+            <div class="section-header">
+                <span class="events-badge">📅 What's Happening</span>
+                <div class="editable-section" onclick="editField('home', 'eventsTitle', 'Events Section Title')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <h2 class="section-title" id="home-eventsTitle">Upcoming Events</h2>
+                </div>
+                <div class="editable-section" onclick="editField('home', 'eventsSubtitle', 'Events Section Subtitle')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <p class="section-description" id="home-eventsSubtitle">Join us for workshops, training sessions, and community events</p>
+                </div>
+            </div>
+            <div class="events-placeholder">
+                <p>📅 Events are loaded dynamically from Firebase</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Manage events in the Events tab of the CMS</p>
+            </div>
+        </section>
+        
+        <!-- ========== CTA BANNER ========== -->
+        <section class="cta-banner">
+            <div class="cta-content">
+                <div class="editable-section" onclick="editField('home', 'ctaTitle', 'CTA Banner Title')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <h2 id="home-ctaTitle">Ready to Make a Difference?</h2>
+                </div>
+                <div class="editable-section" onclick="editField('home', 'ctaSubtitle', 'CTA Banner Subtitle')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <p id="home-ctaSubtitle">Join our community of volunteers, supporters, and advocates working to create opportunities for children with disabilities.</p>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-primary">Become a Volunteer</a>
+                    <a href="#" class="btn-secondary">Support Us</a>
+                </div>
+            </div>
+        </section>
+        
     </div>
 
     <script>
@@ -408,286 +745,45 @@
         const auth = firebase.auth();
         
         let isLoggedIn = false;
-        let currentPage = 'home';
         let pageContent = {};
         
-        // Page templates
-        const pageTemplates = {
-            home: `
-                <div class="hero-section">
-                    <div class="editable-section" data-field="heroTitle" onclick="editField('home', 'heroTitle', 'Hero Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h1 id="home-heroTitle">Leadership in Disabilities & Achievement of Hawai'i</h1>
-                    </div>
-                    <div class="editable-section" data-field="heroSubtitle" onclick="editField('home', 'heroSubtitle', 'Hero Subtitle')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="home-heroSubtitle">Empowering individuals with disabilities and their families through education, advocacy, and community support since 1994.</p>
-                    </div>
-                    <div class="impact-grid" style="margin-top: 3rem;">
-                        <div class="impact-item editable-section" onclick="editField('home', 'impactYears', 'Years Number')">
-                            <span class="edit-indicator">✏️ Edit</span>
-                            <h3 id="home-impactYears">30+</h3>
-                            <p>Years of Service</p>
-                        </div>
-                        <div class="impact-item editable-section" onclick="editField('home', 'impactFamilies', 'Families Number')">
-                            <span class="edit-indicator">✏️ Edit</span>
-                            <h3 id="home-impactFamilies">5,000+</h3>
-                            <p>Families Served</p>
-                        </div>
-                        <div class="impact-item editable-section" onclick="editField('home', 'impactVolunteers', 'Volunteers Number')">
-                            <span class="edit-indicator">✏️ Edit</span>
-                            <h3 id="home-impactVolunteers">500+</h3>
-                            <p>Volunteers</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="content-section">
-                    <div class="editable-section" onclick="editField('home', 'missionTitle', 'Mission Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="home-missionTitle">Our Mission</h2>
-                    </div>
-                    <div class="editable-section" onclick="editField('home', 'missionText', 'Mission Text')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="home-missionText">LDAH is committed to empowering children and adults with all disabilities and the people who care for and about them. We provide education, support, and resources to help individuals with disabilities reach their full potential.</p>
-                    </div>
-                </div>
-                <div class="content-section alt">
-                    <div class="editable-section" onclick="editField('home', 'servicesTitle', 'Services Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="home-servicesTitle">What We Do</h2>
-                    </div>
-                    <div class="card-grid">
-                        <div class="card">
-                            <div class="editable-section" onclick="editField('home', 'service1Title', 'Service 1 Title')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <h3 id="home-service1Title">📢 Advocacy</h3>
-                            </div>
-                            <div class="editable-section" onclick="editField('home', 'service1Desc', 'Service 1 Description')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <p id="home-service1Desc">We advocate for the rights of individuals with disabilities at the local, state, and federal levels.</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="editable-section" onclick="editField('home', 'service2Title', 'Service 2 Title')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <h3 id="home-service2Title">🎓 Education</h3>
-                            </div>
-                            <div class="editable-section" onclick="editField('home', 'service2Desc', 'Service 2 Description')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <p id="home-service2Desc">We provide workshops, trainings, and resources to help families navigate disability services.</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="editable-section" onclick="editField('home', 'service3Title', 'Service 3 Title')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <h3 id="home-service3Title">🤝 Community</h3>
-                            </div>
-                            <div class="editable-section" onclick="editField('home', 'service3Desc', 'Service 3 Description')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <p id="home-service3Desc">We bring families together through events, support groups, and community programs.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `,
-            whoweare: `
-                <div class="hero-section" style="padding: 3rem 2rem;">
-                    <div class="editable-section" onclick="editField('whoweare', 'pageTitle', 'Page Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h1 id="whoweare-pageTitle">Who We Are</h1>
-                    </div>
-                    <div class="editable-section" onclick="editField('whoweare', 'pageSubtitle', 'Page Subtitle')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whoweare-pageSubtitle">Meet the dedicated team working to support Hawaii's disability community.</p>
-                    </div>
-                </div>
-                <div class="content-section">
-                    <div class="editable-section" onclick="editField('whoweare', 'historyTitle', 'History Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="whoweare-historyTitle">Our History</h2>
-                    </div>
-                    <div class="editable-section" onclick="editField('whoweare', 'historyText', 'History Text')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whoweare-historyText">Founded in 1994, LDAH began as a small group of parents seeking resources for their children with disabilities. Over the past three decades, we have grown into a statewide organization serving thousands of families across all Hawaiian islands.</p>
-                    </div>
-                </div>
-                <div class="content-section alt">
-                    <div class="editable-section" onclick="editField('whoweare', 'valuesTitle', 'Values Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="whoweare-valuesTitle">Our Values</h2>
-                    </div>
-                    <div class="editable-section" onclick="editField('whoweare', 'valuesText', 'Values Text')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whoweare-valuesText">We believe in inclusion, empowerment, and the inherent dignity of every individual. Our work is guided by the voices of people with disabilities and their families, ensuring that our programs and advocacy efforts reflect their needs and aspirations.</p>
-                    </div>
-                </div>
-            `,
-            whatwedo: `
-                <div class="hero-section" style="padding: 3rem 2rem;">
-                    <div class="editable-section" onclick="editField('whatwedo', 'pageTitle', 'Page Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h1 id="whatwedo-pageTitle">What We Do</h1>
-                    </div>
-                    <div class="editable-section" onclick="editField('whatwedo', 'pageSubtitle', 'Page Subtitle')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whatwedo-pageSubtitle">Comprehensive programs and services for the disability community.</p>
-                    </div>
-                </div>
-                <div class="content-section">
-                    <div class="editable-section" onclick="editField('whatwedo', 'advocacyTitle', 'Advocacy Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="whatwedo-advocacyTitle">📢 Advocacy</h2>
-                    </div>
-                    <div class="editable-section" onclick="editField('whatwedo', 'advocacyText', 'Advocacy Text')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whatwedo-advocacyText">We advocate at all levels of government for policies that support individuals with disabilities. Our advocacy efforts include legislative testimony, community organizing, and public awareness campaigns.</p>
-                    </div>
-                </div>
-                <div class="content-section alt">
-                    <div class="editable-section" onclick="editField('whatwedo', 'educationTitle', 'Education Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="whatwedo-educationTitle">🎓 Education & Training</h2>
-                    </div>
-                    <div class="editable-section" onclick="editField('whatwedo', 'educationText', 'Education Text')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whatwedo-educationText">We provide workshops, webinars, and training sessions on topics including IEP development, transition planning, self-advocacy skills, and navigating disability services.</p>
-                    </div>
-                </div>
-                <div class="content-section">
-                    <div class="editable-section" onclick="editField('whatwedo', 'antibullyingTitle', 'Anti-Bullying Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="whatwedo-antibullyingTitle">🛡️ Anti-Bullying Initiative</h2>
-                    </div>
-                    <div class="editable-section" onclick="editField('whatwedo', 'antibullyingText', 'Anti-Bullying Text')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whatwedo-antibullyingText">Our anti-bullying program works with schools and communities to create safe, inclusive environments for all students, with a special focus on protecting students with disabilities.</p>
-                    </div>
-                </div>
-            `,
-            events: `
-                <div class="hero-section" style="padding: 3rem 2rem;">
-                    <div class="editable-section" onclick="editField('events', 'pageTitle', 'Page Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h1 id="events-pageTitle">Events</h1>
-                    </div>
-                    <div class="editable-section" onclick="editField('events', 'pageSubtitle', 'Page Subtitle')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="events-pageSubtitle">Join us for workshops, community gatherings, and special events.</p>
-                    </div>
-                </div>
-                <div class="content-section">
-                    <div class="editable-section" onclick="editField('events', 'eventsIntro', 'Events Introduction')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="events-eventsIntro">Throughout the year, LDAH hosts a variety of events designed to educate, connect, and celebrate our community. From educational workshops to family fun days, there's something for everyone.</p>
-                    </div>
-                </div>
-                <div class="content-section alt">
-                    <div class="editable-section" onclick="editField('events', 'ctaTitle', 'CTA Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="events-ctaTitle">Host an Event with Us</h2>
-                    </div>
-                    <div class="editable-section" onclick="editField('events', 'ctaText', 'CTA Text')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="events-ctaText">Interested in partnering with LDAH for a community event? We're always looking for opportunities to bring disability awareness and resources to new audiences.</p>
-                    </div>
-                </div>
-            `,
-            volunteer: `
-                <div class="hero-section" style="padding: 3rem 2rem;">
-                    <div class="editable-section" onclick="editField('volunteer', 'pageTitle', 'Page Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h1 id="volunteer-pageTitle">Volunteer With Us</h1>
-                    </div>
-                    <div class="editable-section" onclick="editField('volunteer', 'pageSubtitle', 'Page Subtitle')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="volunteer-pageSubtitle">Make a difference in the lives of individuals with disabilities and their families.</p>
-                    </div>
-                </div>
-                <div class="content-section">
-                    <div class="editable-section" onclick="editField('volunteer', 'whyTitle', 'Why Volunteer Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="volunteer-whyTitle">Why Volunteer?</h2>
-                    </div>
-                    <div class="editable-section" onclick="editField('volunteer', 'whyText', 'Why Volunteer Text')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="volunteer-whyText">Volunteering with LDAH is a rewarding way to give back to your community. Whether you have a few hours or can make a regular commitment, your time and talents make a real difference for families across Hawaii.</p>
-                    </div>
-                </div>
-            `,
-            resources: `
-                <div class="hero-section" style="padding: 3rem 2rem;">
-                    <div class="editable-section" onclick="editField('resources', 'pageTitle', 'Page Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h1 id="resources-pageTitle">Resources</h1>
-                    </div>
-                    <div class="editable-section" onclick="editField('resources', 'pageSubtitle', 'Page Subtitle')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="resources-pageSubtitle">Find the support and information you need.</p>
-                    </div>
-                </div>
-                <div class="content-section">
-                    <div class="editable-section" onclick="editField('resources', 'resourcesIntro', 'Resources Introduction')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="resources-resourcesIntro">We've compiled a comprehensive directory of disability resources available in Hawaii. Whether you're looking for healthcare providers, educational support, or community services, we're here to help you find what you need.</p>
-                    </div>
-                </div>
-            `,
-            contact: `
-                <div class="hero-section" style="padding: 3rem 2rem;">
-                    <div class="editable-section" onclick="editField('contact', 'pageTitle', 'Page Title')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <h1 id="contact-pageTitle">Contact Us</h1>
-                    </div>
-                    <div class="editable-section" onclick="editField('contact', 'pageSubtitle', 'Page Subtitle')">
-                        <span class="edit-indicator">✏️ Edit</span>
-                        <p id="contact-pageSubtitle">We're here to help. Reach out to us today.</p>
-                    </div>
-                </div>
-                <div class="content-section">
-                    <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                        <div class="card">
-                            <h3>📍 Address</h3>
-                            <div class="editable-section" onclick="editField('contact', 'address', 'Address')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <p id="contact-address">245 N. Kukui Street, Suite 205<br>Honolulu, HI 96817</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h3>📞 Phone</h3>
-                            <div class="editable-section" onclick="editField('contact', 'phone', 'Phone Number')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <p id="contact-phone">(808) 536-9684</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h3>✉️ Email</h3>
-                            <div class="editable-section" onclick="editField('contact', 'email', 'Email Address')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <p id="contact-email">info@ldahawaii.org</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h3>🕐 Hours</h3>
-                            <div class="editable-section" onclick="editField('contact', 'hours', 'Office Hours')">
-                                <span class="edit-indicator">✏️ Edit</span>
-                                <p id="contact-hours">Monday - Friday<br>8:30 AM - 4:30 PM</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `
-        };
-        
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check session
-            if (sessionStorage.getItem('ldah_admin') === 'true') {
-                isLoggedIn = true;
-                document.getElementById('loginBox').style.display = 'none';
-                document.getElementById('loggedInBox').classList.add('active');
-            }
-            showPage('home');
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Listen for auth state changes
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    isLoggedIn = true;
+                    document.getElementById('loginBox').style.display = 'none';
+                    document.getElementById('loggedInBox').classList.add('active');
+                    document.getElementById('userEmail').textContent = user.email;
+                } else {
+                    isLoggedIn = false;
+                    document.getElementById('loginBox').style.display = 'block';
+                    document.getElementById('loggedInBox').classList.remove('active');
+                }
+            });
+            
+            // Load content from Firebase
+            await loadContent();
         });
+        
+        async function loadContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('home').get();
+                if (doc.exists) {
+                    pageContent = doc.data();
+                    // Update displayed content
+                    Object.keys(pageContent).forEach(key => {
+                        const el = document.getElementById(`home-${key}`);
+                        if (el && pageContent[key]) {
+                            el.innerHTML = pageContent[key];
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading content:', err);
+            }
+        }
         
         function toggleAdmin() {
             const panel = document.getElementById('adminPanel');
@@ -696,53 +792,42 @@
             toggle.textContent = panel.classList.contains('open') ? '✖️ Close' : '📝 Edit Mode';
         }
         
-        function login() {
+        async function login() {
+            const email = document.getElementById('adminEmail').value;
             const password = document.getElementById('adminPassword').value;
-            if (password === 'ldah2024') {
-                isLoggedIn = true;
-                sessionStorage.setItem('ldah_admin', 'true');
-                document.getElementById('loginBox').style.display = 'none';
-                document.getElementById('loggedInBox').classList.add('active');
+            
+            if (!email || !password) {
+                alert('⚠️ Please enter both email and password');
+                return;
+            }
+            
+            try {
+                document.querySelector('#loginBox button').textContent = 'Logging in...';
+                document.querySelector('#loginBox button').disabled = true;
+                
+                await auth.signInWithEmailAndPassword(email, password);
                 alert('✅ Logged in! You can now edit page content.');
-            } else {
-                alert('❌ Incorrect password');
+            } catch (err) {
+                console.error('Login error:', err);
+                let message = 'Login failed';
+                if (err.code === 'auth/user-not-found') message = 'No account found with this email';
+                else if (err.code === 'auth/wrong-password') message = 'Incorrect password';
+                else if (err.code === 'auth/invalid-email') message = 'Invalid email address';
+                else if (err.code === 'auth/too-many-requests') message = 'Too many attempts. Try again later.';
+                alert('❌ ' + message);
+            } finally {
+                document.querySelector('#loginBox button').textContent = 'Login';
+                document.querySelector('#loginBox button').disabled = false;
             }
         }
         
-        function logout() {
-            isLoggedIn = false;
-            sessionStorage.removeItem('ldah_admin');
-            document.getElementById('loginBox').style.display = 'block';
-            document.getElementById('loggedInBox').classList.remove('active');
-            alert('👋 Logged out');
-        }
-        
-        async function showPage(pageId) {
-            currentPage = pageId;
-            
-            // Update nav buttons
-            document.querySelectorAll('.page-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.page-btn[onclick="showPage('${pageId}')"]`)?.classList.add('active');
-            
-            // Load template
-            const preview = document.getElementById('pagePreview');
-            preview.innerHTML = pageTemplates[pageId] || '<p>Page not found</p>';
-            
-            // Load content from Firebase
+        async function logout() {
             try {
-                const doc = await db.collection('pageContent').doc(pageId).get();
-                if (doc.exists) {
-                    pageContent[pageId] = doc.data();
-                    // Update displayed content
-                    Object.keys(pageContent[pageId]).forEach(key => {
-                        const el = document.getElementById(`${pageId}-${key}`);
-                        if (el && pageContent[pageId][key]) {
-                            el.innerHTML = pageContent[pageId][key];
-                        }
-                    });
-                }
+                await auth.signOut();
+                alert('👋 Logged out');
             } catch (err) {
-                console.error('Error loading content:', err);
+                console.error('Logout error:', err);
+                alert('❌ Error logging out');
             }
         }
         
@@ -788,8 +873,7 @@
                 if (el) el.innerHTML = content;
                 
                 // Update local cache
-                if (!pageContent[pageId]) pageContent[pageId] = {};
-                pageContent[pageId][fieldId] = content;
+                pageContent[fieldId] = content;
                 
                 alert('✅ Saved!');
                 cancelEdit();
