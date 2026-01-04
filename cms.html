@@ -4062,34 +4062,169 @@
       if (signups.length === 0) {
         list.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 2rem;">No signups yet.</p>';
       } else {
-        list.innerHTML = signups.map(s => {
-          const date = s.timestamp?.seconds ? new Date(s.timestamp.seconds * 1000).toLocaleDateString() : '';
+        // Group signups by selectedDate if available
+        const groupedByDate = {};
+        signups.forEach(s => {
+          // Handle both selectedDate (string) and selectedDates (array)
+          const dates = s.selectedDates || (s.selectedDate ? [s.selectedDate] : ['No date specified']);
+          dates.forEach(date => {
+            if (!groupedByDate[date]) groupedByDate[date] = [];
+            groupedByDate[date].push(s);
+          });
+        });
+        
+        list.innerHTML = Object.entries(groupedByDate).map(([dateStr, dateSignups]) => {
+          const totalVolunteers = dateSignups.reduce((sum, s) => sum + (parseInt(s.groupSize) || parseInt(s.numVolunteers) || 1), 0);
+          
           return `
-            <div class="data-card" style="margin-bottom: 0.75rem;">
-              <div class="data-card-header" onclick="toggleDataExpand('signup-${s.id}')">
-                <div style="flex: 1;">
-                  <strong>${s.name || (s.firstName + ' ' + s.lastName)}</strong>
-                  <span style="background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-left: 0.5rem;">${s.numVolunteers || 1} volunteer${(s.numVolunteers || 1) > 1 ? 's' : ''}</span>
-                  <p style="color: var(--text-light); font-size: 0.85rem;">📧 ${s.email} • ${date}</p>
-                  ${s.selectedDate ? `<p style="color: var(--text-light); font-size: 0.85rem;">📅 ${s.selectedDate}</p>` : ''}
-                </div>
-                <span id="signup-${s.id}-arrow">▶</span>
+            <div style="margin-bottom: 1.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; padding: 0.75rem; background: linear-gradient(135deg, #004E7C, #0066a1); border-radius: 8px;">
+                <span style="font-size: 1.25rem;">📅</span>
+                <h4 style="color: white; margin: 0; flex: 1;">${dateStr}</h4>
+                <span style="background: #4DD0E1; color: #004E7C; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${totalVolunteers} volunteer${totalVolunteers !== 1 ? 's' : ''}</span>
               </div>
-              <div id="signup-${s.id}-body" class="data-card-body" style="display: none;">
-                <p><strong>Phone:</strong> ${s.phone || 'N/A'}</p>
-                <p><strong>Message:</strong> ${s.message || s.additionalInfo || 'N/A'}</p>
-                ${s.customResponses ? `<div style="margin-top: 0.5rem;"><strong>Custom Responses:</strong><pre style="background: #f9fafb; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem; overflow-x: auto;">${JSON.stringify(s.customResponses, null, 2)}</pre></div>` : ''}
-                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                  <a href="mailto:${s.email}" class="btn-edit">📧 Email</a>
-                  <button class="btn-delete" onclick="deleteEventSignup('${eventId}', '${s.id}')">🗑️</button>
-                </div>
-              </div>
+              ${dateSignups.map(s => {
+                const submitDate = s.timestamp?.seconds ? new Date(s.timestamp.seconds * 1000) : null;
+                const submitDateStr = submitDate ? submitDate.toLocaleString() : 'Unknown';
+                const status = s.status || 'pending';
+                const isGroup = s.participationType === 'Group' || s.groupName;
+                const volunteerCount = parseInt(s.groupSize) || parseInt(s.numVolunteers) || 1;
+                
+                return `
+                  <div class="data-card ${status}" style="margin-bottom: 0.75rem; border-left: 4px solid ${status === 'confirmed' ? '#22c55e' : status === 'cancelled' ? '#ef4444' : '#f59e0b'};">
+                    <div class="data-card-header" onclick="toggleDataExpand('signup-${s.id}')">
+                      <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                          <strong>${s.name || (s.firstName ? s.firstName + ' ' + s.lastName : 'Unknown')}</strong>
+                          <select onchange="updateSignupStatus('${eventId}', '${s.id}', this.value)" style="padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; border: none; cursor: pointer; font-weight: 600; ${status === 'confirmed' ? 'background: #dcfce7; color: #166534;' : status === 'cancelled' ? 'background: #fee2e2; color: #991b1b;' : 'background: #fef3c7; color: #92400e;'}">
+                            <option value="pending" ${status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                            <option value="confirmed" ${status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
+                            <option value="cancelled" ${status === 'cancelled' ? 'selected' : ''}>❌ Cancelled</option>
+                          </select>
+                        </div>
+                        <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.25rem;">
+                          📧 ${s.email} ${s.phone ? '• 📱 ' + s.phone : ''}
+                        </p>
+                        ${isGroup ? `<p style="color: var(--text-light); font-size: 0.85rem;">👥 ${s.groupName || 'Group'} (${volunteerCount} volunteers)</p>` : `<p style="color: var(--text-light); font-size: 0.85rem;">👤 Individual</p>`}
+                        ${s.adminNotes ? '<span style="background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem;">📝 Notes</span>' : ''}
+                      </div>
+                      <span id="signup-${s.id}-arrow">▶</span>
+                    </div>
+                    <div id="signup-${s.id}-body" class="data-card-body" style="display: none;">
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                          <p><strong>Preferred Contact:</strong> ${s.preferredContact || 'Not specified'}</p>
+                          <p><strong>Type:</strong> ${s.participationType || (isGroup ? 'Group' : 'Individual')}</p>
+                          ${isGroup ? `<p><strong>Group Name:</strong> ${s.groupName || 'N/A'}</p><p><strong>Group Size:</strong> ${volunteerCount}</p>` : ''}
+                        </div>
+                        <div>
+                          <p><strong>Submitted:</strong> ${submitDateStr}</p>
+                          ${s.selectedDates && s.selectedDates.length > 1 ? `<p><strong>All Selected Dates:</strong> ${s.selectedDates.join(', ')}</p>` : ''}
+                        </div>
+                      </div>
+                      
+                      ${s.customAnswers && Object.keys(s.customAnswers).length > 0 ? `
+                        <div style="margin-bottom: 1rem;">
+                          <strong>Custom Responses:</strong>
+                          <div style="background: #f9fafb; padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">
+                            ${Object.entries(s.customAnswers).map(([key, value]) => `
+                              <p style="margin-bottom: 0.5rem;"><strong>${key}:</strong> ${value}</p>
+                            `).join('')}
+                          </div>
+                        </div>
+                      ` : ''}
+                      
+                      ${s.customResponses ? `
+                        <div style="margin-bottom: 1rem;">
+                          <strong>Custom Responses:</strong>
+                          <pre style="background: #f9fafb; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem; overflow-x: auto;">${JSON.stringify(s.customResponses, null, 2)}</pre>
+                        </div>
+                      ` : ''}
+                      
+                      ${s.message || s.additionalInfo || s.additionalComments ? `
+                        <div style="margin-bottom: 1rem;">
+                          <strong>Message/Comments:</strong>
+                          <p style="background: #f9fafb; padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">${s.message || s.additionalInfo || s.additionalComments}</p>
+                        </div>
+                      ` : ''}
+                      
+                      <div style="margin-bottom: 1rem;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">📝 Admin Notes (Private):</label>
+                        <textarea id="signup-notes-${s.id}" rows="2" style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical; background: #fffbeb;" placeholder="Add internal notes here...">${s.adminNotes || ''}</textarea>
+                        <button onclick="saveSignupNotes('${eventId}', '${s.id}')" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: var(--primary-blue); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">💾 Save Notes</button>
+                      </div>
+                      
+                      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; padding-top: 1rem; border-top: 1px solid #eee;">
+                        <a href="mailto:${s.email}" class="btn-edit">📧 Email</a>
+                        ${s.phone ? `<a href="tel:${s.phone}" class="btn-edit" style="background: #22c55e;">📞 Call</a>` : ''}
+                        ${s.phone ? `<a href="sms:${s.phone}" class="btn-edit" style="background: #8b5cf6;">💬 Text</a>` : ''}
+                        <button class="btn-delete" onclick="deleteEventSignup('${eventId}', '${s.id}')">🗑️ Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
           `;
         }).join('');
       }
       
       document.getElementById('signupsModal').classList.add('active');
+    }
+    
+    async function updateSignupStatus(eventId, signupId, status) {
+      try {
+        await db.collection('events').doc(eventId).collection('signups').doc(signupId).update({ status });
+        const signup = eventSignups[eventId]?.find(s => s.id === signupId);
+        if (signup) signup.status = status;
+        // Refresh the modal
+        openSignupsModal(eventId);
+      } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Error updating status. Please try again.');
+      }
+    }
+    
+    async function saveSignupNotes(eventId, signupId) {
+      const textarea = document.getElementById(`signup-notes-${signupId}`);
+      if (!textarea) return;
+      
+      const adminNotes = textarea.value.trim();
+      const btn = textarea.nextElementSibling;
+      const originalText = btn.textContent;
+      
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+        
+        await db.collection('events').doc(eventId).collection('signups').doc(signupId).update({ 
+          adminNotes: adminNotes,
+          notesUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Update local data
+        const signup = eventSignups[eventId]?.find(s => s.id === signupId);
+        if (signup) signup.adminNotes = adminNotes;
+        
+        btn.textContent = '✓ Saved!';
+        btn.style.background = 'var(--success)';
+        
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = 'var(--primary-blue)';
+          btn.disabled = false;
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Error saving notes:', error);
+        btn.textContent = '✗ Error';
+        btn.style.background = 'var(--danger)';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = 'var(--primary-blue)';
+          btn.disabled = false;
+        }, 2000);
+      }
     }
     
     function closeSignupsModal() {
@@ -4113,10 +4248,27 @@
       const event = events.find(e => e.id === eventId);
       const signups = eventSignups[eventId] || [];
       
-      const headers = ['Name', 'Email', 'Phone', 'Volunteers', 'Selected Date', 'Message', 'Signed Up'];
+      const headers = ['Name', 'Email', 'Phone', 'Preferred Contact', 'Type', 'Group Name', 'Group Size', 'Selected Dates', 'Status', 'Custom Answers', 'Message', 'Admin Notes', 'Submitted'];
       const rows = signups.map(s => {
-        const date = s.timestamp?.seconds ? new Date(s.timestamp.seconds * 1000).toLocaleDateString() : '';
-        return [s.name || `${s.firstName} ${s.lastName}`, s.email, s.phone || '', s.numVolunteers || 1, s.selectedDate || '', (s.message || s.additionalInfo || '').replace(/"/g, '""'), date];
+        const date = s.timestamp?.seconds ? new Date(s.timestamp.seconds * 1000).toLocaleString() : '';
+        const selectedDates = s.selectedDates ? s.selectedDates.join('; ') : (s.selectedDate || '');
+        const customAnswers = s.customAnswers ? Object.entries(s.customAnswers).map(([k, v]) => `${k}: ${v}`).join('; ') : '';
+        const volunteerCount = s.groupSize || s.numVolunteers || 1;
+        return [
+          s.name || `${s.firstName || ''} ${s.lastName || ''}`.trim(), 
+          s.email || '', 
+          s.phone || '', 
+          s.preferredContact || '',
+          s.participationType || (s.groupName ? 'Group' : 'Individual'),
+          s.groupName || '',
+          volunteerCount,
+          selectedDates,
+          s.status || 'pending',
+          customAnswers.replace(/"/g, '""'),
+          (s.message || s.additionalInfo || s.additionalComments || '').replace(/"/g, '""'), 
+          (s.adminNotes || '').replace(/"/g, '""'),
+          date
+        ];
       });
       downloadCSV(`${event.title.replace(/[^a-z0-9]/gi, '_')}_signups.csv`, headers, rows);
     }
@@ -4348,6 +4500,7 @@
                 <div style="flex: 1;">
                   <strong>${app.firstName} ${app.lastName}</strong>
                   <span class="status-badge status-${status}">${status}</span>
+                  ${app.adminNotes ? '<span style="background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 4px;">📝 Notes</span>' : ''}
                   <p style="color: var(--text-light); font-size: 0.85rem;">📧 ${app.email} • ${date}</p>
                 </div>
                 <span id="oppapp-${app.id}-arrow">▶</span>
@@ -4355,6 +4508,11 @@
               <div id="oppapp-${app.id}-body" class="data-card-body" style="display: none;">
                 <p><strong>Phone:</strong> ${app.phone || 'N/A'}</p>
                 <p><strong>Message:</strong> ${app.message || 'N/A'}</p>
+                <div style="margin-top: 1rem;">
+                  <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">📝 Admin Notes:</label>
+                  <textarea id="oppapp-notes-${app.id}" rows="2" style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical;" placeholder="Add private notes about this applicant...">${app.adminNotes || ''}</textarea>
+                  <button onclick="saveApplicationNotes('${app.id}', 'oppapp-notes-${app.id}', '${oppId}')" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: var(--primary-blue); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">💾 Save Notes</button>
+                </div>
                 <div class="status-buttons">
                   ${['new', 'contacted', 'interviewing', 'accepted', 'declined'].map(s => `
                     <button class="status-btn ${status === s ? 'active' : ''}" onclick="updateApplicationStatus('${app.id}', '${s}'); openOpportunityAppsModal('${oppId}');">${s}</button>
@@ -4419,6 +4577,10 @@
           if (countEl) countEl.textContent = `${applications.length} applications`;
           renderApplications();
         }
+        
+        // Re-render opportunities to update application counts and badges
+        renderOpportunities();
+        
       } catch (error) {
         console.error('Error:', error);
         loading.style.display = 'none';
@@ -4450,6 +4612,7 @@
               <div style="flex: 1;">
                 <strong>${app.firstName} ${app.lastName}</strong>
                 <span class="status-badge status-${status}">${status}</span>
+                ${app.adminNotes ? '<span style="background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 4px;">📝 Notes</span>' : ''}
                 <p style="color: var(--text-light); font-size: 0.85rem;">${opp?.title || 'Unknown opportunity'}</p>
                 <p style="color: var(--text-light); font-size: 0.85rem;">📧 ${app.email} • ${date}</p>
               </div>
@@ -4458,6 +4621,11 @@
             <div id="app-${app.id}-body" class="data-card-body" style="display: none;">
               <p><strong>Phone:</strong> ${app.phone || 'N/A'}</p>
               <p><strong>Message:</strong> ${app.message || 'N/A'}</p>
+              <div style="margin-top: 1rem;">
+                <label style="font-weight: 600; display: block; margin-bottom: 0.5rem;">📝 Admin Notes:</label>
+                <textarea id="app-notes-${app.id}" rows="2" style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical;" placeholder="Add private notes about this applicant...">${app.adminNotes || ''}</textarea>
+                <button onclick="saveApplicationNotes('${app.id}', 'app-notes-${app.id}')" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: var(--primary-blue); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">💾 Save Notes</button>
+              </div>
               <div class="status-buttons">
                 ${['new', 'contacted', 'interviewing', 'accepted', 'declined'].map(s => `
                   <button class="status-btn ${status === s ? 'active' : ''}" onclick="updateApplicationStatus('${app.id}', '${s}')">${s}</button>
@@ -4486,6 +4654,55 @@
       } catch (error) { console.error('Error:', error); }
     }
     
+    async function saveApplicationNotes(appId, textareaId, oppId = null) {
+      const textarea = document.getElementById(textareaId);
+      if (!textarea) return;
+      
+      const adminNotes = textarea.value.trim();
+      const btn = textarea.nextElementSibling;
+      const originalText = btn.textContent;
+      
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+        
+        await db.collection('volunteers').doc(appId).update({ 
+          adminNotes: adminNotes,
+          notesUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Update local data
+        const app = applications.find(a => a.id === appId);
+        if (app) app.adminNotes = adminNotes;
+        
+        btn.textContent = '✓ Saved!';
+        btn.style.background = 'var(--success)';
+        
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = 'var(--primary-blue)';
+          btn.disabled = false;
+          // Refresh the view to show/hide the notes indicator
+          if (oppId) {
+            openOpportunityAppsModal(oppId);
+          } else {
+            renderApplications();
+          }
+          renderOpportunities();
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Error saving notes:', error);
+        btn.textContent = '✗ Error';
+        btn.style.background = 'var(--danger)';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = 'var(--primary-blue)';
+          btn.disabled = false;
+        }, 2000);
+      }
+    }
+    
     async function deleteApplication(id) {
       if (!confirm('Delete this application?')) return;
       try {
@@ -4498,11 +4715,11 @@
     }
     
     function exportApplicationsToCSV() {
-      const headers = ['Name', 'Email', 'Phone', 'Opportunity', 'Status', 'Message', 'Date'];
+      const headers = ['Name', 'Email', 'Phone', 'Opportunity', 'Status', 'Message', 'Admin Notes', 'Date'];
       const rows = applications.map(a => {
         const opp = opportunities.find(o => o.id === a.opportunityId);
         const date = a.timestamp?.seconds ? new Date(a.timestamp.seconds * 1000).toLocaleDateString() : '';
-        return [`${a.firstName} ${a.lastName}`, a.email, a.phone || '', opp?.title || '', a.status || 'new', (a.message || '').replace(/"/g, '""'), date];
+        return [`${a.firstName} ${a.lastName}`, a.email, a.phone || '', opp?.title || '', a.status || 'new', (a.message || '').replace(/"/g, '""'), (a.adminNotes || '').replace(/"/g, '""'), date];
       });
       downloadCSV('volunteer_applications.csv', headers, rows);
     }
