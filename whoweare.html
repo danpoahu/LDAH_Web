@@ -880,35 +880,35 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <h1>Who We Are</h1>
-        <p>Leadership in Disabilities & Achievement of Hawai'i is a <span class="highlight">501(c)(3) non-profit</span> founded in 1968 by parents of children with learning disabilities. Today, we serve families of children with any type of disability across Hawai'i and the Pacific Islands.</p>
+        <h1 id="whoweare-heroTitle">Who We Are</h1>
+        <p id="whoweare-heroSubtitle">Leadership in Disabilities & Achievement of Hawai'i is a <span class="highlight">501(c)(3) non-profit</span> founded in 1968 by parents of children with learning disabilities. Today, we serve families of children with any type of disability across Hawai'i and the Pacific Islands.</p>
     </section>
 
     <!-- Mission, Vision, Values Cards -->
     <div class="content-wrapper">
         <div class="section-header">
             <span class="section-badge">🌺 Our Foundation</span>
-            <h2>Mission, Vision & Values</h2>
-            <p>Guiding principles that drive our commitment to families and children with disabilities</p>
+            <h2 id="whoweare-foundationTitle">Mission, Vision & Values</h2>
+            <p id="whoweare-foundationSubtitle">Guiding principles that drive our commitment to families and children with disabilities</p>
         </div>
 
         <div class="cards-grid">
             <div class="info-card">
                 <div class="card-icon">🎯</div>
-                <h3>Our Mission</h3>
-                <p>To enhance educational, work and life opportunities for children and youth with or at risk of disabilities by empowering them and their families through screening, identification, information, training, and mentoring, and by public outreach and advocacy.</p>
+                <h3 id="whoweare-missionTitle">Our Mission</h3>
+                <p id="whoweare-missionText">To enhance educational, work and life opportunities for children and youth with or at risk of disabilities by empowering them and their families through screening, identification, information, training, and mentoring, and by public outreach and advocacy.</p>
             </div>
 
             <div class="info-card">
                 <div class="card-icon">🔭</div>
-                <h3>Our Vision</h3>
-                <p>Individuals have choice and access to educational, work and life opportunities to be successful regardless of their disabilities.</p>
+                <h3 id="whoweare-visionTitle">Our Vision</h3>
+                <p id="whoweare-visionText">Individuals have choice and access to educational, work and life opportunities to be successful regardless of their disabilities.</p>
             </div>
 
             <div class="info-card">
                 <div class="card-icon">💎</div>
-                <h3>Core Values</h3>
-                <ul>
+                <h3 id="whoweare-valuesTitle">Core Values</h3>
+                <ul id="whoweare-valuesList">
                     <li>Advocating for the Rights of Children with Disabilities</li>
                     <li>Putting Families First</li>
                     <li>Creating Partnerships</li>
@@ -922,16 +922,16 @@
         <!-- About PTI -->
         <div class="info-card" style="max-width: 900px; margin: 0 auto 60px;">
             <div class="card-icon">🏛️</div>
-            <h3>Parent Training & Information Center</h3>
-            <p>Through a contract with the United States Department of Education, Office of Special Education Programs (OSEP), LDAH has operated and served as The Parent Training and Information Center (PTI) for the State of Hawaii since 1990. As the PTI, LDAH provides education and training to parents, children, professionals and community members.</p>
-            <p style="margin-top: 1rem;">The majority of Parent Center staff and board are parents of children with disabilities, bringing personal experience and expertise when working with families.</p>
+            <h3 id="whoweare-ptiTitle">Parent Training & Information Center</h3>
+            <p id="whoweare-ptiText1">Through a contract with the United States Department of Education, Office of Special Education Programs (OSEP), LDAH has operated and served as The Parent Training and Information Center (PTI) for the State of Hawaii since 1990. As the PTI, LDAH provides education and training to parents, children, professionals and community members.</p>
+            <p style="margin-top: 1rem;" id="whoweare-ptiText2">The majority of Parent Center staff and board are parents of children with disabilities, bringing personal experience and expertise when working with families.</p>
         </div>
 
         <!-- Meet Our People -->
         <div class="section-header">
             <span class="section-badge">👥 Meet Our People</span>
-            <h2>The Team Behind LDAH</h2>
-            <p>Dedicated professionals and volunteers committed to supporting families</p>
+            <h2 id="whoweare-teamTitle">The Team Behind LDAH</h2>
+            <p id="whoweare-teamSubtitle">Dedicated professionals and volunteers committed to supporting families</p>
         </div>
 
         <div class="team-cards-grid">
@@ -956,8 +956,8 @@
         <div class="content-wrapper" style="padding-top: 0; padding-bottom: 0;">
             <div class="section-header">
                 <span class="section-badge">📸 Our Community</span>
-                <h2>LDAH in Action</h2>
-                <p>Moments from our events, workshops, and community outreach</p>
+                <h2 id="whoweare-galleryTitle">LDAH in Action</h2>
+                <p id="whoweare-gallerySubtitle">Moments from our events, workshops, and community outreach</p>
             </div>
         </div>
 
@@ -971,8 +971,8 @@
 
     <!-- CTA Section -->
     <section class="cta-section">
-        <h2>Have Questions? We're Here to Help</h2>
-        <p>Our team is ready to assist you with information about special education, advocacy support, and navigating services for your child.</p>
+        <h2 id="whoweare-ctaTitle">Have Questions? We're Here to Help</h2>
+        <p id="whoweare-ctaSubtitle">Our team is ready to assist you with information about special education, advocacy support, and navigating services for your child.</p>
         <div class="cta-buttons">
             <a href="contact.html" class="btn-primary">📞 Contact Us</a>
             <a href="volunteer.html" class="btn-secondary">🤝 Join Our Team</a>
@@ -1064,6 +1064,25 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.firestore();
+
+        // Load page content from Firebase
+        async function loadPageContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('whoweare').get();
+                if (doc.exists) {
+                    const content = doc.data();
+                    // Update all elements that have matching IDs
+                    Object.keys(content).forEach(key => {
+                        const el = document.getElementById(`whoweare-${key}`);
+                        if (el && content[key]) {
+                            el.innerHTML = content[key];
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading page content:', err);
+            }
+        }
 
         // State for loaded data
         let teamMembersLoaded = false;
@@ -1565,10 +1584,12 @@
         
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
+                loadPageContent();
                 loadHeaderFooter();
                 loadGallery();
             });
         } else {
+            loadPageContent();
             loadHeaderFooter();
             loadGallery();
         }
