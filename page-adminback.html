@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LDAH Page Editor - Who We Are</title>
+    <title>LDAH Page Editor - Home</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -28,7 +28,7 @@
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
         h1, h2, h3 { font-family: 'Poppins', sans-serif; font-weight: 700; line-height: 1.2; }
         
-        /* Admin Panel */
+        /* Admin Panel - slide in from right */
         .admin-panel {
             position: fixed; right: 0; top: 0; bottom: 0;
             width: 380px; background: white;
@@ -122,7 +122,7 @@
             box-shadow: 0 0 0 2px white;
         }
         
-        /* Page Preview */
+        /* Page Preview Container */
         .page-preview {
             max-width: 1200px;
             margin: 0 auto;
@@ -130,162 +130,54 @@
             min-height: calc(100vh - 60px);
         }
         
+        /* ========== HOME PAGE STYLES (matching index.html) ========== */
+        
         /* Hero Section */
-        .hero-section {
+        .hero {
             background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
             color: white;
-            padding: 80px 20px 60px;
+            padding: 4rem 2rem;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
-        .hero-section::before {
+        .hero::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             opacity: 1;
-            background-image:
+            background-image: 
                 linear-gradient(90deg, rgba(255, 255, 255, .08) 1px, transparent 1px),
                 linear-gradient(rgba(255, 255, 255, .08) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, .12) 1px, transparent 1px),
                 linear-gradient(rgba(255, 255, 255, .12) 1px, transparent 1px);
             background-size: 30px 30px, 30px 30px, 60px 60px, 60px 60px;
+            background-position: 0 0, 0 0, -15px -15px, -15px -15px;
         }
-        .hero-section > * { position: relative; z-index: 1; }
-        .hero-section h1 { font-size: 2.8em; margin-bottom: 20px; }
-        .hero-section p { font-size: 1.3em; max-width: 900px; margin: 0 auto; opacity: 0.95; }
-        .highlight { color: var(--accent-teal); }
-        
-        /* Content Wrapper */
-        .content-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 60px 20px;
-        }
-        
-        /* Section Header */
-        .section-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .section-header h2 {
-            color: var(--primary-blue);
-            font-size: 2rem;
-            margin-bottom: 12px;
-        }
-        .section-header p {
-            color: var(--text-light);
-            font-size: 1.1rem;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .section-badge {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            background: rgba(77, 208, 225, 0.1);
-            color: var(--primary-blue);
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        /* Info Cards Grid */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-bottom: 60px;
-        }
-        .info-card {
-            background: var(--bg-light);
-            border-radius: 20px;
-            padding: 2rem;
-        }
-        .info-card .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .info-card h3 {
-            font-size: 1.4rem;
-            color: var(--primary-blue);
-            margin-bottom: 0.75rem;
-        }
-        .info-card p, .info-card ul {
-            color: var(--text-light);
-            line-height: 1.7;
-        }
-        .info-card ul {
-            list-style: none;
-            margin-top: 0.5rem;
-        }
-        .info-card ul li {
-            padding: 0.4rem 0;
-        }
-        .info-card ul li::before {
-            content: '✓ ';
-            color: var(--accent-teal);
-            font-weight: bold;
-        }
-        
-        /* PTI Card */
-        .pti-card {
-            background: var(--bg-light);
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 900px;
-            margin: 0 auto 60px;
-        }
-        .pti-card .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .pti-card h3 {
-            font-size: 1.4rem;
-            color: var(--primary-blue);
-            margin-bottom: 0.75rem;
-        }
-        .pti-card p {
-            color: var(--text-light);
-            line-height: 1.7;
-            margin-bottom: 1rem;
-        }
-        
-        /* Gallery Section Placeholder */
-        .gallery-section {
-            background: var(--bg-light);
-            padding: 60px 20px;
-        }
-        .gallery-placeholder {
-            background: white;
-            padding: 3rem;
-            border-radius: 20px;
-            text-align: center;
-            color: var(--text-light);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%);
-            color: white;
-            padding: 80px 20px;
-            text-align: center;
+        .hero-content {
             position: relative;
-            overflow: hidden;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
         }
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(circle, transparent 0, transparent 22px, rgba(255, 255, 255, 0.15) 22px, rgba(255, 255, 255, 0.15) 24px, transparent 24px);
-            background-size: 48px 48px;
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
         }
-        .cta-section > * { position: relative; z-index: 1; }
-        .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
-        .cta-section p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.95; }
-        .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .hero .highlight {
+            color: var(--accent-teal);
+        }
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
         .btn-primary {
             padding: 1rem 2rem;
             background: white;
@@ -304,7 +196,147 @@
             text-decoration: none;
         }
         
-        /* Edit Form */
+        /* Stats Section */
+        .stats-section {
+            background: var(--bg-light);
+            padding: 4rem 2rem;
+        }
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 78, 124, 0.1);
+        }
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        /* Services Section */
+        .services-section {
+            padding: 5rem 2rem;
+            background: white;
+        }
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+        .services-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .service-card {
+            background: var(--bg-light);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0, 78, 124, 0.15);
+        }
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .service-title {
+            font-size: 1.3rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.75rem;
+        }
+        .service-description {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        
+        /* Events Section */
+        .events-section {
+            padding: 5rem 2rem;
+            background: white;
+        }
+        .events-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(77, 208, 225, 0.1);
+            color: var(--primary-blue);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .events-placeholder {
+            background: var(--bg-light);
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            color: var(--text-light);
+        }
+        
+        /* CTA Banner */
+        .cta-banner {
+            background: linear-gradient(135deg, #004E7C, #0066a1);
+            padding: 5rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle, transparent 0, transparent 22px, rgba(255, 255, 255, 0.15) 22px, rgba(255, 255, 255, 0.15) 24px, transparent 24px);
+            background-size: 48px 48px;
+        }
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .cta-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+        
+        /* Edit Form in Panel */
         .edit-form {
             padding: 1rem;
             display: none;
@@ -333,7 +365,10 @@
             outline: none;
             border-color: var(--primary-blue);
         }
-        .btn-row { display: flex; gap: 0.5rem; }
+        .btn-row {
+            display: flex;
+            gap: 0.5rem;
+        }
         .btn-save {
             flex: 1;
             background: var(--primary-blue);
@@ -357,12 +392,26 @@
         }
         .btn-cancel:hover { background: #cbd5e1; }
         
-        /* Welcome Panel */
-        .welcome-panel { padding: 1.5rem; }
-        .welcome-panel h3 { color: var(--primary-blue); margin-bottom: 1rem; }
-        .welcome-panel ul { list-style: none; margin-bottom: 1.5rem; }
-        .welcome-panel li { padding: 0.5rem 0; color: var(--text-light); }
-        .welcome-panel li::before { content: "✓ "; color: var(--primary-blue); }
+        /* Welcome/Login in panel */
+        .welcome-panel {
+            padding: 1.5rem;
+        }
+        .welcome-panel h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+        .welcome-panel ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        .welcome-panel li {
+            padding: 0.5rem 0;
+            color: var(--text-light);
+        }
+        .welcome-panel li::before {
+            content: "✓ ";
+            color: var(--primary-blue);
+        }
         .login-box {
             background: #f0f9ff;
             border: 1px solid #bae6fd;
@@ -374,7 +423,7 @@
             padding: 0.75rem;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
         .login-box button {
             width: 100%;
@@ -386,6 +435,7 @@
             font-weight: 600;
             cursor: pointer;
         }
+        
         .logged-in-box {
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
@@ -394,7 +444,10 @@
             display: none;
         }
         .logged-in-box.active { display: block; }
-        .logged-in-box p { color: #166534; margin-bottom: 1rem; }
+        .logged-in-box p {
+            color: #166534;
+            margin-bottom: 1rem;
+        }
         .btn-logout {
             width: 100%;
             background: #ef4444;
@@ -408,11 +461,16 @@
         
         /* Responsive */
         @media (max-width: 1024px) {
-            .cards-grid { grid-template-columns: 1fr; }
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-container { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 768px) {
             .admin-toggle, .admin-panel { display: none; }
-            .hero-section h1 { font-size: 2rem; }
+            .page-nav { font-size: 0.8rem; }
+            .page-btn { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
+            .hero h1 { font-size: 2rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            .stats-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -421,18 +479,18 @@
     <nav class="page-nav">
         <div class="page-nav-inner">
             <h1>📄 LDAH Page Editor</h1>
-            <a href="page-admin.html" class="page-btn">Home</a>
-            <span class="page-btn active">Who We Are</span>
+            <span class="page-btn active">Home (index.html)</span>
             <a href="cms.html" class="page-btn" style="margin-left: auto;">← Back to CMS</a>
         </div>
     </nav>
 
-    <!-- Admin Panel -->
+    <!-- Admin Panel (slides in from right) -->
     <div class="admin-panel" id="adminPanel">
         <div class="admin-panel-header">
             <h2 style="font-size: 1.1rem;">✏️ Edit Content</h2>
         </div>
         
+        <!-- Edit Form (hidden until something is clicked) -->
         <div class="edit-form" id="editForm">
             <label id="editLabel">Editing...</label>
             <input type="hidden" id="editId">
@@ -444,6 +502,7 @@
             </div>
         </div>
         
+        <!-- Welcome Panel -->
         <div class="welcome-panel" id="welcomePanel">
             <h3>👋 Welcome!</h3>
             <ul>
@@ -454,7 +513,7 @@
             
             <div class="login-box" id="loginBox">
                 <p style="font-size: 0.85rem; color: #666; margin-bottom: 0.75rem;">🔐 Login to edit content:</p>
-                <input type="email" id="adminEmail" placeholder="Email">
+                <input type="email" id="adminEmail" placeholder="Email" style="margin-bottom: 0.5rem;">
                 <input type="password" id="adminPassword" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
                 <button onclick="login()">Login</button>
             </div>
@@ -468,153 +527,203 @@
     </div>
 
     <!-- Admin Toggle Button -->
-    <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">📝 Edit Mode</button>
+    <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">
+        📝 Edit Mode
+    </button>
 
-    <!-- Page Preview -->
+    <!-- Page Preview Container -->
     <div class="page-preview" id="pagePreview">
         
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="editable-section" onclick="editField('whoweare', 'heroTitle', 'Hero Title')">
-                <span class="edit-indicator">✏️ Edit</span>
-                <h1 id="whoweare-heroTitle">Who We Are</h1>
-            </div>
-            <div class="editable-section" onclick="editField('whoweare', 'heroSubtitle', 'Hero Subtitle')">
-                <span class="edit-indicator">✏️ Edit</span>
-                <p id="whoweare-heroSubtitle">Leadership in Disabilities & Achievement of Hawai'i is a <span class="highlight">501(c)(3) non-profit</span> founded in 1968 by parents of children with learning disabilities. Today, we serve families of children with any type of disability across Hawai'i and the Pacific Islands.</p>
+        <!-- ========== HERO SECTION ========== -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="editable-section" onclick="editField('home', 'heroTitle', 'Hero Title (with highlight)')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <h1 id="home-heroTitle">Empowering Families, <span class="highlight">Transforming Lives</span></h1>
+                </div>
+                <div class="editable-section" onclick="editField('home', 'heroSubtitle', 'Hero Subtitle')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <p id="home-heroSubtitle">Supporting children and youth with disabilities across Hawai'i and the Pacific Islands through advocacy, education, and community partnerships.</p>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-primary">Our Services</a>
+                    <a href="#" class="btn-secondary">Get Involved</a>
+                </div>
             </div>
         </section>
         
-        <!-- Mission, Vision, Values Section -->
-        <div class="content-wrapper">
-            <div class="section-header">
-                <span class="section-badge">🌺 Our Foundation</span>
-                <div class="editable-section" onclick="editField('whoweare', 'foundationTitle', 'Foundation Section Title')">
-                    <span class="edit-indicator">✏️ Edit</span>
-                    <h2 id="whoweare-foundationTitle">Mission, Vision & Values</h2>
-                </div>
-                <div class="editable-section" onclick="editField('whoweare', 'foundationSubtitle', 'Foundation Section Subtitle')">
-                    <span class="edit-indicator">✏️ Edit</span>
-                    <p id="whoweare-foundationSubtitle">Guiding principles that drive our commitment to families and children with disabilities</p>
-                </div>
-            </div>
-
-            <div class="cards-grid">
-                <!-- Mission Card -->
-                <div class="info-card">
-                    <div class="card-icon">🎯</div>
-                    <div class="editable-section" onclick="editField('whoweare', 'missionTitle', 'Mission Title')">
+        <!-- ========== STATS SECTION ========== -->
+        <section class="stats-section">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon">👨‍👩‍👧‍👦</div>
+                    <div class="editable-section" onclick="editField('home', 'stat1Number', 'Stat 1: Number')">
                         <span class="edit-indicator">✏️ Edit</span>
-                        <h3 id="whoweare-missionTitle">Our Mission</h3>
+                        <div class="stat-number" id="home-stat1Number">15,000+</div>
                     </div>
-                    <div class="editable-section" onclick="editField('whoweare', 'missionText', 'Mission Text')">
+                    <div class="editable-section" onclick="editField('home', 'stat1Label', 'Stat 1: Label')">
                         <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whoweare-missionText">To enhance educational, work and life opportunities for children and youth with or at risk of disabilities by empowering them and their families through screening, identification, information, training, and mentoring, and by public outreach and advocacy.</p>
+                        <div class="stat-label" id="home-stat1Label">Families Served</div>
                     </div>
                 </div>
-
-                <!-- Vision Card -->
-                <div class="info-card">
-                    <div class="card-icon">🔭</div>
-                    <div class="editable-section" onclick="editField('whoweare', 'visionTitle', 'Vision Title')">
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="editable-section" onclick="editField('home', 'stat2Number', 'Stat 2: Number')">
                         <span class="edit-indicator">✏️ Edit</span>
-                        <h3 id="whoweare-visionTitle">Our Vision</h3>
+                        <div class="stat-number" id="home-stat2Number">200+</div>
                     </div>
-                    <div class="editable-section" onclick="editField('whoweare', 'visionText', 'Vision Text')">
+                    <div class="editable-section" onclick="editField('home', 'stat2Label', 'Stat 2: Label')">
                         <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whoweare-visionText">Individuals have choice and access to educational, work and life opportunities to be successful regardless of their disabilities.</p>
+                        <div class="stat-label" id="home-stat2Label">Annual Events</div>
                     </div>
                 </div>
-
-                <!-- Values Card -->
-                <div class="info-card">
-                    <div class="card-icon">💎</div>
-                    <div class="editable-section" onclick="editField('whoweare', 'valuesTitle', 'Values Title')">
+                <div class="stat-card">
+                    <div class="stat-icon">🏫</div>
+                    <div class="editable-section" onclick="editField('home', 'stat3Number', 'Stat 3: Number')">
                         <span class="edit-indicator">✏️ Edit</span>
-                        <h3 id="whoweare-valuesTitle">Core Values</h3>
+                        <div class="stat-number" id="home-stat3Number">50+</div>
                     </div>
-                    <div class="editable-section" onclick="editField('whoweare', 'valuesList', 'Values List (use &lt;li&gt; tags)')">
+                    <div class="editable-section" onclick="editField('home', 'stat3Label', 'Stat 3: Label')">
                         <span class="edit-indicator">✏️ Edit</span>
-                        <ul id="whoweare-valuesList">
-                            <li>Advocating for the Rights of Children with Disabilities</li>
-                            <li>Putting Families First</li>
-                            <li>Creating Partnerships</li>
-                            <li>Improving Communication</li>
-                            <li>Implementing Best-Practices & Innovation</li>
-                            <li>Ensuring Accountability</li>
-                        </ul>
+                        <div class="stat-label" id="home-stat3Label">Years of Service</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- PTI Card -->
-            <div class="pti-card">
-                <div class="card-icon">🏛️</div>
-                <div class="editable-section" onclick="editField('whoweare', 'ptiTitle', 'PTI Section Title')">
-                    <span class="edit-indicator">✏️ Edit</span>
-                    <h3 id="whoweare-ptiTitle">Parent Training & Information Center</h3>
-                </div>
-                <div class="editable-section" onclick="editField('whoweare', 'ptiText1', 'PTI Paragraph 1')">
-                    <span class="edit-indicator">✏️ Edit</span>
-                    <p id="whoweare-ptiText1">Through a contract with the United States Department of Education, Office of Special Education Programs (OSEP), LDAH has operated and served as The Parent Training and Information Center (PTI) for the State of Hawaii since 1990. As the PTI, LDAH provides education and training to parents, children, professionals and community members.</p>
-                </div>
-                <div class="editable-section" onclick="editField('whoweare', 'ptiText2', 'PTI Paragraph 2')">
-                    <span class="edit-indicator">✏️ Edit</span>
-                    <p id="whoweare-ptiText2">The majority of Parent Center staff and board are parents of children with disabilities, bringing personal experience and expertise when working with families.</p>
-                </div>
-            </div>
-
-            <!-- Meet Our People Section Header -->
-            <div class="section-header">
-                <span class="section-badge">👥 Meet Our People</span>
-                <div class="editable-section" onclick="editField('whoweare', 'teamTitle', 'Team Section Title')">
-                    <span class="edit-indicator">✏️ Edit</span>
-                    <h2 id="whoweare-teamTitle">The Team Behind LDAH</h2>
-                </div>
-                <div class="editable-section" onclick="editField('whoweare', 'teamSubtitle', 'Team Section Subtitle')">
-                    <span class="edit-indicator">✏️ Edit</span>
-                    <p id="whoweare-teamSubtitle">Dedicated professionals and volunteers committed to supporting families</p>
-                </div>
-            </div>
-            
-            <div class="gallery-placeholder">
-                <p>👥 Team and Board members are managed in the CMS Team tab</p>
-            </div>
-        </div>
-
-        <!-- Gallery Section -->
-        <section class="gallery-section">
-            <div class="content-wrapper" style="padding-top: 0; padding-bottom: 0;">
-                <div class="section-header">
-                    <span class="section-badge">📸 Our Community</span>
-                    <div class="editable-section" onclick="editField('whoweare', 'galleryTitle', 'Gallery Section Title')">
+                <div class="stat-card">
+                    <div class="stat-icon">🌴</div>
+                    <div class="editable-section" onclick="editField('home', 'stat4Number', 'Stat 4: Number')">
                         <span class="edit-indicator">✏️ Edit</span>
-                        <h2 id="whoweare-galleryTitle">LDAH in Action</h2>
+                        <div class="stat-number" id="home-stat4Number">7</div>
                     </div>
-                    <div class="editable-section" onclick="editField('whoweare', 'gallerySubtitle', 'Gallery Section Subtitle')">
+                    <div class="editable-section" onclick="editField('home', 'stat4Label', 'Stat 4: Label')">
                         <span class="edit-indicator">✏️ Edit</span>
-                        <p id="whoweare-gallerySubtitle">Moments from our events, workshops, and community outreach</p>
+                        <div class="stat-label" id="home-stat4Label">Pacific Islands</div>
                     </div>
                 </div>
-            </div>
-            <div class="gallery-placeholder">
-                <p>📸 Gallery images are managed in the CMS</p>
             </div>
         </section>
-
-        <!-- CTA Section -->
-        <section class="cta-section">
-            <div class="editable-section" onclick="editField('whoweare', 'ctaTitle', 'CTA Title')">
-                <span class="edit-indicator">✏️ Edit</span>
-                <h2 id="whoweare-ctaTitle">Have Questions? We're Here to Help</h2>
+        
+        <!-- ========== SERVICES SECTION ========== -->
+        <section class="services-section" id="services">
+            <div class="section-header">
+                <div class="editable-section" onclick="editField('home', 'servicesTitle', 'Services Section Title')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <h2 class="section-title" id="home-servicesTitle">Comprehensive Support Services</h2>
+                </div>
+                <div class="editable-section" onclick="editField('home', 'servicesSubtitle', 'Services Section Subtitle')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <p class="section-description" id="home-servicesSubtitle">We provide a wide range of services designed to empower families and support children with disabilities throughout their educational journey.</p>
+                </div>
             </div>
-            <div class="editable-section" onclick="editField('whoweare', 'ctaSubtitle', 'CTA Subtitle')">
-                <span class="edit-indicator">✏️ Edit</span>
-                <p id="whoweare-ctaSubtitle">Our team is ready to assist you with information about special education, advocacy support, and navigating services for your child.</p>
+            <div class="services-grid">
+                <!-- Service Card 1 -->
+                <div class="service-card">
+                    <div class="service-icon">📚</div>
+                    <div class="editable-section" onclick="editField('home', 'service1Title', 'Service 1: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service1Title">Parent Training & Information</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service1Desc', 'Service 1: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service1Desc">Comprehensive training and resources to help parents navigate special education systems and advocate for their children.</p>
+                    </div>
+                </div>
+                <!-- Service Card 2 -->
+                <div class="service-card">
+                    <div class="service-icon">🎓</div>
+                    <div class="editable-section" onclick="editField('home', 'service2Title', 'Service 2: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service2Title">School Readiness Project</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service2Desc', 'Service 2: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service2Desc">Early intervention programs helping children with disabilities prepare for successful school experiences.</p>
+                    </div>
+                </div>
+                <!-- Service Card 3 -->
+                <div class="service-card">
+                    <div class="service-icon">⚖️</div>
+                    <div class="editable-section" onclick="editField('home', 'service3Title', 'Service 3: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service3Title">Special Education Advocacy</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service3Desc', 'Service 3: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service3Desc">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p>
+                    </div>
+                </div>
+                <!-- Service Card 4 -->
+                <div class="service-card">
+                    <div class="service-icon">🇺🇸</div>
+                    <div class="editable-section" onclick="editField('home', 'service4Title', 'Service 4: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service4Title">Military Family Support</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service4Desc', 'Service 4: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service4Desc">Specialized assistance for military families navigating relocations and IEP transitions across installations.</p>
+                    </div>
+                </div>
+                <!-- Service Card 5 -->
+                <div class="service-card">
+                    <div class="service-icon">🏝️</div>
+                    <div class="editable-section" onclick="editField('home', 'service5Title', 'Service 5: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service5Title">Pacific Islands Outreach</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service5Desc', 'Service 5: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service5Desc">Extending support to families across American Samoa, CNMI, FSM, Guam, Marshall Islands, and Palau.</p>
+                    </div>
+                </div>
+                <!-- Service Card 6 -->
+                <div class="service-card">
+                    <div class="service-icon">✊</div>
+                    <div class="editable-section" onclick="editField('home', 'service6Title', 'Service 6: Title')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <h3 class="service-title" id="home-service6Title">Stand Up to Bullying</h3>
+                    </div>
+                    <div class="editable-section" onclick="editField('home', 'service6Desc', 'Service 6: Description')">
+                        <span class="edit-indicator">✏️ Edit</span>
+                        <p class="service-description" id="home-service6Desc">Resources and support to help prevent bullying and protect children. Take the pledge to end bullying in our community.</p>
+                    </div>
+                </div>
             </div>
-            <div class="cta-buttons">
-                <a href="#" class="btn-primary">📞 Contact Us</a>
-                <a href="#" class="btn-secondary">🤝 Join Our Team</a>
+        </section>
+        
+        <!-- ========== EVENTS SECTION ========== -->
+        <section class="events-section">
+            <div class="section-header">
+                <span class="events-badge">📅 What's Happening</span>
+                <div class="editable-section" onclick="editField('home', 'eventsTitle', 'Events Section Title')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <h2 class="section-title" id="home-eventsTitle">Upcoming Events</h2>
+                </div>
+                <div class="editable-section" onclick="editField('home', 'eventsSubtitle', 'Events Section Subtitle')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <p class="section-description" id="home-eventsSubtitle">Join us for workshops, training sessions, and community events</p>
+                </div>
+            </div>
+            <div class="events-placeholder">
+                <p>📅 Events are loaded dynamically from Firebase</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Manage events in the Events tab of the CMS</p>
+            </div>
+        </section>
+        
+        <!-- ========== CTA BANNER ========== -->
+        <section class="cta-banner">
+            <div class="cta-content">
+                <div class="editable-section" onclick="editField('home', 'ctaTitle', 'CTA Banner Title')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <h2 id="home-ctaTitle">Ready to Make a Difference?</h2>
+                </div>
+                <div class="editable-section" onclick="editField('home', 'ctaSubtitle', 'CTA Banner Subtitle')">
+                    <span class="edit-indicator">✏️ Edit</span>
+                    <p id="home-ctaSubtitle">Join our community of volunteers, supporters, and advocates working to create opportunities for children with disabilities.</p>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-primary">Become a Volunteer</a>
+                    <a href="#" class="btn-secondary">Support Us</a>
+                </div>
             </div>
         </section>
         
@@ -660,11 +769,12 @@
         
         async function loadContent() {
             try {
-                const doc = await db.collection('pageContent').doc('whoweare').get();
+                const doc = await db.collection('pageContent').doc('home').get();
                 if (doc.exists) {
                     pageContent = doc.data();
+                    // Update displayed content
                     Object.keys(pageContent).forEach(key => {
-                        const el = document.getElementById(`whoweare-${key}`);
+                        const el = document.getElementById(`home-${key}`);
                         if (el && pageContent[key]) {
                             el.innerHTML = pageContent[key];
                         }
@@ -703,6 +813,7 @@
                 if (err.code === 'auth/user-not-found') message = 'No account found with this email';
                 else if (err.code === 'auth/wrong-password') message = 'Incorrect password';
                 else if (err.code === 'auth/invalid-email') message = 'Invalid email address';
+                else if (err.code === 'auth/too-many-requests') message = 'Too many attempts. Try again later.';
                 alert('❌ ' + message);
             } finally {
                 document.querySelector('#loginBox button').textContent = 'Login';
@@ -716,6 +827,7 @@
                 alert('👋 Logged out');
             } catch (err) {
                 console.error('Logout error:', err);
+                alert('❌ Error logging out');
             }
         }
         
@@ -726,9 +838,11 @@
                 return;
             }
             
+            // Show edit form
             document.getElementById('welcomePanel').style.display = 'none';
             document.getElementById('editForm').classList.add('active');
             
+            // Fill form
             document.getElementById('editLabel').textContent = `Editing: ${label}`;
             document.getElementById('editId').value = fieldId;
             document.getElementById('editPage').value = pageId;
@@ -736,6 +850,7 @@
             const currentContent = document.getElementById(`${pageId}-${fieldId}`)?.innerHTML || '';
             document.getElementById('editContent').value = currentContent.trim();
             
+            // Open panel if not open
             if (!document.getElementById('adminPanel').classList.contains('open')) {
                 toggleAdmin();
             }
@@ -747,14 +862,17 @@
             const content = document.getElementById('editContent').value;
             
             try {
+                // Save to Firebase
                 await db.collection('pageContent').doc(pageId).set({
                     [fieldId]: content,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
                 
+                // Update display
                 const el = document.getElementById(`${pageId}-${fieldId}`);
                 if (el) el.innerHTML = content;
                 
+                // Update local cache
                 pageContent[fieldId] = content;
                 
                 alert('✅ Saved!');
