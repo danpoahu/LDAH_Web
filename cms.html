@@ -914,7 +914,8 @@
     .status-in-progress, .status-interviewing, .status-scheduled { background: #e0e7ff; color: #3730a3; }
     .status-completed, .status-accepted, .status-approved { background: #d1fae5; color: #065f46; }
     .status-archived, .status-declined { background: #fee2e2; color: #991b1b; }
-    .status-read, .status-replied { background: #f3f4f6; color: #374151; }
+    .status-read, .status-replied, .status-viewed { background: #f3f4f6; color: #374151; }
+    .status-acknowledged { background: #ddd6fe; color: #5b21b6; }
     
     .btn-export {
       padding: 0.5rem 1rem;
@@ -1240,9 +1241,9 @@
         <button class="tab" data-tab="gallery">📸 Gallery</button>
         <button class="tab" data-tab="resources">📚 Resources</button>
         <button class="tab" data-tab="faq">❓ FAQ</button>
-        <button class="tab" data-tab="events">📅 Events</button>
-        <button class="tab" data-tab="volunteers">🤝 Volunteers</button>
-        <button class="tab" data-tab="data">📊 Data</button>
+        <button class="tab" data-tab="events">📅 Events <span id="eventsTabBadge" class="badge" style="display: none;"></span></button>
+        <button class="tab" data-tab="volunteers">🤝 Volunteers <span id="volunteersTabBadge" class="badge" style="display: none;"></span></button>
+        <button class="tab" data-tab="data">📊 Data <span id="dataTabBadge" class="badge" style="display: none;"></span></button>
         <button class="tab" data-tab="pages">📄 Pages</button>
         <button class="tab" data-tab="analytics">📈 Analytics</button>
       </div>
@@ -1470,7 +1471,10 @@
               🏢 Provider Requests
               <span id="newProvidersBadge" class="badge" style="display: none;"></span>
             </button>
-            <button class="sub-tab" data-subtab="pledges" onclick="switchDataSubTab('pledges')">✊ Anti-Bullying Pledges</button>
+            <button class="sub-tab" data-subtab="pledges" onclick="switchDataSubTab('pledges')">
+              ✊ Anti-Bullying Pledges
+              <span id="newPledgesBadge" class="badge" style="display: none;"></span>
+            </button>
             <button class="sub-tab" data-subtab="eventRequests" onclick="switchDataSubTab('eventRequests')">
               📅 Event Requests
               <span id="newEventRequestsBadge" class="badge" style="display: none;"></span>
@@ -1504,7 +1508,14 @@
           
           <!-- Pledges Sub-tab -->
           <div id="pledges-subtab" class="subtab-content" style="display: none;">
-            <div style="margin-bottom: 1rem;">
+            <div style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+              <select id="pledgeStatusFilter" onchange="filterPledges()" style="padding: 0.5rem; border-radius: 8px; border: 2px solid #ddd;">
+                <option value="all">All Statuses</option>
+                <option value="new">New</option>
+                <option value="viewed">Viewed</option>
+                <option value="acknowledged">Acknowledged</option>
+              </select>
+              <button onclick="markAllPledgesViewed()" class="btn-add-person" style="padding: 0.5rem 1rem; background: #8b5cf6;">✓ Mark All Viewed</button>
               <button onclick="exportPledgesToCSV()" class="btn-export">📥 Export CSV</button>
             </div>
             <div id="pledgesLoading" class="loading-spinner">Loading pledges...</div>
@@ -3810,6 +3821,17 @@
         
         loading.style.display = 'none';
         
+        // Calculate total new signups across all events
+        let totalNewSignups = 0;
+        for (const eventId in eventSignups) {
+          totalNewSignups += eventSignups[eventId].filter(s => !s.status || s.status === 'new').length;
+        }
+        const eventsBadge = document.getElementById('eventsTabBadge');
+        if (eventsBadge) {
+          eventsBadge.textContent = totalNewSignups;
+          eventsBadge.style.display = totalNewSignups > 0 ? 'inline' : 'none';
+        }
+        
         if (events.length === 0) {
           empty.style.display = 'block';
           if (countEl) countEl.textContent = '';
@@ -4570,6 +4592,7 @@
           badge.textContent = newCount;
           badge.style.display = newCount > 0 ? 'inline' : 'none';
         }
+        updateVolunteersTabBadge();
         
         if (applications.length === 0) {
           empty.style.display = 'block';
@@ -4759,6 +4782,7 @@
         const newCount = providers.filter(p => !p.status || p.status === 'new').length;
         const badge = document.getElementById('newProvidersBadge');
         if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'inline' : 'none'; }
+        updateDataTabBadge();
         
         if (providers.length === 0) {
           empty.style.display = 'block';
@@ -4827,6 +4851,7 @@
         const newCount = providers.filter(p => !p.status || p.status === 'new').length;
         const badge = document.getElementById('newProvidersBadge');
         if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'inline' : 'none'; }
+        updateDataTabBadge();
       } catch (error) { console.error('Error:', error); }
     }
     
@@ -4866,6 +4891,11 @@
         pledges.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
         loading.style.display = 'none';
         
+        const newCount = pledges.filter(p => !p.status || p.status === 'new').length;
+        const badge = document.getElementById('newPledgesBadge');
+        if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'inline' : 'none'; }
+        updateDataTabBadge();
+        
         if (pledges.length === 0) {
           empty.style.display = 'block';
         } else {
@@ -4880,22 +4910,75 @@
     
     function renderPledges() {
       const list = document.getElementById('pledgesList');
+      const filterEl = document.getElementById('pledgeStatusFilter');
       if (!list) return;
-      list.innerHTML = pledges.map(p => {
+      const filter = filterEl ? filterEl.value : 'all';
+      let filtered = filter === 'all' ? pledges : pledges.filter(p => (p.status || 'new') === filter);
+      
+      if (filtered.length === 0) {
+        list.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 2rem;">No pledges found.</p>';
+        return;
+      }
+      
+      list.innerHTML = filtered.map(p => {
         const date = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000).toLocaleDateString() : 'Unknown';
+        const status = p.status || 'new';
         return `
-          <div class="data-card">
-            <div class="data-card-header">
-              <div>
+          <div class="data-card ${status}">
+            <div class="data-card-header" onclick="toggleDataExpand('pledge-${p.id}')">
+              <div style="flex: 1;">
                 <strong>✊ ${p.name || 'Anonymous'}</strong>
+                <span class="status-badge status-${status}">${status}</span>
                 ${p.location ? `<span style="color: var(--text-light); margin-left: 0.5rem;">from ${p.location}</span>` : ''}
                 <p style="color: var(--text-light); font-size: 0.85rem;">Pledged on ${date}</p>
               </div>
-              <button class="btn-delete" onclick="deletePledge('${p.id}')">🗑️</button>
+              <span id="pledge-${p.id}-arrow">▶</span>
+            </div>
+            <div id="pledge-${p.id}-body" class="data-card-body" style="display: none;">
+              ${p.email ? `<p><strong>Email:</strong> ${p.email}</p>` : ''}
+              ${p.message ? `<p><strong>Message:</strong> ${p.message}</p>` : ''}
+              <div class="status-buttons">
+                ${['new', 'viewed', 'acknowledged'].map(s => `
+                  <button class="status-btn ${status === s ? 'active' : ''}" onclick="updatePledgeStatus('${p.id}', '${s}')">${s}</button>
+                `).join('')}
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                ${p.email ? `<a href="mailto:${p.email}" class="btn-edit">📧 Email</a>` : ''}
+                <button class="btn-delete" onclick="deletePledge('${p.id}')">🗑️</button>
+              </div>
             </div>
           </div>
         `;
       }).join('');
+    }
+    
+    function filterPledges() { renderPledges(); }
+    
+    async function updatePledgeStatus(id, status) {
+      try {
+        await db.collection('pledges').doc(id).update({ status });
+        const p = pledges.find(x => x.id === id);
+        if (p) p.status = status;
+        renderPledges();
+        const newCount = pledges.filter(p => !p.status || p.status === 'new').length;
+        const badge = document.getElementById('newPledgesBadge');
+        if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'inline' : 'none'; }
+        updateDataTabBadge();
+      } catch (error) { console.error('Error:', error); }
+    }
+    
+    async function markAllPledgesViewed() {
+      try {
+        const newPledges = pledges.filter(p => !p.status || p.status === 'new');
+        for (const p of newPledges) {
+          await db.collection('pledges').doc(p.id).update({ status: 'viewed' });
+          p.status = 'viewed';
+        }
+        renderPledges();
+        const badge = document.getElementById('newPledgesBadge');
+        if (badge) { badge.textContent = 0; badge.style.display = 'none'; }
+        updateDataTabBadge();
+      } catch (error) { console.error('Error:', error); }
     }
     
     async function deletePledge(id) {
@@ -4937,6 +5020,7 @@
         const newCount = eventRequests.filter(r => !r.status || r.status === 'pending').length;
         const badge = document.getElementById('newEventRequestsBadge');
         if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'inline' : 'none'; }
+        updateDataTabBadge();
         
         if (eventRequests.length === 0) {
           empty.style.display = 'block';
@@ -5009,6 +5093,7 @@
         const newCount = eventRequests.filter(r => !r.status || r.status === 'pending').length;
         const badge = document.getElementById('newEventRequestsBadge');
         if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'inline' : 'none'; }
+        updateDataTabBadge();
       } catch (error) { console.error('Error:', error); }
     }
     
@@ -5052,6 +5137,7 @@
         const newCount = contacts.filter(c => !c.status || c.status === 'new').length;
         const badge = document.getElementById('newContactsBadge');
         if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'inline' : 'none'; }
+        updateDataTabBadge();
         
         if (contacts.length === 0) {
           empty.style.display = 'block';
@@ -5120,6 +5206,7 @@
         const newCount = contacts.filter(c => !c.status || c.status === 'new').length;
         const badge = document.getElementById('newContactsBadge');
         if (badge) { badge.textContent = newCount; badge.style.display = newCount > 0 ? 'inline' : 'none'; }
+        updateDataTabBadge();
       } catch (error) { console.error('Error:', error); }
     }
     
@@ -5302,6 +5389,44 @@
       setTimeout(() => {
         successEl.style.display = 'none';
       }, 3000);
+    }
+    
+    // Update Data tab badge (sum of all data sub-tab badges)
+    function updateDataTabBadge() {
+      const providersNew = providers.filter(p => !p.status || p.status === 'new').length;
+      const pledgesNew = pledges.filter(p => !p.status || p.status === 'new').length;
+      const eventRequestsNew = eventRequests.filter(r => !r.status || r.status === 'pending').length;
+      const contactsNew = contacts.filter(c => !c.status || c.status === 'new').length;
+      const total = providersNew + pledgesNew + eventRequestsNew + contactsNew;
+      
+      const badge = document.getElementById('dataTabBadge');
+      if (badge) {
+        badge.textContent = total;
+        badge.style.display = total > 0 ? 'inline' : 'none';
+      }
+    }
+    
+    // Update Volunteers tab badge
+    function updateVolunteersTabBadge() {
+      const newCount = applications.filter(a => !a.status || a.status === 'new').length;
+      const badge = document.getElementById('volunteersTabBadge');
+      if (badge) {
+        badge.textContent = newCount;
+        badge.style.display = newCount > 0 ? 'inline' : 'none';
+      }
+    }
+    
+    // Update Events tab badge
+    function updateEventsTabBadge() {
+      let totalNewSignups = 0;
+      for (const eventId in eventSignups) {
+        totalNewSignups += eventSignups[eventId].filter(s => !s.status || s.status === 'new').length;
+      }
+      const badge = document.getElementById('eventsTabBadge');
+      if (badge) {
+        badge.textContent = totalNewSignups;
+        badge.style.display = totalNewSignups > 0 ? 'inline' : 'none';
+      }
     }
 
     // ===== Init on Load =====
