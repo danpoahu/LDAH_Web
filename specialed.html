@@ -614,6 +614,18 @@
         </div>
     </div>
 
+    <!-- Video Modal -->
+    <div id="videoModal" class="iframe-modal" onclick="closeVideoModal(event)">
+        <div class="iframe-content" onclick="event.stopPropagation()">
+            <div class="iframe-header">
+                <img src="assets/logo_transparent.png" alt="LDAH" onclick="closeVideoModal()" style="width: 80px; height: 80px; cursor: pointer;" title="Close">
+                <h3 id="videoTitle">Loading...</h3>
+                <button class="close-video-modal close-iframe" onclick="closeVideoModal()">&times;</button>
+            </div>
+            <iframe id="videoFrame" class="iframe-frame" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+    </div>
+
     <script>
         // Firebase SDK - for page content
         const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
@@ -634,6 +646,38 @@
             } catch (err) { console.error('Error loading page content:', err); }
         }
         loadPageContent();
+
+        // Video Modal Functions
+        function openVideoModal(title, videoId) {
+            const modal = document.getElementById('videoModal');
+            const titleEl = document.getElementById('videoTitle');
+            const frame = document.getElementById('videoFrame');
+            
+            titleEl.textContent = title;
+            // Use youtube-nocookie for better privacy/embedding support
+            frame.src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1&loop=1&playlist=${videoId}&enablejsapi=1`;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // If embed fails, provide fallback link
+            frame.onerror = function() {
+                frame.outerHTML = `<div id="videoFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;">
+                    <h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">📺 Video</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">This video cannot be embedded. Click below to watch on YouTube.</p>
+                    <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">▶️ Watch on YouTube →</a>
+                </div>`;
+            };
+        }
+
+        function closeVideoModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-video-modal')) {
+                return;
+            }
+            const modal = document.getElementById('videoModal');
+            document.getElementById('videoFrame').src = '';
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
 
         // Modal functions - must be defined before footer loads
         function openIframeModal(title, url) {
