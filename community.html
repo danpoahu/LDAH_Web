@@ -1046,20 +1046,7 @@
     <script src="modal.js"></script>
     
     <script>
-        // Firebase Configuration and Initialization
-        const firebaseConfig = {
-            apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk",
-            authDomain: "ldah-932d5.firebaseapp.com",
-            projectId: "ldah-932d5",
-            storageBucket: "ldah-932d5.firebasestorage.app",
-            messagingSenderId: "662130454003",
-            appId: "1:662130454003:web:437576d5a5811ecd8df686"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
-        // Pledge Form Submission Handler
+        // Pledge Form Submission Handler (Firebase already initialized above)
         document.getElementById('pledgeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -1068,12 +1055,13 @@
             
             // Get form values
             const name = document.getElementById('pledgeName').value.trim();
+            const zip = document.getElementById('pledgeZip').value.trim();
             const email = document.getElementById('pledgeEmail').value.trim();
             const roleInput = document.querySelector('input[name="pledgeRole"]:checked');
             const acceptPledge = document.getElementById('pledgeAccept').checked;
             
             // Validation
-            if (!name || !email || !roleInput || !acceptPledge) {
+            if (!name || !zip || !email || !roleInput || !acceptPledge) {
                 alert('Please fill in all required fields and accept the pledge.');
                 return;
             }
@@ -1086,6 +1074,7 @@
                 // Submit to Firebase
                 await db.collection('pledges').add({
                     name: name,
+                    zip: zip,
                     email: email,
                     role: roleInput.value,
                     pledgeAccepted: true,
