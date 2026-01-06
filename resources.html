@@ -634,8 +634,8 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <h1>📚 Resources</h1>
-        <p>Find helpful resources for families and children with disabilities throughout Hawaii and the Pacific Islands.</p>
+        <h1 id="resources-heroTitle">📚 Resources</h1>
+        <p id="resources-heroSubtitle">Find helpful resources for families and children with disabilities throughout Hawaii and the Pacific Islands.</p>
     </section>
 
     <div class="content-wrapper">
@@ -681,8 +681,8 @@
 
     <!-- CTA Banner -->
     <section class="cta-banner">
-        <h2>Need Help Finding the Right Resource?</h2>
-        <p>Our team is here to guide you through options and connect you with the support your family needs.</p>
+        <h2 id="resources-ctaTitle">Need Help Finding the Right Resource?</h2>
+        <p id="resources-ctaSubtitle">Our team is here to guide you through options and connect you with the support your family needs.</p>
         <a href="contact.html" class="btn-primary" style="display: inline-block; padding: 1rem 2rem; background: white; color: #004E7C; border-radius: 50px; font-weight: 600; text-decoration: none;">Contact Us Today</a>
     </section>
 
@@ -702,6 +702,26 @@
     </div>
 
     <script>
+        // Firebase SDK - for page content
+        const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Load page content from Firebase
+        async function loadPageContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('resources').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    Object.keys(data).forEach(key => {
+                        const el = document.getElementById(`resources-${key}`);
+                        if (el && data[key]) el.innerHTML = data[key];
+                    });
+                }
+            } catch (err) { console.error('Error loading page content:', err); }
+        }
+        loadPageContent();
+
         // Resources data will be loaded from Firebase
         let resourcesData = [];
         let isLoading = true;

@@ -660,8 +660,8 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <h1>✊ Stand Up to Bullying</h1>
-        <p>We can prevent bullying together! Take this pledge to help end bullying in our community. There should be zero tolerance for bullying in our community and schools.</p>
+        <h1 id="community-heroTitle">✊ Stand Up to Bullying</h1>
+        <p id="community-heroSubtitle">We can prevent bullying together! Take this pledge to help end bullying in our community. There should be zero tolerance for bullying in our community and schools.</p>
         <button class="pledge-btn" onclick="openPledgeModal()">✋ Take the Pledge</button>
     </section>
 
@@ -767,8 +767,8 @@
 
         <!-- CTA Section -->
         <section class="support-section">
-            <h2>Need Help with a Bullying Situation?</h2>
-            <p>Our team can help you understand your rights and guide you through the process of addressing bullying in schools. Every child deserves to feel safe.</p>
+            <h2 id="community-ctaTitle">Need Help with a Bullying Situation?</h2>
+            <p id="community-ctaSubtitle">Our team can help you understand your rights and guide you through the process of addressing bullying in schools. Every child deserves to feel safe.</p>
             <a href="contact.html" class="contact-btn">Contact Us Today</a>
         </section>
     </div>
@@ -844,6 +844,26 @@
     </div>
 
     <script>
+        // Firebase SDK - for page content
+        const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Load page content from Firebase
+        async function loadPageContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('community').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    Object.keys(data).forEach(key => {
+                        const el = document.getElementById(`community-${key}`);
+                        if (el && data[key]) el.innerHTML = data[key];
+                    });
+                }
+            } catch (err) { console.error('Error loading page content:', err); }
+        }
+        loadPageContent();
+
         // Modal functions - must be defined before footer loads
         function openIframeModal(title, url) {
             // Special handling for Facebook

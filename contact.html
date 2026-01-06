@@ -792,8 +792,8 @@
 
 
   <div class="page-header">
-    <h1>Contact Us</h1>
-    <p>We're here to help your family navigate special education and disability services</p>
+    <h1 id="contact-heroTitle">Contact Us</h1>
+    <p id="contact-heroSubtitle">We're here to help your family navigate special education and disability services</p>
   </div>
 
   <div class="container">
@@ -903,8 +903,8 @@
 
     <!-- CTA Banner -->
     <section class="cta-banner">
-      <h2>Join Our Community</h2>
-      <p>Connect with other Hawaii families navigating special education and disabilities. Share experiences and find support.</p>
+      <h2 id="contact-ctaTitle">Join Our Community</h2>
+      <p id="contact-ctaSubtitle">Connect with other Hawaii families navigating special education and disabilities. Share experiences and find support.</p>
       <a href="javascript:void(0)" onclick="openIframeModal('Parent Talk Cafe - Facebook Group', 'https://www.facebook.com/groups/2659334410969387')" class="cta-btn">Join Parent Talk Cafe</a>
     </section>
 
@@ -934,6 +934,26 @@
   </div>
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Firebase SDK - for page content
+    const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Load page content from Firebase
+    async function loadPageContent() {
+        try {
+            const doc = await db.collection('pageContent').doc('contact').get();
+            if (doc.exists) {
+                const data = doc.data();
+                Object.keys(data).forEach(key => {
+                    const el = document.getElementById(`contact-${key}`);
+                    if (el && data[key]) el.innerHTML = data[key];
+                });
+            }
+        } catch (err) { console.error('Error loading page content:', err); }
+    }
+    loadPageContent();
+
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('active');
     }

@@ -722,8 +722,8 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <h1>🎓 School Readiness Project</h1>
-        <p>Supporting children in gaining the skills to be successful in their education through developmental screenings, family support, and parent education.</p>
+        <h1 id="readiness-heroTitle">🎓 School Readiness Project</h1>
+        <p id="readiness-heroSubtitle">Supporting children in gaining the skills to be successful in their education through developmental screenings, family support, and parent education.</p>
     </section>
 
     <div class="content-wrapper">
@@ -804,8 +804,8 @@
 
         <!-- CTA Section -->
         <section class="support-section">
-            <h2>Schedule a Screening</h2>
-            <p>Contact LDAH to schedule a screening event in your community. Individual screenings are also available by appointment in both our Honolulu and Wai'anae offices.</p>
+            <h2 id="readiness-ctaTitle">Schedule a Screening</h2>
+            <p id="readiness-ctaSubtitle">Contact LDAH to schedule a screening event in your community. Individual screenings are also available by appointment in both our Honolulu and Wai'anae offices.</p>
             <a href="contact.html" class="contact-btn">Contact Us Today</a>
         </section>
     </div>
@@ -934,6 +934,21 @@
         // Initialize Analytics and Firestore
         const analytics = firebase.analytics();
         const db = firebase.firestore();
+        
+        // Load page content from Firebase
+        async function loadPageContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('readiness').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    Object.keys(data).forEach(key => {
+                        const el = document.getElementById(`readiness-${key}`);
+                        if (el && data[key]) el.innerHTML = data[key];
+                    });
+                }
+            } catch (err) { console.error('Error loading page content:', err); }
+        }
+        loadPageContent();
         
         // Track page view
         analytics.logEvent('page_view', {

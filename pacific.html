@@ -790,8 +790,8 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <img src="https://www.ldahawaii.org/wp-content/uploads/2023/10/Pacific-Island-Partners-Logo.png" alt="Pacific Island Partners" class="partner-logo">
-        <h1>🏝️ Pacific Islands Partnership</h1>
-        <p>LDAH provides support and resources to families across the Pacific Islands, partnering with local organizations to empower children with disabilities and their families.</p>
+        <h1 id="pacific-heroTitle">🏝️ Pacific Islands Partnership</h1>
+        <p id="pacific-heroSubtitle">LDAH provides support and resources to families across the Pacific Islands, partnering with local organizations to empower children with disabilities and their families.</p>
         <button class="facebook-btn" onclick="openIframeModal('PI Partners Facebook Group', 'https://www.facebook.com/groups/333501733848880')">📱 Join PI Partners on Facebook</button>
     </section>
 
@@ -885,8 +885,8 @@
 
         <!-- CTA Section -->
         <section class="support-section">
-            <h2>Looking for Pacific Islands Support?</h2>
-            <p>Whether you're a family in the Pacific Islands or an organization looking to partner with LDAH, we're here to help connect you with resources and support.</p>
+            <h2 id="pacific-ctaTitle">Looking for Pacific Islands Support?</h2>
+            <p id="pacific-ctaSubtitle">Whether you're a family in the Pacific Islands or an organization looking to partner with LDAH, we're here to help connect you with resources and support.</p>
             <a href="contact.html" class="contact-btn">Contact Us Today</a>
         </section>
     </div>
@@ -920,6 +920,26 @@
     </div>
 
     <script>
+        // Firebase SDK - for page content
+        const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Load page content from Firebase
+        async function loadPageContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('pacific').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    Object.keys(data).forEach(key => {
+                        const el = document.getElementById(`pacific-${key}`);
+                        if (el && data[key]) el.innerHTML = data[key];
+                    });
+                }
+            } catch (err) { console.error('Error loading page content:', err); }
+        }
+        loadPageContent();
+
         // Modal functions - must be defined before footer loads
         function openIframeModal(title, url) {
             // Special handling for Facebook (blocks iframes)

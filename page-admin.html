@@ -7,77 +7,64 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-blue: #004E7C; --light-blue: #0066a1; --accent-teal: #4DD0E1; --text-dark: #1a1a1a; --text-light: #666; --bg-light: #f8f9fa; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; }
-        h1, h2, h3 { font-family: 'Poppins', sans-serif; font-weight: 700; line-height: 1.2; }
-        .admin-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.15); transform: translateX(100%); transition: transform 0.3s ease; z-index: 1000; overflow-y: auto; }
+        body { font-family: 'Inter', sans-serif; background: #f5f5f5; }
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; font-weight: 700; }
+        
+        .admin-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.15); transform: translateX(100%); transition: transform 0.3s; z-index: 1000; overflow-y: auto; }
         .admin-panel.open { transform: translateX(0); }
         .admin-panel-header { background: var(--primary-blue); color: white; padding: 1rem; position: sticky; top: 0; z-index: 10; }
-        .admin-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 999; padding: 14px 24px; background: var(--primary-blue); color: white; border-radius: 50px; border: none; box-shadow: 0 4px 20px rgba(0, 78, 124, 0.4); cursor: pointer; font-weight: 600; font-size: 1rem; }
+        .admin-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 999; padding: 14px 24px; background: var(--primary-blue); color: white; border-radius: 50px; border: none; box-shadow: 0 4px 20px rgba(0,78,124,0.4); cursor: pointer; font-weight: 600; }
         .admin-toggle:hover { background: var(--light-blue); }
-        .editable-section { position: relative; border: 2px dashed transparent; transition: all 0.3s ease; cursor: pointer; border-radius: 8px; padding: 4px; margin: -4px; }
-        .editable-section:hover { border-color: var(--accent-teal); background-color: rgba(77, 208, 225, 0.1); }
-        .edit-indicator { position: absolute; top: -12px; right: 5px; background: var(--accent-teal); color: var(--primary-blue); padding: 2px 10px; font-size: 11px; border-radius: 4px; font-weight: 600; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        
+        .editable-section { position: relative; border: 2px dashed transparent; transition: all 0.3s; cursor: pointer; border-radius: 8px; padding: 4px; margin: -4px; }
+        .editable-section:hover { border-color: var(--accent-teal); background: rgba(77,208,225,0.1); }
+        .edit-indicator { position: absolute; top: -12px; right: 5px; background: var(--accent-teal); color: var(--primary-blue); padding: 2px 10px; font-size: 11px; border-radius: 4px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
         .editable-section:hover .edit-indicator { opacity: 1; }
-        .page-nav { background: #1a1a2e; padding: 1rem; position: sticky; top: 0; z-index: 100; }
-        .page-nav-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-        .page-nav h1 { color: white; font-size: 1.1rem; margin-right: auto; }
-        .page-btn { background: rgba(255,255,255,0.1); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; text-decoration: none; }
+        
+        .page-nav { background: #1a1a2e; padding: 0.75rem 1rem; position: sticky; top: 0; z-index: 100; }
+        .page-nav-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+        .page-nav h1 { color: white; font-size: 1rem; margin-right: auto; white-space: nowrap; }
+        .page-btn { background: rgba(255,255,255,0.1); color: white; border: none; padding: 0.4rem 0.7rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; text-decoration: none; white-space: nowrap; }
         .page-btn:hover, .page-btn.active { background: var(--primary-blue); }
         .page-btn.active { box-shadow: 0 0 0 2px var(--accent-teal); }
-        .page-preview-container { max-width: 1200px; margin: 0 auto; background: white; min-height: calc(100vh - 60px); }
+        
+        .page-preview-container { max-width: 1200px; margin: 0 auto; background: white; min-height: calc(100vh - 50px); }
         .page-preview { display: none; }
         .page-preview.active { display: block; }
-        .hero-section { background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%); color: white; padding: 60px 20px; text-align: center; position: relative; overflow: hidden; }
-        .hero-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 1; background-image: linear-gradient(90deg, rgba(255, 255, 255, .08) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, .08) 1px, transparent 1px); background-size: 30px 30px; }
-        .hero-section > * { position: relative; z-index: 1; }
-        .hero-section h1 { font-size: 2.5em; margin-bottom: 15px; }
-        .hero-section p { font-size: 1.2em; max-width: 900px; margin: 0 auto; opacity: 0.95; }
+        
+        .hero-section { background: linear-gradient(135deg, #004E7C, #0066a1); color: white; padding: 50px 20px; text-align: center; position: relative; }
+        .hero-section h1 { font-size: 2.2em; margin-bottom: 12px; }
+        .hero-section p { font-size: 1.1em; max-width: 800px; margin: 0 auto; opacity: 0.95; }
         .highlight { color: var(--accent-teal); }
-        .content-wrapper { max-width: 1100px; margin: 0 auto; padding: 50px 20px; }
-        .section-header { text-align: center; margin-bottom: 30px; }
-        .section-header h2 { color: var(--primary-blue); font-size: 1.8rem; margin-bottom: 10px; }
-        .section-header p { color: var(--text-light); font-size: 1rem; max-width: 600px; margin: 0 auto; }
-        .section-badge { display: inline-block; padding: 0.4rem 1.2rem; background: rgba(77, 208, 225, 0.1); color: var(--primary-blue); border-radius: 50px; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem; }
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 40px; }
-        .info-card, .stat-card, .service-card { background: var(--bg-light); border-radius: 16px; padding: 1.5rem; }
-        .card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
-        .info-card h3, .stat-card h3, .service-card h3 { font-size: 1.25rem; color: var(--primary-blue); margin-bottom: 0.5rem; }
-        .info-card p, .stat-card p, .service-card p, .info-card ul { color: var(--text-light); line-height: 1.6; font-size: 0.95rem; }
-        .info-card ul { list-style: none; margin-top: 0.5rem; }
-        .info-card ul li { padding: 0.3rem 0; }
-        .info-card ul li::before { content: '✓ '; color: var(--accent-teal); font-weight: bold; }
-        .stats-section { background: var(--bg-light); padding: 40px 20px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
-        .stat-card { background: white; text-align: center; padding: 1.5rem; }
-        .stat-number { font-size: 2.5rem; font-weight: 800; color: var(--primary-blue); }
-        .stat-label { color: var(--text-light); font-size: 0.9rem; }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-        .cta-section { background: linear-gradient(135deg, #004E7C 0%, #0066a1 100%); color: white; padding: 60px 20px; text-align: center; position: relative; overflow: hidden; }
-        .cta-section > * { position: relative; z-index: 1; }
-        .cta-section h2 { font-size: 2rem; margin-bottom: 0.75rem; }
-        .cta-section p { font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.5rem; opacity: 0.95; }
-        .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-        .btn-primary { padding: 0.85rem 1.75rem; background: white; color: var(--primary-blue); border-radius: 50px; font-weight: 600; text-decoration: none; }
-        .btn-secondary { padding: 0.85rem 1.75rem; background: transparent; color: white; border: 2px solid white; border-radius: 50px; font-weight: 600; text-decoration: none; }
-        .placeholder-section { background: var(--bg-light); padding: 3rem; border-radius: 16px; text-align: center; color: var(--text-light); margin: 1.5rem 0; }
+        
+        .content-wrapper { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .section-header { text-align: center; margin-bottom: 25px; }
+        .section-header h2 { color: var(--primary-blue); font-size: 1.6rem; margin-bottom: 8px; }
+        .section-header p { color: var(--text-light); font-size: 0.95rem; }
+        
+        .cta-section { background: linear-gradient(135deg, #004E7C, #0066a1); color: white; padding: 50px 20px; text-align: center; }
+        .cta-section h2 { font-size: 1.8rem; margin-bottom: 10px; }
+        .cta-section p { font-size: 1rem; max-width: 600px; margin: 0 auto 1.5rem; opacity: 0.95; }
+        
+        .placeholder-section { background: var(--bg-light); padding: 2.5rem; border-radius: 12px; text-align: center; color: var(--text-light); margin: 1rem 0; }
+        
         .edit-form { padding: 1rem; display: none; }
         .edit-form.active { display: block; }
         .edit-form label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark); }
-        .edit-form input, .edit-form textarea { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; font-family: inherit; }
-        .edit-form textarea { min-height: 120px; resize: vertical; }
-        .edit-form input:focus, .edit-form textarea:focus { outline: none; border-color: var(--primary-blue); }
+        .edit-form textarea { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; font-family: inherit; min-height: 120px; resize: vertical; }
+        .edit-form textarea:focus { outline: none; border-color: var(--primary-blue); }
         .btn-row { display: flex; gap: 0.5rem; }
         .btn-save { flex: 1; background: var(--primary-blue); color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        .btn-save:hover { background: var(--light-blue); }
         .btn-cancel { flex: 1; background: #e2e8f0; color: var(--text-dark); border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        
         .welcome-panel { padding: 1.5rem; }
         .welcome-panel h3 { color: var(--primary-blue); margin-bottom: 1rem; }
         .welcome-panel ul { list-style: none; margin-bottom: 1.5rem; }
-        .welcome-panel li { padding: 0.5rem 0; color: var(--text-light); }
+        .welcome-panel li { padding: 0.4rem 0; color: var(--text-light); }
         .welcome-panel li::before { content: "✓ "; color: var(--primary-blue); }
         .login-box { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 1rem; }
         .login-box input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 0.5rem; }
@@ -86,19 +73,26 @@
         .logged-in-box.active { display: block; }
         .logged-in-box p { color: #166534; margin-bottom: 0.5rem; }
         .btn-logout { width: 100%; background: #ef4444; color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        @media (max-width: 1024px) { .cards-grid, .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 768px) { .cards-grid, .stats-grid, .services-grid { grid-template-columns: 1fr; } .hero-section h1 { font-size: 1.8rem; } .page-nav-inner { gap: 0.25rem; } .page-btn { padding: 0.4rem 0.6rem; font-size: 0.75rem; } }
+        
+        @media (max-width: 900px) { .page-btn { padding: 0.3rem 0.5rem; font-size: 0.7rem; } .page-nav h1 { font-size: 0.85rem; } }
     </style>
 </head>
 <body>
     <nav class="page-nav">
         <div class="page-nav-inner">
-            <h1>📄 LDAH Page Editor</h1>
+            <h1>📄 Page Editor</h1>
             <button class="page-btn active" onclick="switchPage('home', this)">🏠 Home</button>
             <button class="page-btn" onclick="switchPage('whoweare', this)">👥 Who We Are</button>
             <button class="page-btn" onclick="switchPage('events', this)">📅 Events</button>
             <button class="page-btn" onclick="switchPage('volunteer', this)">🤝 Volunteer</button>
-            <a href="cms.html" class="page-btn" style="margin-left: auto;">← Back to CMS</a>
+            <button class="page-btn" onclick="switchPage('resources', this)">📚 Resources</button>
+            <button class="page-btn" onclick="switchPage('contact', this)">✉️ Contact</button>
+            <button class="page-btn" onclick="switchPage('readiness', this)">🎓 Readiness</button>
+            <button class="page-btn" onclick="switchPage('specialed', this)">⚖️ Special Ed</button>
+            <button class="page-btn" onclick="switchPage('military', this)">🇺🇸 Military</button>
+            <button class="page-btn" onclick="switchPage('pacific', this)">🏝️ Pacific</button>
+            <button class="page-btn" onclick="switchPage('community', this)">✊ Bullying</button>
+            <a href="cms.html" class="page-btn" style="margin-left: auto;">← CMS</a>
         </div>
     </nav>
 
@@ -106,13 +100,9 @@
         <div class="admin-panel-header"><h2 style="font-size: 1.1rem;">✏️ Edit Content</h2></div>
         <div class="edit-form" id="editForm">
             <label id="editLabel">Editing...</label>
-            <input type="hidden" id="editId">
-            <input type="hidden" id="editPage">
+            <input type="hidden" id="editId"><input type="hidden" id="editPage">
             <textarea id="editContent" placeholder="Enter content..."></textarea>
-            <div class="btn-row">
-                <button class="btn-cancel" onclick="cancelEdit()">Cancel</button>
-                <button class="btn-save" onclick="saveContent()">💾 Save</button>
-            </div>
+            <div class="btn-row"><button class="btn-cancel" onclick="cancelEdit()">Cancel</button><button class="btn-save" onclick="saveContent()">💾 Save</button></div>
         </div>
         <div class="welcome-panel" id="welcomePanel">
             <h3>👋 Welcome!</h3>
@@ -124,57 +114,34 @@
                 <button onclick="login()">Login</button>
             </div>
             <div class="logged-in-box" id="loggedInBox">
-                <p>✅ Logged in as:</p>
-                <p style="font-size: 0.85rem;" id="userEmail"></p>
+                <p>✅ Logged in as:</p><p style="font-size: 0.85rem;" id="userEmail"></p>
                 <button class="btn-logout" onclick="logout()">🚪 Logout</button>
             </div>
         </div>
     </div>
-    <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">📝 Edit Mode</button>
+    <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">📝 Edit</button>
 
     <div class="page-preview-container">
-        <!-- HOME PAGE -->
+        <!-- HOME -->
         <div class="page-preview active" id="home-preview">
             <section class="hero-section">
-                <div class="editable-section" onclick="editField('home', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️ Edit</span><h1 id="home-heroTitle">Empowering Families, <span class="highlight">Transforming Lives</span></h1></div>
-                <div class="editable-section" onclick="editField('home', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️ Edit</span><p id="home-heroSubtitle">Supporting children and youth with disabilities across Hawai'i and the Pacific Islands.</p></div>
-            </section>
-            <section class="stats-section">
-                <div class="stats-grid">
-                    <div class="stat-card"><div class="card-icon">👨‍👩‍👧‍👦</div><div class="editable-section" onclick="editField('home', 'stat1Number', 'Stat 1 Number')"><span class="edit-indicator">✏️</span><div class="stat-number" id="home-stat1Number">15,000+</div></div><div class="editable-section" onclick="editField('home', 'stat1Label', 'Stat 1 Label')"><span class="edit-indicator">✏️</span><div class="stat-label" id="home-stat1Label">Families Served</div></div></div>
-                    <div class="stat-card"><div class="card-icon">📅</div><div class="editable-section" onclick="editField('home', 'stat2Number', 'Stat 2 Number')"><span class="edit-indicator">✏️</span><div class="stat-number" id="home-stat2Number">200+</div></div><div class="editable-section" onclick="editField('home', 'stat2Label', 'Stat 2 Label')"><span class="edit-indicator">✏️</span><div class="stat-label" id="home-stat2Label">Annual Events</div></div></div>
-                    <div class="stat-card"><div class="card-icon">🏫</div><div class="editable-section" onclick="editField('home', 'stat3Number', 'Stat 3 Number')"><span class="edit-indicator">✏️</span><div class="stat-number" id="home-stat3Number">50+</div></div><div class="editable-section" onclick="editField('home', 'stat3Label', 'Stat 3 Label')"><span class="edit-indicator">✏️</span><div class="stat-label" id="home-stat3Label">Years of Service</div></div></div>
-                    <div class="stat-card"><div class="card-icon">🌴</div><div class="editable-section" onclick="editField('home', 'stat4Number', 'Stat 4 Number')"><span class="edit-indicator">✏️</span><div class="stat-number" id="home-stat4Number">7</div></div><div class="editable-section" onclick="editField('home', 'stat4Label', 'Stat 4 Label')"><span class="edit-indicator">✏️</span><div class="stat-label" id="home-stat4Label">Pacific Islands</div></div></div>
-                </div>
+                <div class="editable-section" onclick="editField('home', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="home-heroTitle">Empowering Families, <span class="highlight">Transforming Lives</span></h1></div>
+                <div class="editable-section" onclick="editField('home', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="home-heroSubtitle">Supporting children and youth with disabilities across Hawai'i and the Pacific Islands.</p></div>
             </section>
             <div class="content-wrapper">
                 <div class="section-header">
                     <div class="editable-section" onclick="editField('home', 'servicesTitle', 'Services Title')"><span class="edit-indicator">✏️</span><h2 id="home-servicesTitle">Comprehensive Support Services</h2></div>
                     <div class="editable-section" onclick="editField('home', 'servicesSubtitle', 'Services Subtitle')"><span class="edit-indicator">✏️</span><p id="home-servicesSubtitle">Services designed to empower families and support children with disabilities.</p></div>
                 </div>
-                <div class="services-grid">
-                    <div class="service-card"><div class="card-icon">📚</div><div class="editable-section" onclick="editField('home', 'service1Title', 'Service 1 Title')"><span class="edit-indicator">✏️</span><h3 id="home-service1Title">Parent Training & Information</h3></div><div class="editable-section" onclick="editField('home', 'service1Desc', 'Service 1 Desc')"><span class="edit-indicator">✏️</span><p id="home-service1Desc">Training and resources to help parents navigate special education.</p></div></div>
-                    <div class="service-card"><div class="card-icon">🎓</div><div class="editable-section" onclick="editField('home', 'service2Title', 'Service 2 Title')"><span class="edit-indicator">✏️</span><h3 id="home-service2Title">School Readiness Project</h3></div><div class="editable-section" onclick="editField('home', 'service2Desc', 'Service 2 Desc')"><span class="edit-indicator">✏️</span><p id="home-service2Desc">Early intervention programs for school preparation.</p></div></div>
-                    <div class="service-card"><div class="card-icon">⚖️</div><div class="editable-section" onclick="editField('home', 'service3Title', 'Service 3 Title')"><span class="edit-indicator">✏️</span><h3 id="home-service3Title">Special Education Advocacy</h3></div><div class="editable-section" onclick="editField('home', 'service3Desc', 'Service 3 Desc')"><span class="edit-indicator">✏️</span><p id="home-service3Desc">Expert guidance on IEPs, IDEA, and education laws.</p></div></div>
-                    <div class="service-card"><div class="card-icon">🇺🇸</div><div class="editable-section" onclick="editField('home', 'service4Title', 'Service 4 Title')"><span class="edit-indicator">✏️</span><h3 id="home-service4Title">Military Family Support</h3></div><div class="editable-section" onclick="editField('home', 'service4Desc', 'Service 4 Desc')"><span class="edit-indicator">✏️</span><p id="home-service4Desc">Assistance for military families with IEP transitions.</p></div></div>
-                    <div class="service-card"><div class="card-icon">🏝️</div><div class="editable-section" onclick="editField('home', 'service5Title', 'Service 5 Title')"><span class="edit-indicator">✏️</span><h3 id="home-service5Title">Pacific Islands Outreach</h3></div><div class="editable-section" onclick="editField('home', 'service5Desc', 'Service 5 Desc')"><span class="edit-indicator">✏️</span><p id="home-service5Desc">Support across American Samoa, CNMI, FSM, Guam.</p></div></div>
-                    <div class="service-card"><div class="card-icon">✊</div><div class="editable-section" onclick="editField('home', 'service6Title', 'Service 6 Title')"><span class="edit-indicator">✏️</span><h3 id="home-service6Title">Stand Up to Bullying</h3></div><div class="editable-section" onclick="editField('home', 'service6Desc', 'Service 6 Desc')"><span class="edit-indicator">✏️</span><p id="home-service6Desc">Resources to prevent bullying and protect children.</p></div></div>
-                </div>
-                <div class="section-header" style="margin-top: 50px;">
-                    <span class="section-badge">📅 What's Happening</span>
-                    <div class="editable-section" onclick="editField('home', 'eventsTitle', 'Events Title')"><span class="edit-indicator">✏️</span><h2 id="home-eventsTitle">Upcoming Events</h2></div>
-                    <div class="editable-section" onclick="editField('home', 'eventsSubtitle', 'Events Subtitle')"><span class="edit-indicator">✏️</span><p id="home-eventsSubtitle">Join us for workshops and community events</p></div>
-                </div>
-                <div class="placeholder-section"><p>📅 Events load dynamically from Firebase</p></div>
+                <div class="placeholder-section"><p>📋 Services managed in CMS</p></div>
             </div>
             <section class="cta-section">
                 <div class="editable-section" onclick="editField('home', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="home-ctaTitle">Ready to Make a Difference?</h2></div>
                 <div class="editable-section" onclick="editField('home', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="home-ctaSubtitle">Join our community of volunteers and advocates.</p></div>
-                <div class="cta-buttons"><a href="#" class="btn-primary">Become a Volunteer</a><a href="#" class="btn-secondary">Support Us</a></div>
             </section>
         </div>
 
-        <!-- WHO WE ARE PAGE -->
+        <!-- WHO WE ARE -->
         <div class="page-preview" id="whoweare-preview">
             <section class="hero-section">
                 <div class="editable-section" onclick="editField('whoweare', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="whoweare-heroTitle">Who We Are</h1></div>
@@ -182,42 +149,18 @@
             </section>
             <div class="content-wrapper">
                 <div class="section-header">
-                    <span class="section-badge">🌺 Our Foundation</span>
                     <div class="editable-section" onclick="editField('whoweare', 'foundationTitle', 'Foundation Title')"><span class="edit-indicator">✏️</span><h2 id="whoweare-foundationTitle">Mission, Vision & Values</h2></div>
                     <div class="editable-section" onclick="editField('whoweare', 'foundationSubtitle', 'Foundation Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-foundationSubtitle">Guiding principles driving our commitment to families</p></div>
                 </div>
-                <div class="cards-grid">
-                    <div class="info-card"><div class="card-icon">🎯</div><div class="editable-section" onclick="editField('whoweare', 'missionTitle', 'Mission Title')"><span class="edit-indicator">✏️</span><h3 id="whoweare-missionTitle">Our Mission</h3></div><div class="editable-section" onclick="editField('whoweare', 'missionText', 'Mission Text')"><span class="edit-indicator">✏️</span><p id="whoweare-missionText">To enhance educational, work and life opportunities for children with disabilities.</p></div></div>
-                    <div class="info-card"><div class="card-icon">🔭</div><div class="editable-section" onclick="editField('whoweare', 'visionTitle', 'Vision Title')"><span class="edit-indicator">✏️</span><h3 id="whoweare-visionTitle">Our Vision</h3></div><div class="editable-section" onclick="editField('whoweare', 'visionText', 'Vision Text')"><span class="edit-indicator">✏️</span><p id="whoweare-visionText">Individuals have choice and access to opportunities regardless of disabilities.</p></div></div>
-                    <div class="info-card"><div class="card-icon">💎</div><div class="editable-section" onclick="editField('whoweare', 'valuesTitle', 'Values Title')"><span class="edit-indicator">✏️</span><h3 id="whoweare-valuesTitle">Core Values</h3></div><div class="editable-section" onclick="editField('whoweare', 'valuesList', 'Values List')"><span class="edit-indicator">✏️</span><ul id="whoweare-valuesList"><li>Advocating for Rights</li><li>Putting Families First</li><li>Creating Partnerships</li></ul></div></div>
-                </div>
-                <div class="info-card" style="max-width: 800px; margin: 0 auto 40px;">
-                    <div class="card-icon">🏛️</div>
-                    <div class="editable-section" onclick="editField('whoweare', 'ptiTitle', 'PTI Title')"><span class="edit-indicator">✏️</span><h3 id="whoweare-ptiTitle">Parent Training & Information Center</h3></div>
-                    <div class="editable-section" onclick="editField('whoweare', 'ptiText1', 'PTI Text 1')"><span class="edit-indicator">✏️</span><p id="whoweare-ptiText1">LDAH has served as the PTI for Hawaii since 1990 through the US Department of Education.</p></div>
-                    <div class="editable-section" onclick="editField('whoweare', 'ptiText2', 'PTI Text 2')" style="margin-top: 1rem;"><span class="edit-indicator">✏️</span><p id="whoweare-ptiText2">The majority of staff are parents of children with disabilities.</p></div>
-                </div>
-                <div class="section-header">
-                    <span class="section-badge">👥 Meet Our People</span>
-                    <div class="editable-section" onclick="editField('whoweare', 'teamTitle', 'Team Title')"><span class="edit-indicator">✏️</span><h2 id="whoweare-teamTitle">The Team Behind LDAH</h2></div>
-                    <div class="editable-section" onclick="editField('whoweare', 'teamSubtitle', 'Team Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-teamSubtitle">Dedicated professionals committed to supporting families</p></div>
-                </div>
-                <div class="placeholder-section"><p>👥 Team members managed in CMS Team tab</p></div>
-                <div class="section-header" style="margin-top: 40px;">
-                    <span class="section-badge">📸 Our Community</span>
-                    <div class="editable-section" onclick="editField('whoweare', 'galleryTitle', 'Gallery Title')"><span class="edit-indicator">✏️</span><h2 id="whoweare-galleryTitle">LDAH in Action</h2></div>
-                    <div class="editable-section" onclick="editField('whoweare', 'gallerySubtitle', 'Gallery Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-gallerySubtitle">Moments from our events and community outreach</p></div>
-                </div>
-                <div class="placeholder-section"><p>📸 Gallery managed in CMS Gallery tab</p></div>
+                <div class="placeholder-section"><p>🎯 Mission/Vision/Values cards</p></div>
             </div>
             <section class="cta-section">
                 <div class="editable-section" onclick="editField('whoweare', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="whoweare-ctaTitle">Have Questions? We're Here to Help</h2></div>
                 <div class="editable-section" onclick="editField('whoweare', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-ctaSubtitle">Our team is ready to assist with special education and advocacy support.</p></div>
-                <div class="cta-buttons"><a href="#" class="btn-primary">📞 Contact Us</a><a href="#" class="btn-secondary">🤝 Join Our Team</a></div>
             </section>
         </div>
 
-        <!-- EVENTS PAGE -->
+        <!-- EVENTS -->
         <div class="page-preview" id="events-preview">
             <section class="hero-section">
                 <div class="editable-section" onclick="editField('events', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="events-heroTitle">📅 Events & Workshops</h1></div>
@@ -225,48 +168,117 @@
             </section>
             <div class="content-wrapper">
                 <div class="section-header">
-                    <span class="section-badge">🎯 Happening Now</span>
-                    <div class="editable-section" onclick="editField('events', 'currentTitle', 'Current Events Title')"><span class="edit-indicator">✏️</span><h2 id="events-currentTitle">Current Events</h2></div>
-                    <div class="editable-section" onclick="editField('events', 'currentSubtitle', 'Current Events Subtitle')"><span class="edit-indicator">✏️</span><p id="events-currentSubtitle">Don't miss these ongoing opportunities</p></div>
+                    <div class="editable-section" onclick="editField('events', 'currentTitle', 'Current Events Title')"><span class="edit-indicator">✏️</span><h2 id="events-currentTitle">Upcoming Events</h2></div>
                 </div>
-                <div class="placeholder-section"><p>📅 Current events load from Firebase</p></div>
-                <div class="section-header" style="margin-top: 40px;">
-                    <span class="section-badge">🔜 Coming Up</span>
-                    <div class="editable-section" onclick="editField('events', 'upcomingTitle', 'Upcoming Title')"><span class="edit-indicator">✏️</span><h2 id="events-upcomingTitle">Upcoming Events</h2></div>
-                    <div class="editable-section" onclick="editField('events', 'upcomingSubtitle', 'Upcoming Subtitle')"><span class="edit-indicator">✏️</span><p id="events-upcomingSubtitle">Mark your calendar for these workshops</p></div>
-                </div>
-                <div class="placeholder-section"><p>📅 Upcoming events load from Firebase</p></div>
-                <div class="section-header" style="margin-top: 40px;">
-                    <span class="section-badge">📅 Calendar</span>
-                    <div class="editable-section" onclick="editField('events', 'calendarTitle', 'Calendar Title')"><span class="edit-indicator">✏️</span><h2 id="events-calendarTitle">Event Calendar</h2></div>
-                </div>
-                <div class="placeholder-section"><p>📅 Interactive calendar displays here</p></div>
+                <div class="placeholder-section"><p>📅 Events load from Firebase</p></div>
             </div>
             <section class="cta-section">
                 <div class="editable-section" onclick="editField('events', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="events-ctaTitle">Can't Find What You're Looking For?</h2></div>
                 <div class="editable-section" onclick="editField('events', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="events-ctaSubtitle">Contact us about upcoming workshops and events in your area.</p></div>
-                <div class="cta-buttons"><a href="#" class="btn-primary">Get in Touch</a></div>
             </section>
         </div>
 
-        <!-- VOLUNTEER PAGE -->
+        <!-- VOLUNTEER -->
         <div class="page-preview" id="volunteer-preview">
             <section class="hero-section">
                 <div class="editable-section" onclick="editField('volunteer', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="volunteer-heroTitle">Volunteer Opportunities</h1></div>
                 <div class="editable-section" onclick="editField('volunteer', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="volunteer-heroSubtitle">Make a difference in the lives of families and children with disabilities</p></div>
             </section>
-            <div class="content-wrapper">
-                <div class="section-header">
-                    <span class="section-badge">🤝 Get Involved</span>
-                    <div class="editable-section" onclick="editField('volunteer', 'opportunitiesTitle', 'Opportunities Title')"><span class="edit-indicator">✏️</span><h2 id="volunteer-opportunitiesTitle">Current Opportunities</h2></div>
-                    <div class="editable-section" onclick="editField('volunteer', 'opportunitiesSubtitle', 'Opportunities Subtitle')"><span class="edit-indicator">✏️</span><p id="volunteer-opportunitiesSubtitle">Find the perfect way to contribute your time and skills</p></div>
-                </div>
-                <div class="placeholder-section"><p>🤝 Volunteer opportunities load from Firebase</p></div>
-            </div>
+            <div class="content-wrapper"><div class="placeholder-section"><p>🤝 Volunteer opportunities load from Firebase</p></div></div>
             <section class="cta-section">
                 <div class="editable-section" onclick="editField('volunteer', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="volunteer-ctaTitle">Make a Difference Today</h2></div>
                 <div class="editable-section" onclick="editField('volunteer', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="volunteer-ctaSubtitle">Your time and skills can help families across Hawaii.</p></div>
-                <div class="cta-buttons"><a href="#" class="btn-primary">Apply Now</a><a href="#" class="btn-secondary">Contact Us</a></div>
+            </section>
+        </div>
+
+        <!-- RESOURCES -->
+        <div class="page-preview" id="resources-preview">
+            <section class="hero-section">
+                <div class="editable-section" onclick="editField('resources', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="resources-heroTitle">📚 Resources</h1></div>
+                <div class="editable-section" onclick="editField('resources', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="resources-heroSubtitle">Find helpful resources for families and children with disabilities.</p></div>
+            </section>
+            <div class="content-wrapper"><div class="placeholder-section"><p>📚 Resources load from Firebase</p></div></div>
+            <section class="cta-section">
+                <div class="editable-section" onclick="editField('resources', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="resources-ctaTitle">Need Help Finding the Right Resource?</h2></div>
+                <div class="editable-section" onclick="editField('resources', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="resources-ctaSubtitle">Our team is here to guide you and connect you with support.</p></div>
+            </section>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="page-preview" id="contact-preview">
+            <section class="hero-section">
+                <div class="editable-section" onclick="editField('contact', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="contact-heroTitle">Contact Us</h1></div>
+                <div class="editable-section" onclick="editField('contact', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="contact-heroSubtitle">We're here to help your family navigate special education and disability services</p></div>
+            </section>
+            <div class="content-wrapper"><div class="placeholder-section"><p>📍 Office locations and contact form</p></div></div>
+            <section class="cta-section">
+                <div class="editable-section" onclick="editField('contact', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="contact-ctaTitle">Join Our Community</h2></div>
+                <div class="editable-section" onclick="editField('contact', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="contact-ctaSubtitle">Connect with other Hawaii families navigating special education.</p></div>
+            </section>
+        </div>
+
+        <!-- READINESS -->
+        <div class="page-preview" id="readiness-preview">
+            <section class="hero-section">
+                <div class="editable-section" onclick="editField('readiness', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="readiness-heroTitle">🎓 School Readiness Project</h1></div>
+                <div class="editable-section" onclick="editField('readiness', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="readiness-heroSubtitle">Supporting children through developmental screenings, family support, and parent education.</p></div>
+            </section>
+            <div class="content-wrapper"><div class="placeholder-section"><p>📋 Program info, screenings, and services</p></div></div>
+            <section class="cta-section">
+                <div class="editable-section" onclick="editField('readiness', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="readiness-ctaTitle">Schedule a Screening</h2></div>
+                <div class="editable-section" onclick="editField('readiness', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="readiness-ctaSubtitle">Contact LDAH to schedule a screening event in your community.</p></div>
+            </section>
+        </div>
+
+        <!-- SPECIAL ED -->
+        <div class="page-preview" id="specialed-preview">
+            <section class="hero-section">
+                <div class="editable-section" onclick="editField('specialed', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="specialed-heroTitle">⚖️ Special Education Advocacy</h1></div>
+                <div class="editable-section" onclick="editField('specialed', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="specialed-heroSubtitle">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws.</p></div>
+            </section>
+            <div class="content-wrapper"><div class="placeholder-section"><p>📚 Resource documents and guides</p></div></div>
+            <section class="cta-section">
+                <div class="editable-section" onclick="editField('specialed', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="specialed-ctaTitle">Need Advocacy Support?</h2></div>
+                <div class="editable-section" onclick="editField('specialed', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="specialed-ctaSubtitle">Our team can help you understand your rights and navigate the special education system.</p></div>
+            </section>
+        </div>
+
+        <!-- MILITARY -->
+        <div class="page-preview" id="military-preview">
+            <section class="hero-section">
+                <div class="editable-section" onclick="editField('military', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="military-heroTitle">🇺🇸 Serving Military Families</h1></div>
+                <div class="editable-section" onclick="editField('military', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="military-heroSubtitle">Supporting Hawaii's military families through transitions, education, and advocacy</p></div>
+            </section>
+            <div class="content-wrapper"><div class="placeholder-section"><p>🎖️ Military resources and videos</p></div></div>
+            <section class="cta-section">
+                <div class="editable-section" onclick="editField('military', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="military-ctaTitle">We're Here to Help</h2></div>
+                <div class="editable-section" onclick="editField('military', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="military-ctaSubtitle">Whether arriving or leaving Hawaii, our team is ready to support you and your family.</p></div>
+            </section>
+        </div>
+
+        <!-- PACIFIC -->
+        <div class="page-preview" id="pacific-preview">
+            <section class="hero-section">
+                <div class="editable-section" onclick="editField('pacific', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="pacific-heroTitle">🏝️ Pacific Islands Partnership</h1></div>
+                <div class="editable-section" onclick="editField('pacific', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="pacific-heroSubtitle">Supporting families across the Pacific Islands with local partnerships.</p></div>
+            </section>
+            <div class="content-wrapper"><div class="placeholder-section"><p>🌺 Island partner information</p></div></div>
+            <section class="cta-section">
+                <div class="editable-section" onclick="editField('pacific', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="pacific-ctaTitle">Looking for Pacific Islands Support?</h2></div>
+                <div class="editable-section" onclick="editField('pacific', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="pacific-ctaSubtitle">We're here to connect you with resources and support.</p></div>
+            </section>
+        </div>
+
+        <!-- COMMUNITY (Bullying) -->
+        <div class="page-preview" id="community-preview">
+            <section class="hero-section">
+                <div class="editable-section" onclick="editField('community', 'heroTitle', 'Hero Title')"><span class="edit-indicator">✏️</span><h1 id="community-heroTitle">✊ Stand Up to Bullying</h1></div>
+                <div class="editable-section" onclick="editField('community', 'heroSubtitle', 'Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="community-heroSubtitle">We can prevent bullying together! Take the pledge to help end bullying.</p></div>
+            </section>
+            <div class="content-wrapper"><div class="placeholder-section"><p>📋 Bullying resources and pledge form</p></div></div>
+            <section class="cta-section">
+                <div class="editable-section" onclick="editField('community', 'ctaTitle', 'CTA Title')"><span class="edit-indicator">✏️</span><h2 id="community-ctaTitle">Need Help with a Bullying Situation?</h2></div>
+                <div class="editable-section" onclick="editField('community', 'ctaSubtitle', 'CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="community-ctaSubtitle">Our team can help you understand your rights. Every child deserves to feel safe.</p></div>
             </section>
         </div>
     </div>
@@ -277,7 +289,9 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
         let isLoggedIn = false;
-        let pageContent = { home: {}, whoweare: {}, events: {}, volunteer: {} };
+        const allPages = ['home', 'whoweare', 'events', 'volunteer', 'resources', 'contact', 'readiness', 'specialed', 'military', 'pacific', 'community'];
+        let pageContent = {};
+        allPages.forEach(p => pageContent[p] = {});
 
         document.addEventListener('DOMContentLoaded', async () => {
             auth.onAuthStateChanged(async (user) => {
@@ -296,8 +310,7 @@
         });
 
         async function loadAllContent() {
-            const pages = ['home', 'whoweare', 'events', 'volunteer'];
-            for (const page of pages) {
+            for (const page of allPages) {
                 try {
                     const doc = await db.collection('pageContent').doc(page).get();
                     if (doc.exists) {
@@ -320,9 +333,8 @@
 
         function toggleAdmin() {
             const panel = document.getElementById('adminPanel');
-            const toggle = document.getElementById('adminToggle');
             panel.classList.toggle('open');
-            toggle.textContent = panel.classList.contains('open') ? '✖️ Close' : '📝 Edit Mode';
+            document.getElementById('adminToggle').textContent = panel.classList.contains('open') ? '✖️ Close' : '📝 Edit';
         }
 
         async function login() {
@@ -333,17 +345,11 @@
                 document.querySelector('#loginBox button').textContent = 'Logging in...';
                 await auth.signInWithEmailAndPassword(email, password);
                 alert('✅ Logged in!');
-            } catch (err) {
-                alert('❌ Login failed: ' + err.message);
-            } finally {
-                document.querySelector('#loginBox button').textContent = 'Login';
-            }
+            } catch (err) { alert('❌ Login failed: ' + err.message); }
+            finally { document.querySelector('#loginBox button').textContent = 'Login'; }
         }
 
-        async function logout() {
-            await auth.signOut();
-            alert('👋 Logged out');
-        }
+        async function logout() { await auth.signOut(); alert('👋 Logged out'); }
 
         function editField(pageId, fieldId, label) {
             if (!isLoggedIn) { alert('Please login first'); toggleAdmin(); return; }

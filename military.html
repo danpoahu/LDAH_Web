@@ -685,8 +685,8 @@
 
     <!-- Hero Section -->
     <div class="hero-section">
-        <h1>Serving Military Families</h1>
-        <p>Supporting Hawaii's military families through transitions, education, and advocacy</p>
+        <h1 id="military-heroTitle">Serving Military Families</h1>
+        <p id="military-heroSubtitle">Supporting Hawaii's military families through transitions, education, and advocacy</p>
     </div>
 
     <!-- Main Content -->
@@ -765,8 +765,8 @@
         </div>
 
         <section class="support-section">
-            <h2>We're Here to Help</h2>
-            <p>
+            <h2 id="military-ctaTitle">We're Here to Help</h2>
+            <p id="military-ctaSubtitle">
                 Whether you're arriving at your new duty station in Hawaii or preparing to leave, our team is ready 
                 to support you and your family. We can help you navigate the special education system, connect with 
                 local resources, and ensure your child's educational needs are met.
@@ -803,6 +803,26 @@
     </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Firebase SDK - for page content
+        const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Load page content from Firebase
+        async function loadPageContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('military').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    Object.keys(data).forEach(key => {
+                        const el = document.getElementById(`military-${key}`);
+                        if (el && data[key]) el.innerHTML = data[key];
+                    });
+                }
+            } catch (err) { console.error('Error loading page content:', err); }
+        }
+        loadPageContent();
+
         // Video Modal Functions
         function openVideoModal(title, videoId) {
             const modal = document.getElementById('videoModal');

@@ -516,8 +516,8 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <h1>⚖️ Special Education Advocacy</h1>
-        <p>Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p>
+        <h1 id="specialed-heroTitle">⚖️ Special Education Advocacy</h1>
+        <p id="specialed-heroSubtitle">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p>
     </section>
 
     <div class="content-wrapper">
@@ -592,8 +592,8 @@
 
         <!-- CTA Section -->
         <section class="support-section">
-            <h2>Need Advocacy Support?</h2>
-            <p>Our team can help you understand your rights and navigate the special education system to ensure your child gets the services they deserve.</p>
+            <h2 id="specialed-ctaTitle">Need Advocacy Support?</h2>
+            <p id="specialed-ctaSubtitle">Our team can help you understand your rights and navigate the special education system to ensure your child gets the services they deserve.</p>
             <a href="contact.html" class="contact-btn">Contact Us Today</a>
         </section>
     </div>
@@ -614,6 +614,26 @@
     </div>
 
     <script>
+        // Firebase SDK - for page content
+        const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Load page content from Firebase
+        async function loadPageContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('specialed').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    Object.keys(data).forEach(key => {
+                        const el = document.getElementById(`specialed-${key}`);
+                        if (el && data[key]) el.innerHTML = data[key];
+                    });
+                }
+            } catch (err) { console.error('Error loading page content:', err); }
+        }
+        loadPageContent();
+
         // Modal functions - must be defined before footer loads
         function openIframeModal(title, url) {
             // Special handling for Facebook
