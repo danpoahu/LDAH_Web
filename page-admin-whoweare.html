@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LDAH Page Editor - Who We Are</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-blue: #004E7C; --light-blue: #0066a1; --accent-teal: #4DD0E1; --text-dark: #1a1a1a; --text-light: #666; --bg-light: #f8f9fa; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f5f5f5; }
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; font-weight: 700; line-height: 1.2; }
+        .admin-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.15); transform: translateX(100%); transition: transform 0.3s; z-index: 1000; overflow-y: auto; }
+        .admin-panel.open { transform: translateX(0); }
+        .admin-panel-header { background: var(--primary-blue); color: white; padding: 1rem; position: sticky; top: 0; z-index: 10; }
+        .admin-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 999; padding: 14px 24px; background: var(--primary-blue); color: white; border-radius: 50px; border: none; box-shadow: 0 4px 20px rgba(0,78,124,0.4); cursor: pointer; font-weight: 600; }
+        .editable-section { position: relative; border: 2px dashed transparent; transition: all 0.3s; cursor: pointer; border-radius: 8px; padding: 4px; margin: -4px; }
+        .editable-section:hover { border-color: var(--accent-teal); background: rgba(77,208,225,0.1); }
+        .edit-indicator { position: absolute; top: -12px; right: 5px; background: var(--accent-teal); color: var(--primary-blue); padding: 2px 10px; font-size: 11px; border-radius: 4px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .editable-section:hover .edit-indicator { opacity: 1; }
+        .page-nav { background: #1a1a2e; padding: 1rem; position: sticky; top: 0; z-index: 100; }
+        .page-nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .page-nav h1 { color: white; font-size: 1rem; margin-right: auto; }
+        .page-btn { background: rgba(255,255,255,0.1); color: white; border: none; padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; text-decoration: none; }
+        .page-btn:hover, .page-btn.active { background: var(--primary-blue); }
+        .page-btn.active { box-shadow: 0 0 0 2px var(--accent-teal); }
+        .page-preview { max-width: 1200px; margin: 0 auto; background: white; min-height: calc(100vh - 60px); }
+        .hero-section { background: linear-gradient(135deg, #004E7C, #0066a1); color: white; padding: 80px 20px 60px; text-align: center; position: relative; overflow: hidden; }
+        .hero-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px); background-size: 30px 30px; }
+        .hero-section > * { position: relative; z-index: 1; }
+        .hero-section h1 { font-size: 2.5em; margin-bottom: 20px; }
+        .hero-section p { font-size: 1.1em; max-width: 900px; margin: 0 auto; opacity: 0.95; line-height: 1.7; }
+        .highlight { color: var(--accent-teal); }
+        .content-wrapper { max-width: 1200px; margin: 0 auto; padding: 50px 20px; }
+        .section-header { text-align: center; margin-bottom: 30px; }
+        .section-badge { display: inline-block; padding: 0.5rem 1rem; background: rgba(77,208,225,0.1); color: var(--primary-blue); border-radius: 50px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; }
+        .section-header h2 { font-size: 1.8rem; color: var(--primary-blue); margin-bottom: 10px; }
+        .section-header p { font-size: 1rem; color: var(--text-light); max-width: 600px; margin: 0 auto; }
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .info-card { background: var(--bg-light); border-radius: 16px; padding: 2rem; text-align: center; }
+        .card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .info-card h3 { color: var(--primary-blue); margin-bottom: 0.75rem; }
+        .info-card p { color: var(--text-light); line-height: 1.7; font-size: 0.95rem; }
+        .info-card ul { text-align: left; color: var(--text-light); padding-left: 1.5rem; line-height: 1.8; }
+        .pti-card { background: linear-gradient(135deg, rgba(0,78,124,0.05), rgba(77,208,225,0.1)); border-radius: 16px; padding: 2rem; margin-bottom: 3rem; }
+        .pti-card h3 { color: var(--primary-blue); margin-bottom: 1rem; }
+        .pti-card p { color: var(--text-light); line-height: 1.8; margin-bottom: 1rem; }
+        .gallery-placeholder { background: var(--bg-light); padding: 2rem; border-radius: 12px; text-align: center; color: var(--text-light); margin-top: 1rem; }
+        .gallery-section { background: #f0f4f8; padding: 50px 20px; }
+        .cta-section { background: linear-gradient(135deg, #004E7C, #0066a1); color: white; padding: 60px 20px; text-align: center; position: relative; }
+        .cta-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle, transparent 22px, rgba(255,255,255,0.1) 22px, rgba(255,255,255,0.1) 24px, transparent 24px); background-size: 48px 48px; }
+        .cta-section > * { position: relative; z-index: 1; }
+        .cta-section h2 { font-size: 2rem; margin-bottom: 15px; }
+        .cta-section p { font-size: 1.1rem; max-width: 600px; margin: 0 auto; opacity: 0.95; }
+        .edit-form { padding: 1rem; display: none; }
+        .edit-form.active { display: block; }
+        .edit-form label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-dark); }
+        .edit-form textarea { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; font-family: inherit; min-height: 120px; resize: vertical; }
+        .btn-row { display: flex; gap: 0.5rem; }
+        .btn-save { flex: 1; background: var(--primary-blue); color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-cancel { flex: 1; background: #e2e8f0; color: var(--text-dark); border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .welcome-panel { padding: 1.5rem; }
+        .welcome-panel h3 { color: var(--primary-blue); margin-bottom: 1rem; }
+        .welcome-panel ul { list-style: none; margin-bottom: 1.5rem; }
+        .welcome-panel li { padding: 0.4rem 0; color: var(--text-light); }
+        .welcome-panel li::before { content: "✓ "; color: var(--primary-blue); }
+        .login-box { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 1rem; }
+        .login-box input { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 0.5rem; }
+        .login-box button { width: 100%; background: var(--primary-blue); color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .logged-in-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 1rem; display: none; }
+        .logged-in-box.active { display: block; }
+        .btn-logout { width: 100%; background: #ef4444; color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        @media (max-width: 900px) { .cards-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="page-nav">
+        <div class="page-nav-inner">
+            <h1>📄 Page Editor</h1>
+            <a href="page-admin-home.html" class="page-btn">🏠 Home</a>
+            <span class="page-btn active">👥 Who We Are</span>
+            <a href="page-admin-events.html" class="page-btn">📅 Events</a>
+            <a href="page-admin-volunteer.html" class="page-btn">🤝 Volunteer</a>
+            <a href="page-admin-resources.html" class="page-btn">📚 Resources</a>
+            <a href="cms.html" class="page-btn" style="margin-left: auto;">← CMS</a>
+        </div>
+    </nav>
+
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-panel-header"><h2 style="font-size: 1.1rem;">✏️ Edit Content</h2></div>
+        <div class="edit-form" id="editForm">
+            <label id="editLabel">Editing...</label>
+            <input type="hidden" id="editId"><input type="hidden" id="editPage">
+            <textarea id="editContent"></textarea>
+            <div class="btn-row"><button class="btn-cancel" onclick="cancelEdit()">Cancel</button><button class="btn-save" onclick="saveContent()">💾 Save</button></div>
+        </div>
+        <div class="welcome-panel" id="welcomePanel">
+            <h3>👋 Welcome!</h3>
+            <ul><li>Click any text to edit</li><li>Changes save to Firebase</li><li>Updates appear on live site</li></ul>
+            <div class="login-box" id="loginBox">
+                <p style="font-size: 0.85rem; color: #666; margin-bottom: 0.75rem;">🔐 Login to edit:</p>
+                <input type="email" id="adminEmail" placeholder="Email">
+                <input type="password" id="adminPassword" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
+                <button onclick="login()">Login</button>
+            </div>
+            <div class="logged-in-box" id="loggedInBox">
+                <p>✅ Logged in as:</p><p id="userEmail" style="font-size: 0.85rem; margin-bottom: 1rem;"></p>
+                <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+    </div>
+    <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">📝 Edit</button>
+
+    <div class="page-preview">
+        <!-- Hero -->
+        <section class="hero-section">
+            <div class="editable-section" onclick="editField('whoweare','heroTitle','Hero Title')"><span class="edit-indicator">✏️</span><h1 id="whoweare-heroTitle">Who We Are</h1></div>
+            <div class="editable-section" onclick="editField('whoweare','heroSubtitle','Hero Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-heroSubtitle">Leadership in Disabilities & Achievement of Hawai'i is a <span class="highlight">501(c)(3) non-profit</span> founded in 1968 by parents of children with learning disabilities. Today, we serve families of children with any type of disability across Hawai'i and the Pacific Islands.</p></div>
+        </section>
+
+        <!-- Mission, Vision, Values -->
+        <div class="content-wrapper">
+            <div class="section-header">
+                <span class="section-badge">🌺 Our Foundation</span>
+                <div class="editable-section" onclick="editField('whoweare','foundationTitle','Foundation Title')"><span class="edit-indicator">✏️</span><h2 id="whoweare-foundationTitle">Mission, Vision & Values</h2></div>
+                <div class="editable-section" onclick="editField('whoweare','foundationSubtitle','Foundation Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-foundationSubtitle">Guiding principles that drive our commitment to families and children with disabilities</p></div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="info-card"><div class="card-icon">🎯</div><div class="editable-section" onclick="editField('whoweare','missionTitle','Mission Title')"><span class="edit-indicator">✏️</span><h3 id="whoweare-missionTitle">Our Mission</h3></div><div class="editable-section" onclick="editField('whoweare','missionText','Mission Text')"><span class="edit-indicator">✏️</span><p id="whoweare-missionText">To enhance educational, work and life opportunities for children and youth with or at risk of disabilities by empowering them and their families through screening, identification, information, training, and mentoring, and by public outreach and advocacy.</p></div></div>
+                <div class="info-card"><div class="card-icon">🔭</div><div class="editable-section" onclick="editField('whoweare','visionTitle','Vision Title')"><span class="edit-indicator">✏️</span><h3 id="whoweare-visionTitle">Our Vision</h3></div><div class="editable-section" onclick="editField('whoweare','visionText','Vision Text')"><span class="edit-indicator">✏️</span><p id="whoweare-visionText">Individuals have choice and access to educational, work and life opportunities to be successful regardless of their disabilities.</p></div></div>
+                <div class="info-card"><div class="card-icon">💎</div><div class="editable-section" onclick="editField('whoweare','valuesTitle','Values Title')"><span class="edit-indicator">✏️</span><h3 id="whoweare-valuesTitle">Core Values</h3></div><div class="editable-section" onclick="editField('whoweare','valuesList','Values List (use &lt;li&gt; tags)')"><span class="edit-indicator">✏️</span><ul id="whoweare-valuesList"><li>Advocating for the Rights of Children with Disabilities</li><li>Putting Families First</li><li>Creating Partnerships</li><li>Improving Communication</li><li>Implementing Best-Practices & Innovation</li><li>Ensuring Accountability</li></ul></div></div>
+            </div>
+
+            <!-- PTI -->
+            <div class="pti-card">
+                <div class="card-icon">🏛️</div>
+                <div class="editable-section" onclick="editField('whoweare','ptiTitle','PTI Title')"><span class="edit-indicator">✏️</span><h3 id="whoweare-ptiTitle">Parent Training & Information Center</h3></div>
+                <div class="editable-section" onclick="editField('whoweare','ptiText1','PTI Paragraph 1')"><span class="edit-indicator">✏️</span><p id="whoweare-ptiText1">Through a contract with the United States Department of Education, Office of Special Education Programs (OSEP), LDAH has operated and served as The Parent Training and Information Center (PTI) for the State of Hawaii since 1990.</p></div>
+                <div class="editable-section" onclick="editField('whoweare','ptiText2','PTI Paragraph 2')"><span class="edit-indicator">✏️</span><p id="whoweare-ptiText2">The majority of Parent Center staff and board are parents of children with disabilities, bringing personal experience and expertise when working with families.</p></div>
+            </div>
+
+            <!-- Team -->
+            <div class="section-header">
+                <span class="section-badge">👥 Meet Our People</span>
+                <div class="editable-section" onclick="editField('whoweare','teamTitle','Team Title')"><span class="edit-indicator">✏️</span><h2 id="whoweare-teamTitle">The Team Behind LDAH</h2></div>
+                <div class="editable-section" onclick="editField('whoweare','teamSubtitle','Team Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-teamSubtitle">Dedicated professionals and volunteers committed to supporting families</p></div>
+            </div>
+            <div class="gallery-placeholder">👥 Team members managed in CMS Team tab</div>
+        </div>
+
+        <!-- Gallery -->
+        <section class="gallery-section">
+            <div class="content-wrapper" style="padding-top: 0;">
+                <div class="section-header">
+                    <span class="section-badge">📸 Our Community</span>
+                    <div class="editable-section" onclick="editField('whoweare','galleryTitle','Gallery Title')"><span class="edit-indicator">✏️</span><h2 id="whoweare-galleryTitle">LDAH in Action</h2></div>
+                    <div class="editable-section" onclick="editField('whoweare','gallerySubtitle','Gallery Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-gallerySubtitle">Moments from our events, workshops, and community outreach</p></div>
+                </div>
+                <div class="gallery-placeholder">📸 Gallery images managed separately</div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <div class="editable-section" onclick="editField('whoweare','ctaTitle','CTA Title')"><span class="edit-indicator">✏️</span><h2 id="whoweare-ctaTitle">Have Questions? We're Here to Help</h2></div>
+            <div class="editable-section" onclick="editField('whoweare','ctaSubtitle','CTA Subtitle')"><span class="edit-indicator">✏️</span><p id="whoweare-ctaSubtitle">Our team is ready to assist you with information about special education, advocacy support, and navigating services for your child.</p></div>
+        </section>
+    </div>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5", storageBucket: "ldah-932d5.firebasestorage.app", messagingSenderId: "662130454003", appId: "1:662130454003:web:437576d5a5811ecd8df686" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(), auth = firebase.auth();
+        let isLoggedIn = false, pageContent = {};
+
+        auth.onAuthStateChanged(user => {
+            isLoggedIn = !!user;
+            document.getElementById('loginBox').style.display = user ? 'none' : 'block';
+            document.getElementById('loggedInBox').classList.toggle('active', !!user);
+            if (user) document.getElementById('userEmail').textContent = user.email;
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const doc = await db.collection('pageContent').doc('whoweare').get();
+                if (doc.exists) { pageContent = doc.data(); Object.keys(pageContent).forEach(k => { const el = document.getElementById('whoweare-' + k); if (el && pageContent[k]) el.innerHTML = pageContent[k]; }); }
+            } catch (e) { console.error(e); }
+        });
+
+        function toggleAdmin() { const p = document.getElementById('adminPanel'); p.classList.toggle('open'); document.getElementById('adminToggle').textContent = p.classList.contains('open') ? '✖️ Close' : '📝 Edit'; }
+        async function login() { const e = document.getElementById('adminEmail').value, p = document.getElementById('adminPassword').value; if (!e || !p) return alert('Enter email and password'); try { await auth.signInWithEmailAndPassword(e, p); alert('✅ Logged in!'); } catch (err) { alert('❌ ' + err.message); } }
+        async function logout() { await auth.signOut(); alert('👋 Logged out'); }
+        function editField(page, field, label) { if (!isLoggedIn) { alert('Please login first'); toggleAdmin(); return; } document.getElementById('welcomePanel').style.display = 'none'; document.getElementById('editForm').classList.add('active'); document.getElementById('editLabel').textContent = 'Editing: ' + label; document.getElementById('editId').value = field; document.getElementById('editPage').value = page; document.getElementById('editContent').value = (document.getElementById(page + '-' + field)?.innerHTML || '').trim(); if (!document.getElementById('adminPanel').classList.contains('open')) toggleAdmin(); }
+        async function saveContent() { const page = document.getElementById('editPage').value, field = document.getElementById('editId').value, content = document.getElementById('editContent').value; try { await db.collection('pageContent').doc(page).set({ [field]: content, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }); const el = document.getElementById(page + '-' + field); if (el) el.innerHTML = content; alert('✅ Saved!'); cancelEdit(); } catch (e) { alert('❌ ' + e.message); } }
+        function cancelEdit() { document.getElementById('editForm').classList.remove('active'); document.getElementById('welcomePanel').style.display = 'block'; }
+    </script>
+</body>
+</html>
