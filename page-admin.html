@@ -267,8 +267,29 @@
             <div class="edit" onclick="ed('contact','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="contact-heroSubtitle">We're here to help your family navigate special education and disability services</p></div>
         </section>
         <section class="sec">
-            <div class="ph">📍 Office cards (Honolulu & Ma'ili) with contact info displayed here</div>
-            <div class="card" style="margin-top: 2rem; text-align: center;">
+            <div class="grid3" style="grid-template-columns: 1fr 1fr; margin-bottom: 2rem;">
+                <!-- Honolulu Office -->
+                <div class="card" style="text-align:center">
+                    <div class="card-icon">🏢</div>
+                    <div class="edit" onclick="ed('contact','honTitle','Honolulu Office Title')"><span class="badge">✏️</span><h3 id="contact-honTitle">Honolulu Office</h3></div>
+                    <div class="edit" onclick="ed('contact','honSubtitle','Honolulu Subtitle')"><span class="badge">✏️</span><p id="contact-honSubtitle" style="color:var(--primary);font-weight:600">Main Office</p></div>
+                    <div class="edit" onclick="ed('contact','honPhone','Honolulu Phone')"><span class="badge">✏️</span><p id="contact-honPhone" style="font-size:0.9rem;margin-top:1rem"><strong>Phone:</strong> (808) 532-5364<br><strong>Toll Free:</strong> 1-800-533-9684</p></div>
+                    <div class="edit" onclick="ed('contact','honEmail','Honolulu Email')"><span class="badge">✏️</span><p id="contact-honEmail" style="font-size:0.9rem"><strong>Email:</strong> info@ldahawaii.org</p></div>
+                    <div class="edit" onclick="ed('contact','honAddress','Honolulu Address')"><span class="badge">✏️</span><p id="contact-honAddress" style="font-size:0.9rem"><strong>Address:</strong><br>Harry and Jeanette Weinberg Kukui Center<br>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817</p></div>
+                </div>
+                <!-- Ma'ili Office -->
+                <div class="card" style="text-align:center">
+                    <div class="card-icon">🏫</div>
+                    <div class="edit" onclick="ed('contact','mailiTitle','Maili Office Title')"><span class="badge">✏️</span><h3 id="contact-mailiTitle">Ma'ili Office</h3></div>
+                    <div class="edit" onclick="ed('contact','mailiSubtitle','Maili Subtitle')"><span class="badge">✏️</span><p id="contact-mailiSubtitle" style="color:var(--primary);font-weight:600">School Readiness Project</p></div>
+                    <div class="edit" onclick="ed('contact','mailiPhone','Maili Phone')"><span class="badge">✏️</span><p id="contact-mailiPhone" style="font-size:0.9rem;margin-top:1rem"><strong>Phone:</strong> (808) 696-5361<br><strong>Fax:</strong> (808) 696-5371</p></div>
+                    <div class="edit" onclick="ed('contact','mailiHours','Maili Hours')"><span class="badge">✏️</span><p id="contact-mailiHours" style="font-size:0.9rem"><strong>Hours:</strong> Monday to Friday, 8:00 AM – 5:00 PM</p></div>
+                    <div class="edit" onclick="ed('contact','mailiAddress','Maili Address')"><span class="badge">✏️</span><p id="contact-mailiAddress" style="font-size:0.9rem"><strong>Address:</strong><br>Community Learning Center<br>Kauhale Building<br>87-790 Kulauku St., Suite A116<br>Wai'anae, HI 96792</p></div>
+                </div>
+            </div>
+            <!-- App Download Card -->
+            <div class="card" style="text-align: center; background: linear-gradient(135deg, rgba(0,78,124,0.05), rgba(77,208,225,0.1));">
+                <div class="card-icon">📱</div>
                 <div class="edit" onclick="ed('contact','appTitle','App Section Title')"><span class="badge">✏️</span><h3 id="contact-appTitle">24/7 Support at Your Fingertips</h3></div>
                 <div class="edit" onclick="ed('contact','appText','App Section Text')"><span class="badge">✏️</span><p id="contact-appText">Need answers anytime? Download our free app for instant access to resources, FAQs, and support—day or night!</p></div>
             </div>
