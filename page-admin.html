@@ -267,7 +267,11 @@
             <div class="edit" onclick="ed('contact','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="contact-heroSubtitle">We're here to help your family navigate special education and disability services</p></div>
         </section>
         <section class="sec">
-            <div class="ph">📍 Office locations and contact forms displayed here</div>
+            <div class="ph">📍 Office cards (Honolulu & Ma'ili) with contact info displayed here</div>
+            <div class="card" style="margin-top: 2rem; text-align: center;">
+                <div class="edit" onclick="ed('contact','appTitle','App Section Title')"><span class="badge">✏️</span><h3 id="contact-appTitle">24/7 Support at Your Fingertips</h3></div>
+                <div class="edit" onclick="ed('contact','appText','App Section Text')"><span class="badge">✏️</span><p id="contact-appText">Need answers anytime? Download our free app for instant access to resources, FAQs, and support—day or night!</p></div>
+            </div>
         </section>
         <section class="cta">
             <div class="edit" onclick="ed('contact','ctaTitle','CTA Title')"><span class="badge">✏️</span><h2 id="contact-ctaTitle">Join Our Community</h2></div>
@@ -282,7 +286,32 @@
             <div class="edit" onclick="ed('readiness','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="readiness-heroSubtitle">Supporting children in gaining the skills to be successful in their education through developmental screenings, family support, and parent education.</p></div>
         </section>
         <section class="sec">
-            <div class="ph">👁️ Program info, partners, screenings, and services displayed here</div>
+            <div class="grid3" style="grid-template-columns: 1fr 1fr; margin-bottom: 2rem;">
+                <div class="card">
+                    <div class="edit" onclick="ed('readiness','aboutTitle','About Title')"><span class="badge">✏️</span><h3 id="readiness-aboutTitle">About the Program</h3></div>
+                    <div class="edit" onclick="ed('readiness','aboutText','About Text')"><span class="badge">✏️</span><p id="readiness-aboutText">The School Readiness Project (SRP) provides services for families of preschool aged children throughout O'ahu, Moloka'i, and Hawai'i Island. We provide developmental, social-emotional, hearing, vision, and autism screenings. SRP works to strengthen families through case management and parent education.</p></div>
+                </div>
+                <div class="card">
+                    <div class="edit" onclick="ed('readiness','partnersTitle','Partners Title')"><span class="badge">✏️</span><h3 id="readiness-partnersTitle">Our Partners</h3></div>
+                    <div class="edit" onclick="ed('readiness','partnersText','Partners Text')"><span class="badge">✏️</span><p id="readiness-partnersText">SRP is a collaborative project with: Aloha United Way, The Community Learning Center at Ma'ili, Harry & Jeanette Weinberg Kukui Center, and Kamehameha Schools.</p></div>
+                </div>
+            </div>
+            <div class="sec-head">
+                <div class="edit" onclick="ed('readiness','screeningsTitle','Screenings Section Title')"><span class="badge">✏️</span><h2 id="readiness-screeningsTitle">👁️ Childhood Screenings</h2></div>
+            </div>
+            <div class="grid3">
+                <div class="card"><div class="card-icon">👁️</div><div class="edit" onclick="ed('readiness','visionTitle','Vision Title')"><span class="badge">✏️</span><h3 id="readiness-visionTitle">Vision Screening</h3></div><div class="edit" onclick="ed('readiness','visionText','Vision Text')"><span class="badge">✏️</span><p id="readiness-visionText">We use the Plusoptix Digital Vision Screener to check your child's eyes. It is an accurate, non-invasive way to detect a variety of vision disorders in children.</p></div></div>
+                <div class="card"><div class="card-icon">👂</div><div class="edit" onclick="ed('readiness','hearingTitle','Hearing Title')"><span class="badge">✏️</span><h3 id="readiness-hearingTitle">Hearing Screening</h3></div><div class="edit" onclick="ed('readiness','hearingText','Hearing Text')"><span class="badge">✏️</span><p id="readiness-hearingText">Two methods can be used: Otoacoustic Emissions checks both the middle and inner ear, and Tympanometry checks for reduced eardrum movement caused by fluid, wax, or other problems.</p></div></div>
+                <div class="card"><div class="card-icon">📊</div><div class="edit" onclick="ed('readiness','devTitle','Developmental Title')"><span class="badge">✏️</span><h3 id="readiness-devTitle">Developmental Screening</h3></div><div class="edit" onclick="ed('readiness','devText','Developmental Text')"><span class="badge">✏️</span><p id="readiness-devText">Our qualified personnel use the Ages & Stages Questionnaire (ASQ-3) and ASQ-SE screening tools. Children with concerns are screened for autism using M-CHAT.</p></div></div>
+            </div>
+            <div class="sec-head" style="margin-top: 2rem;">
+                <div class="edit" onclick="ed('readiness','servicesTitle','Services Section Title')"><span class="badge">✏️</span><h2 id="readiness-servicesTitle">Our Services</h2></div>
+            </div>
+            <div class="grid3">
+                <div class="card"><div class="card-icon">📋</div><div class="edit" onclick="ed('readiness','caseTitle','Case Management Title')"><span class="badge">✏️</span><h3 id="readiness-caseTitle">Case Management</h3></div><div class="edit" onclick="ed('readiness','caseText','Case Management Text')"><span class="badge">✏️</span><p id="readiness-caseText">Case Management is provided for families of children identified with a specific need. Our staff will support you by explaining results, offering solutions, connecting you with resources, and following up on referrals.</p></div></div>
+                <div class="card"><div class="card-icon">🎓</div><div class="edit" onclick="ed('readiness','workshopsTitle','Workshops Title')"><span class="badge">✏️</span><h3 id="readiness-workshopsTitle">Parent Workshops</h3></div><div class="edit" onclick="ed('readiness','workshopsText','Workshops Text')"><span class="badge">✏️</span><p id="readiness-workshopsText">Trainings are designed to increase understanding of health, developmental, and school readiness needs of preschool aged children. Learn what development should look like and review possible signs of delays.</p></div></div>
+                <div class="card"><div class="card-icon">🤝</div><div class="edit" onclick="ed('readiness','providerTitle','Provider Title')"><span class="badge">✏️</span><h3 id="readiness-providerTitle">Provider Services</h3></div><div class="edit" onclick="ed('readiness','providerText','Provider Text')"><span class="badge">✏️</span><p id="readiness-providerText">If you are a provider and would like to add our screening services to your program or event, we can help! We offer vision, hearing, and developmental screenings, trainings, and resources.</p></div></div>
+            </div>
         </section>
         <section class="cta">
             <div class="edit" onclick="ed('readiness','ctaTitle','CTA Title')"><span class="badge">✏️</span><h2 id="readiness-ctaTitle">Schedule a Screening</h2></div>
@@ -297,7 +326,11 @@
             <div class="edit" onclick="ed('specialed','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="specialed-heroSubtitle">Expert guidance on IEPs, IDEA, Chapter 60, and other education laws to ensure your child receives appropriate services.</p></div>
         </section>
         <section class="sec">
-            <div class="ph">📚 Resource documents and advocacy information displayed here</div>
+            <div class="sec-head">
+                <div class="edit" onclick="ed('specialed','resourcesTitle','Resources Section Title')"><span class="badge">✏️</span><h2 id="specialed-resourcesTitle">📚 Resource Documents</h2></div>
+                <div class="edit" onclick="ed('specialed','resourcesSubtitle','Resources Section Subtitle')"><span class="badge">✏️</span><p id="specialed-resourcesSubtitle">Essential guides and regulations for understanding special education rights in Hawai'i</p></div>
+            </div>
+            <div class="ph">📚 Resource document cards displayed here (PDF links managed in code)</div>
         </section>
         <section class="cta">
             <div class="edit" onclick="ed('specialed','ctaTitle','CTA Title')"><span class="badge">✏️</span><h2 id="specialed-ctaTitle">Need Advocacy Support?</h2></div>
@@ -312,7 +345,23 @@
             <div class="edit" onclick="ed('military','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="military-heroSubtitle">Supporting Hawaii's military families through transitions, education, and advocacy</p></div>
         </section>
         <section class="sec">
-            <div class="ph">🎖️ IEP relocation info and military resources displayed here</div>
+            <div class="grid3" style="grid-template-columns: 1fr 1fr; margin-bottom: 2rem;">
+                <div class="card">
+                    <div class="edit" onclick="ed('military','videoTitle','Video Section Title')"><span class="badge">✏️</span><h3 id="military-videoTitle">Relocating With an IEP</h3></div>
+                    <div class="ph" style="margin: 1rem 0;">▶️ Video embed displayed here</div>
+                    <div class="edit" onclick="ed('military','videoDesc','Video Description')"><span class="badge">✏️</span><p id="military-videoDesc">Watch this helpful video about relocating with an IEP for military families.</p></div>
+                </div>
+                <div class="card">
+                    <div class="edit" onclick="ed('military','resourcesTitle','Resources Section Title')"><span class="badge">✏️</span><h3 id="military-resourcesTitle">Additional Military Resources</h3></div>
+                    <div class="edit" onclick="ed('military','resourcesText','Resources Text (HTML allowed)')"><span class="badge">✏️</span><div id="military-resourcesText" style="font-size: 0.9rem; color: var(--gray);">
+                        <strong>ARMY</strong><br>Family Advocacy: Schofield 433-8579, TAMC 433-6606<br>24/7 SAFE Line: 624-7233<br><br>
+                        <strong>NAVY/AIR FORCE</strong><br>Family Advocacy: 474-1999<br><br>
+                        <strong>MARINE CORPS</strong><br>Family Advocacy K-Bay: 254-7658<br><br>
+                        <strong>COAST GUARD</strong><br>Work-Life: 842-2263
+                    </div></div>
+                </div>
+            </div>
+            <div class="ph">📄 PDF resource cards (Relocating With IEP, Forever Transitioning) displayed here</div>
         </section>
         <section class="cta">
             <div class="edit" onclick="ed('military','ctaTitle','CTA Title')"><span class="badge">✏️</span><h2 id="military-ctaTitle">We're Here to Help</h2></div>
@@ -327,7 +376,11 @@
             <div class="edit" onclick="ed('pacific','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="pacific-heroSubtitle">LDAH provides support and resources to families across the Pacific Islands, partnering with local organizations to empower children with disabilities and their families.</p></div>
         </section>
         <section class="sec">
-            <div class="ph">🌺 Island partner information and resources displayed here</div>
+            <div class="sec-head">
+                <div class="edit" onclick="ed('pacific','partnersTitle','Partners Section Title')"><span class="badge">✏️</span><h2 id="pacific-partnersTitle">🌺 Our Island Partners</h2></div>
+                <div class="edit" onclick="ed('pacific','partnersSubtitle','Partners Section Subtitle')"><span class="badge">✏️</span><p id="pacific-partnersSubtitle">Click on each island to learn more about our partnerships and the resources available for families in these communities.</p></div>
+            </div>
+            <div class="ph">🏝️ Island partner cards (American Samoa, CNMI, FSM, Guam, Marshall Islands, Palau) displayed here - managed in code</div>
         </section>
         <section class="cta">
             <div class="edit" onclick="ed('pacific','ctaTitle','CTA Title')"><span class="badge">✏️</span><h2 id="pacific-ctaTitle">Looking for Pacific Islands Support?</h2></div>
@@ -342,7 +395,11 @@
             <div class="edit" onclick="ed('community','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="community-heroSubtitle">We can prevent bullying together! Take this pledge to help end bullying in our community. There should be zero tolerance for bullying in our community and schools.</p></div>
         </section>
         <section class="sec">
-            <div class="ph">🛠️ Bullying response kit and pledge form displayed here</div>
+            <div class="sec-head">
+                <div class="edit" onclick="ed('community','kitTitle','Response Kit Title')"><span class="badge">✏️</span><h2 id="community-kitTitle">🛠️ Build Your Bullying Response Kit</h2></div>
+                <div class="edit" onclick="ed('community','kitSubtitle','Response Kit Subtitle')"><span class="badge">✏️</span><p id="community-kitSubtitle">Download these resources to help you respond to and prevent bullying</p></div>
+            </div>
+            <div class="ph">📄 Resource cards (IDEA letters, 504 letters, checklists, cyberbullying resources) displayed here - managed in code</div>
         </section>
         <section class="cta">
             <div class="edit" onclick="ed('community','ctaTitle','CTA Title')"><span class="badge">✏️</span><h2 id="community-ctaTitle">Need Help with a Bullying Situation?</h2></div>
