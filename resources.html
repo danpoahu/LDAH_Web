@@ -702,26 +702,6 @@
     </div>
 
     <script>
-        // Firebase SDK - for page content
-        const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
-        // Load page content from Firebase
-        async function loadPageContent() {
-            try {
-                const doc = await db.collection('pageContent').doc('resources').get();
-                if (doc.exists) {
-                    const data = doc.data();
-                    Object.keys(data).forEach(key => {
-                        const el = document.getElementById(`resources-${key}`);
-                        if (el && data[key]) el.innerHTML = data[key];
-                    });
-                }
-            } catch (err) { console.error('Error loading page content:', err); }
-        }
-        loadPageContent();
-
         // Resources data will be loaded from Firebase
         let resourcesData = [];
         let isLoading = true;
@@ -766,6 +746,21 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const analytics = firebase.analytics();
+        
+        // Load page content from Firebase CMS
+        async function loadPageContent() {
+            try {
+                const doc = await db.collection('pageContent').doc('resources').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    Object.keys(data).forEach(key => {
+                        const el = document.getElementById('resources-' + key);
+                        if (el && data[key]) el.innerHTML = data[key];
+                    });
+                }
+            } catch (err) { console.error('Error loading page content:', err); }
+        }
+        loadPageContent();
         
         analytics.logEvent('page_view', {
             page_title: 'Resources',
