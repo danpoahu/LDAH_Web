@@ -1663,11 +1663,12 @@
           
           <!-- Stats Cards -->
           <div class="analytics-grid" id="analyticsGrid">
-            <div class="stat-card">
+            <a href="https://console.firebase.google.com/project/ldah-932d5/analytics/app/web/overview" target="_blank" class="stat-card" style="text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 20px rgba(0,78,124,0.2)';" onmouseout="this.style.transform=''; this.style.boxShadow='';">
               <div class="stat-icon">👁️</div>
-              <div class="stat-number" id="statPageViews">-</div>
-              <div class="stat-label">Page Views</div>
-            </div>
+              <div class="stat-number" style="font-size: 1rem; color: var(--primary-blue);">View in Firebase</div>
+              <div class="stat-label">Page Views & Traffic</div>
+              <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.5rem;">📊 Open Analytics Console →</div>
+            </a>
             <div class="stat-card">
               <div class="stat-icon">📅</div>
               <div class="stat-number" id="statEventSignups">-</div>
@@ -5254,7 +5255,6 @@
     }
 
     // ===== Analytics Functions =====
-    let analyticsData = [];
     let allEventSignups = [];
     
     function updateAnalyticsDateRange() {
@@ -5268,9 +5268,8 @@
       if (loading) loading.style.display = 'block';
       
       try {
-        const analyticsSnap = await db.collection('analytics').get();
-        analyticsData = analyticsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
+        // Page views are now tracked via Firebase Analytics Console
+        // Only load event signups data from Firestore
         allEventSignups = [];
         for (const event of events) {
           const signupsSnap = await db.collection('events').doc(event.id).collection('signups').get();
@@ -5325,15 +5324,13 @@
     }
     
     function calculateAnalytics() {
-      const filtered = filterByDate(analyticsData);
       const filteredSignups = filterByDate(allEventSignups);
       const filteredVolunteers = filterByDate(applications);
       const filteredContacts = filterByDate(contacts);
       
-      const pageViews = filtered.filter(a => a.type === 'page_view').length;
       const totalParticipants = filteredSignups.reduce((sum, s) => sum + (parseInt(s.numVolunteers) || 1), 0);
       
-      document.getElementById('statPageViews').textContent = pageViews.toLocaleString();
+      // Page views now shown via Firebase Analytics Console link
       document.getElementById('statEventSignups').textContent = totalParticipants.toLocaleString();
       document.getElementById('statVolunteerApps').textContent = filteredVolunteers.length.toLocaleString();
       document.getElementById('statContacts').textContent = filteredContacts.length.toLocaleString();
@@ -5372,7 +5369,7 @@
       let report = `LDAH Analytics Report\n`;
       report += `Period: ${start.toLocaleDateString()} - ${end.toLocaleDateString()}\n`;
       report += `Generated: ${new Date().toLocaleString()}\n\n`;
-      report += `Page Views: ${document.getElementById('statPageViews').textContent}\n`;
+      report += `Note: Page views available in Firebase Analytics Console\n`;
       report += `Event Signups: ${document.getElementById('statEventSignups').textContent}\n`;
       report += `Volunteer Apps: ${document.getElementById('statVolunteerApps').textContent}\n`;
       report += `Contact Messages: ${document.getElementById('statContacts').textContent}\n`;
