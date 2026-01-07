@@ -997,17 +997,7 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Initialize Firebase
-        firebase.initializeApp({
-            apiKey: "AIzaSyAU3CQ07bCVKlJIqGak-i50kaJEyPKldLk",
-            authDomain: "ldah-932d5.firebaseapp.com",
-            projectId: "ldah-932d5",
-            storageBucket: "ldah-932d5.firebasestorage.app",
-            messagingSenderId: "662130454003",
-            appId: "1:662130454003:web:437576d5a5811ecd8df686"
-        });
-
-        // Initialize Analytics
+        // Initialize Analytics (Firebase already initialized above)
         const analytics = firebase.analytics();
         
         // Track page view
