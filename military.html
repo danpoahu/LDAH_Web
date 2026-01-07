@@ -801,7 +801,7 @@
         </div>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Firebase SDK - for page content
         const firebaseConfig = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -841,6 +841,28 @@
             }
             const modal = document.getElementById('videoModal');
             document.getElementById('videoFrame').src = '';
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Iframe Modal Functions
+        function openIframeModal(title, url) {
+            const modal = document.getElementById('iframeModal');
+            const titleEl = document.getElementById('iframeTitle');
+            const frame = document.getElementById('iframeFrame');
+
+            titleEl.textContent = title;
+            frame.src = url;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeIframeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+                return;
+            }
+            const modal = document.getElementById('iframeModal');
+            document.getElementById('iframeFrame').src = '';
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
         }
@@ -1018,23 +1040,25 @@
         });
 
         // Track PDF interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.download-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    const action = this.classList.contains('view-btn') ? 'view' : 'download';
-                    const pdfName = this.href.split('/').pop().split('?')[0];
-                    
-                    analytics.logEvent('pdf_interaction', {
-                        action: action,
-                        pdf_name: pdfName,
-                                            page: 'military'
-                    });
+        document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const action = this.classList.contains('view-btn') ? 'view' : 'download';
+                const pdfName = this.href.split('/').pop().split('?')[0];
+                
+                analytics.logEvent('pdf_interaction', {
+                    action: action,
+                    pdf_name: pdfName,
+                                        page: 'military'
                 });
             });
-            
-            // Load header and footer
-            loadHeaderFooter();
         });
+        
+        // Load header and footer
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadHeaderFooter);
+        } else {
+            loadHeaderFooter();
+        }
     </script>
     <script src="modal.js"></script>
 </body>
