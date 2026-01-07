@@ -829,10 +829,17 @@
             const frame = document.getElementById('videoFrame');
             
             titleEl.textContent = title;
-            // Loop video and hide related videos
-            frame.src = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1&loop=1&playlist=${videoId}`;
+            frame.src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1&loop=1&playlist=${videoId}&enablejsapi=1`;
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            frame.onerror = function() {
+                frame.outerHTML = `<div id="videoFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;">
+                    <h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">📺 Video</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">This video cannot be embedded. Click below to watch on YouTube.</p>
+                    <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">▶️ Watch on YouTube →</a>
+                </div>`;
+            };
         }
 
         function closeVideoModal(event) {
@@ -845,7 +852,49 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Header and Footer Loader - Fetches from external files
+        // Modal functions - must be defined before footer loads
+        function openIframeModal(title, url) {
+            if (url.includes('facebook.com')) {
+                const modal = document.getElementById('iframeModal');
+                const titleEl = document.getElementById('iframeTitle');
+                const frame = document.getElementById('iframeFrame');
+                
+                titleEl.textContent = title;
+                frame.outerHTML = '<div id="iframeFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Hawaii families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open Parent Talk Cafe →</a></div>';
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                const modal = document.getElementById('iframeModal');
+                const titleEl = document.getElementById('iframeTitle');
+                const frame = document.getElementById('iframeFrame');
+
+                titleEl.textContent = title;
+                frame.src = url;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeIframeModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
+                return;
+            }
+
+            const modal = document.getElementById('iframeModal');
+            const frameEl = document.getElementById('iframeFrame');
+            
+            modal.classList.remove('active');
+            
+            if (frameEl.tagName === 'IFRAME') {
+                frameEl.src = '';
+            } else {
+                frameEl.outerHTML = '<iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>';
+            }
+            
+            document.body.style.overflow = 'auto';
+        }
+
+        // Header and Footer Loader
         async function loadHeaderFooter() {
             const headerContainer = document.getElementById('header-container');
             const footerContainer = document.getElementById('footer-container');
@@ -864,7 +913,6 @@
                     throw new Error('Failed to fetch');
                 }
                 
-                // Load accessibility widget script
                 if (!document.getElementById('a11y-script')) {
                     const script = document.createElement('script');
                     script.id = 'a11y-script';
@@ -928,100 +976,33 @@
     </div>
 </footer>`;
             }
+            
             setActiveNavLink();
         }
         
         function setActiveNavLink() {
             const currentPage = window.location.pathname.split('/').pop() || 'index.html';
             const navLinks = document.querySelectorAll('.nav-links a');
+            
             navLinks.forEach(link => {
                 const href = link.getAttribute('href');
-                if (href === currentPage) {
+                if (href === currentPage || 
+                    (currentPage === 'index.html' && href.includes('index.html')) ||
+                    (currentPage === '' && href.includes('index.html'))) {
                     link.style.borderBottom = '3px solid #004E7C';
                     link.style.color = '#004E7C';
                     link.style.paddingBottom = '4px';
                 }
             });
         }
-
-        // Toggle mobile menu
+        
         function toggleMenu() {
             const navLinks = document.getElementById('navLinks');
             if (navLinks) {
                 navLinks.classList.toggle('active');
             }
         }
-
-        // Open iframe modal
-        function openIframeModal(title, url) {
-            // Special handling for Facebook
-            if (url.includes('facebook.com')) {
-                const modal = document.getElementById('iframeModal');
-                const titleEl = document.getElementById('iframeTitle');
-                const frame = document.getElementById('iframeFrame');
-                
-                titleEl.textContent = title;
-                frame.outerHTML = '<div id="iframeFrame" style="width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem; text-align: center; flex-direction: column;"><h4 style="color: #004E7C; font-size: 1.5rem; margin-bottom: 1rem;">🌺 Join Our Facebook Community</h4><p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 2rem; max-width: 500px;">Connect with other Hawaii families navigating special education and disabilities. Share experiences, ask questions, and find support.</p><a href="' + url + '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #004E7C, #0066a1); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem;">📱 Open Parent Talk Cafe →</a></div>';
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            } else {
-                const modal = document.getElementById('iframeModal');
-                const titleEl = document.getElementById('iframeTitle');
-                const frame = document.getElementById('iframeFrame');
-
-                titleEl.textContent = title;
-                frame.src = url;
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        // Close iframe modal
-        function closeIframeModal(event) {
-            if (event && event.target !== event.currentTarget && !event.target.classList.contains('close-iframe')) {
-                return;
-            }
-
-            const modal = document.getElementById('iframeModal');
-            const frameEl = document.getElementById('iframeFrame');
-            
-            modal.classList.remove('active');
-            
-            // Reset iframe
-            if (frameEl.tagName === 'IFRAME') {
-                frameEl.src = '';
-            } else {
-                frameEl.outerHTML = '<iframe id="iframeFrame" class="iframe-frame" src="" allowfullscreen loading="lazy"></iframe>';
-            }
-            
-            document.body.style.overflow = 'auto';
-        }
-
-        // Initialize Analytics (Firebase already initialized above)
-        const analytics = firebase.analytics();
         
-        // Track page view
-        analytics.logEvent('page_view', {
-            page_title: 'Military Families',
-            page_location: window.location.href,
-            page_path: '/military.html'
-        });
-
-        // Track PDF interactions
-        document.querySelectorAll('.download-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const action = this.classList.contains('view-btn') ? 'view' : 'download';
-                const pdfName = this.href.split('/').pop().split('?')[0];
-                
-                analytics.logEvent('pdf_interaction', {
-                    action: action,
-                    pdf_name: pdfName,
-                    page: 'military'
-                });
-            });
-        });
-        
-        // Load header and footer
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', loadHeaderFooter);
         } else {
