@@ -126,7 +126,44 @@
             }
             setActiveNavLink();
         }
-        function setActiveNavLink() { const currentPage = window.location.pathname.split('/').pop() || 'index.html'; document.querySelectorAll('.nav-links a').forEach(link => { const href = link.getAttribute('href'); const hrefPage = href.split('#')[0]; if (hrefPage === currentPage || (currentPage === '' && hrefPage === 'index.html')) { link.style.borderBottom = '3px solid #004E7C'; link.style.color = '#004E7C'; link.style.paddingBottom = '4px'; } }); }
+        function setActiveNavLink() { 
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html'; 
+            // On index.html, don't highlight anything initially - use scroll detection instead
+            if (currentPage === 'index.html' || currentPage === '') {
+                setupScrollDetection();
+                return;
+            }
+            document.querySelectorAll('.nav-links a').forEach(link => { 
+                const href = link.getAttribute('href'); 
+                const hrefPage = href.split('#')[0]; 
+                if (hrefPage === currentPage) { 
+                    link.style.borderBottom = '3px solid #004E7C'; 
+                    link.style.color = '#004E7C'; 
+                    link.style.paddingBottom = '4px'; 
+                } 
+            }); 
+        }
+        function setupScrollDetection() {
+            const servicesSection = document.getElementById('services');
+            const whatWeDoLink = document.querySelector('.nav-links a[href="index.html#services"]');
+            if (!servicesSection || !whatWeDoLink) return;
+            
+            function checkScroll() {
+                const rect = servicesSection.getBoundingClientRect();
+                const isAtServices = rect.top <= 150;
+                if (isAtServices) {
+                    whatWeDoLink.style.borderBottom = '3px solid #004E7C';
+                    whatWeDoLink.style.color = '#004E7C';
+                    whatWeDoLink.style.paddingBottom = '4px';
+                } else {
+                    whatWeDoLink.style.borderBottom = 'none';
+                    whatWeDoLink.style.color = '';
+                    whatWeDoLink.style.paddingBottom = '';
+                }
+            }
+            window.addEventListener('scroll', checkScroll);
+            checkScroll(); // Check initial position
+        }
         function toggleMenu() { const navLinks = document.getElementById('navLinks'); if (navLinks) navLinks.classList.toggle('active'); }
         if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', loadHeaderFooter); } else { loadHeaderFooter(); }
     </script>
