@@ -265,6 +265,173 @@
       border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Gallery Section */
+    .gallery-section {
+      background: var(--bg-light);
+      padding: 60px 20px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .gallery-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.03);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .section-badge {
+      display: inline-block;
+      background: rgba(0, 78, 124, 0.1);
+      color: var(--primary-blue);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      color: var(--primary-blue);
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-header p {
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+
+    /* Lightbox for gallery with carousel */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 4000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.95);
+      animation: fadeIn 0.3s;
+    }
+
+    .lightbox.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox img {
+      max-width: 85%;
+      max-height: 85%;
+      border-radius: 8px;
+      animation: slideUp 0.3s;
+    }
+
+    .lightbox .close-lightbox {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 3rem;
+      cursor: pointer;
+      transition: transform 0.3s;
+      z-index: 4001;
+    }
+
+    .lightbox .close-lightbox:hover {
+      transform: scale(1.2);
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: none;
+      font-size: 2.5rem;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: all 0.3s;
+      z-index: 4001;
+    }
+
+    .lightbox-prev:hover,
+    .lightbox-next:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .lightbox-prev { left: 20px; }
+    .lightbox-next { right: 20px; }
+
+    .lightbox-counter {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 1rem;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+      .lightbox-prev, .lightbox-next {
+        font-size: 1.5rem;
+        padding: 0.75rem 1rem;
+      }
+      .lightbox-prev { left: 10px; }
+      .lightbox-next { right: 10px; }
+      .lightbox img {
+        max-width: 95%;
+        max-height: 70%;
+      }
+    }
   
     /* External Link Modal */
     .iframe-modal {
@@ -567,6 +734,32 @@
     </div>
   </div>
 
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+      <div class="content-wrapper" style="padding-top: 0; padding-bottom: 0; max-width: 1400px; margin: 0 auto;">
+        <div class="section-header">
+          <span class="section-badge">📸 Our Volunteers</span>
+          <h2 id="volunteer-galleryTitle">Volunteers in Action</h2>
+          <p id="volunteer-gallerySubtitle">Our amazing volunteers making a difference in the community</p>
+        </div>
+      </div>
+
+      <div class="gallery-grid" id="gallery2Grid">
+        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">
+          Loading gallery...
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox for Gallery -->
+    <div id="lightbox2" class="lightbox" onclick="closeLightbox2(event)">
+      <span class="close-lightbox" onclick="closeLightbox2()">&times;</span>
+      <button class="lightbox-prev" onclick="prevImage2(event)">&#10094;</button>
+      <img id="lightbox2Img" src="" alt="Gallery Image">
+      <button class="lightbox-next" onclick="nextImage2(event)">&#10095;</button>
+      <div id="lightbox2Counter" class="lightbox-counter">1 / 1</div>
+    </div>
+
     <!-- CTA Banner -->
     <section class="cta-banner">
       <h2>Make a Difference Today</h2>
@@ -796,10 +989,90 @@
       if (e.target === this) closeModal();
     });
 
+    // Gallery 2 (Volunteer Gallery) - loads from Firebase gallery2 collection
+    let gallery2Images = [];
+    let currentImage2Index = 0;
+
+    // Fallback gallery images for volunteer page
+    const fallbackGallery2Images = [
+      { imageUrl: 'assets/gallery/volunteer1.jpg', caption: 'Volunteer Event' },
+      { imageUrl: 'assets/gallery/volunteer2.jpg', caption: 'Community Outreach' }
+    ];
+
+    async function loadGallery2() {
+      const grid = document.getElementById('gallery2Grid');
+      
+      try {
+        const snapshot = await db.collection('gallery2').orderBy('order').get();
+        
+        if (snapshot.empty) {
+          console.log('📷 Gallery2 is empty, showing placeholder');
+          gallery2Images = [];
+          renderGallery2();
+        } else {
+          gallery2Images = snapshot.docs.map(doc => doc.data());
+          console.log('📷 Loaded', gallery2Images.length, 'gallery2 images from Firebase');
+          renderGallery2();
+        }
+      } catch (error) {
+        console.error('Error loading gallery2:', error);
+        gallery2Images = [];
+        renderGallery2();
+      }
+    }
+
+    function renderGallery2() {
+      const grid = document.getElementById('gallery2Grid');
+      
+      if (gallery2Images.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">No photos in gallery yet. Add photos through the CMS.</div>';
+        return;
+      }
+      
+      grid.innerHTML = gallery2Images.map((photo, index) => `
+        <div class="gallery-item" onclick="openLightbox2(${index})">
+          <img src="${photo.imageUrl}" alt="${photo.caption || 'Volunteer Gallery Photo'}">
+        </div>
+      `).join('');
+    }
+
+    // Lightbox for Gallery 2
+    function openLightbox2(index) {
+      currentImage2Index = index;
+      updateLightbox2Image();
+      document.getElementById('lightbox2').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function updateLightbox2Image() {
+      const photo = gallery2Images[currentImage2Index];
+      document.getElementById('lightbox2Img').src = photo.imageUrl;
+      document.getElementById('lightbox2Counter').textContent = (currentImage2Index + 1) + ' / ' + gallery2Images.length;
+    }
+
+    function nextImage2(event) {
+      event.stopPropagation();
+      currentImage2Index = (currentImage2Index + 1) % gallery2Images.length;
+      updateLightbox2Image();
+    }
+
+    function prevImage2(event) {
+      event.stopPropagation();
+      currentImage2Index = (currentImage2Index - 1 + gallery2Images.length) % gallery2Images.length;
+      updateLightbox2Image();
+    }
+
+    function closeLightbox2(event) {
+      if (event && event.target.tagName === 'IMG') return;
+      document.getElementById('lightbox2').classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
     // Load opportunities on page load
     document.addEventListener('DOMContentLoaded', async () => {
       await loadOpportunitiesData();
       await loadOpportunities();
+      await loadGallery2();
     });
   
 

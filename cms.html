@@ -1239,6 +1239,7 @@
         <button class="tab active" data-tab="team">👥 Team</button>
         <button class="tab" data-tab="board">🏆 Board</button>
         <button class="tab" data-tab="gallery">📸 Gallery</button>
+        <button class="tab" data-tab="gallery2">📸 Gallery 2</button>
         <button class="tab" data-tab="resources">📚 Resources</button>
         <button class="tab" data-tab="faq">❓ FAQ</button>
         <button class="tab" data-tab="events">📅 Events <span id="eventsTabBadge" class="badge" style="display: none;"></span></button>
@@ -1309,6 +1310,28 @@
           </div>
           <div id="galleryCount" style="color: var(--text-light); margin-bottom: 1rem;"></div>
           <div class="gallery-cms-grid" id="galleryGrid"></div>
+        </div>
+      </div>
+      
+      <!-- Gallery 2 Tab -->
+      <div class="tab-content" id="gallery2-tab">
+        <div class="content-section">
+          <h2>📸 Manage Photo Gallery 2</h2>
+          <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+            Add, edit, or remove photos from gallery 2. Drag cards to reorder. Changes appear on the Volunteer page.
+          </p>
+          
+          <div class="success-message" id="gallery2Success">Changes saved successfully!</div>
+          
+          <button class="btn-add-person" onclick="openGallery2Modal()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">+ Add Photo</button>
+          
+          <div id="gallery2Loading" class="loading-spinner">Loading gallery...</div>
+          <div id="gallery2Empty" class="empty-state" style="display:none;">
+            <p>No photos in gallery 2 yet.</p>
+            <button class="btn-add-person" onclick="openGallery2Modal()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">+ Add Your First Photo</button>
+          </div>
+          <div id="gallery2Count" style="color: var(--text-light); margin-bottom: 1rem;"></div>
+          <div class="gallery-cms-grid" id="gallery2Grid"></div>
         </div>
       </div>
       
@@ -1844,6 +1867,74 @@
     </div>
   </div>
 
+  <!-- Add/Edit Gallery 2 Photo Modal -->
+  <div class="modal-overlay" id="gallery2Modal">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+        <h3 id="gallery2ModalTitle" style="color: white;">Add Photo</h3>
+        <button class="modal-close" onclick="closeGallery2Modal()" style="color: white;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="gallery2PhotoId">
+        <input type="hidden" id="gallery2PhotoUrl">
+        
+        <div class="photo-upload-area">
+          <div id="gallery2PreviewContainer">
+            <div class="photo-preview-placeholder" id="gallery2Placeholder" style="width: 200px; height: 150px; border-radius: 8px; font-size: 3rem;">📷</div>
+          </div>
+          <input type="file" id="gallery2PhotoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handleGallery2PhotoSelect(event)">
+          <button type="button" class="btn-upload-photo" onclick="document.getElementById('gallery2PhotoInput').click()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+            📷 Choose Photo
+          </button>
+          <p class="photo-hint">Max 5MB. JPG, PNG, or WebP.</p>
+          <div class="upload-progress" id="gallery2UploadProgress">
+            <div class="upload-progress-bar" id="gallery2UploadProgressBar"></div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Photo Caption / Alt Text *</label>
+          <input type="text" id="gallery2Caption" placeholder="e.g., Volunteer Event 2024" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Or Enter Image URL</label>
+          <input type="url" id="gallery2ImageUrl" placeholder="https://example.com/photo.jpg" oninput="previewGallery2Url()">
+          <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">
+            Tip: You can paste a URL from Firebase Storage, Instagram, or any public image.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeGallery2Modal()">Cancel</button>
+        <button class="btn-save" id="saveGallery2Btn" onclick="saveGallery2Photo()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">Save Photo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Gallery 2 Photo Modal -->
+  <div class="modal-overlay" id="deleteGallery2Modal">
+    <div class="modal-box" style="max-width: 400px;">
+      <div class="modal-header" style="background: var(--danger);">
+        <h3 style="color: white;">Delete Photo</h3>
+        <button class="modal-close" onclick="closeDeleteGallery2Modal()" style="color: white;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <img id="deleteGallery2Preview" src="" alt="" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;">
+        </div>
+        <p>Are you sure you want to remove this photo?</p>
+        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This action cannot be undone.</p>
+        <input type="hidden" id="deleteGallery2Id">
+        <input type="hidden" id="deleteGallery2PhotoUrl">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeDeleteGallery2Modal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDeleteGallery2()" style="flex: none; padding: 0.75rem 1.5rem;">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Add/Edit Resource Modal -->
   <div class="modal-overlay" id="resourceModal">
     <div class="modal-box" style="max-width: 600px;">
@@ -2307,6 +2398,7 @@
         loadTeamMembers();
         loadBoardMembers();
         loadGallery();
+        loadGallery2();
         loadResources();
         loadCategories();
         loadFaqs();
@@ -3348,6 +3440,311 @@
         closeDeleteGalleryModal();
         await loadGallery();
         showSuccess('gallery');
+      } catch (error) {
+        console.error('Error deleting photo:', error);
+        alert('Failed to delete photo. Please try again.');
+      }
+    }
+
+    // ===== Gallery 2 Functions =====
+    let gallery2Photos = [];
+    let draggedGallery2Card = null;
+
+    async function loadGallery2() {
+      const loading = document.getElementById('gallery2Loading');
+      const empty = document.getElementById('gallery2Empty');
+      const grid = document.getElementById('gallery2Grid');
+      const count = document.getElementById('gallery2Count');
+      
+      if (!loading) return;
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+      
+      try {
+        const snapshot = await db.collection('gallery2').orderBy('order').get();
+        gallery2Photos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        loading.style.display = 'none';
+        
+        if (gallery2Photos.length === 0) {
+          empty.style.display = 'block';
+          count.textContent = '';
+        } else {
+          count.textContent = `${gallery2Photos.length} photo${gallery2Photos.length === 1 ? '' : 's'}`;
+          renderGallery2Grid();
+        }
+      } catch (error) {
+        console.error('Error loading gallery2:', error);
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+      }
+    }
+
+    function renderGallery2Grid() {
+      const grid = document.getElementById('gallery2Grid');
+      grid.innerHTML = gallery2Photos.map((photo, index) => `
+        <div class="gallery-card" draggable="true" data-id="${photo.id}" data-index="${index}"
+             ondragstart="handleGallery2DragStart(event)" ondragend="handleGallery2DragEnd(event)"
+             ondragover="handleGallery2DragOver(event)" ondragleave="handleGallery2DragLeave(event)"
+             ondrop="handleGallery2Drop(event)">
+          <div class="gallery-drag-handle">⋮⋮</div>
+          <div class="gallery-order-badge">${index + 1}</div>
+          ${photo.imageUrl 
+            ? `<img src="${photo.imageUrl}" alt="${photo.caption || ''}" class="gallery-card-image">`
+            : `<div class="gallery-card-placeholder">📷</div>`
+          }
+          <div class="gallery-card-info">
+            <h4>${photo.caption || 'Untitled'}</h4>
+          </div>
+          <div class="gallery-card-actions">
+            <button onclick="editGallery2Photo('${photo.id}')" title="Edit">✏️</button>
+            <button onclick="deleteGallery2Photo('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', '${photo.imageUrl || ''}')" title="Delete" style="color: var(--danger);">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleGallery2DragStart(e) {
+      draggedGallery2Card = e.target.closest('.gallery-card');
+      draggedGallery2Card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleGallery2DragEnd(e) {
+      if (draggedGallery2Card) {
+        draggedGallery2Card.classList.remove('dragging');
+      }
+      document.querySelectorAll('#gallery2Grid .gallery-card').forEach(card => {
+        card.classList.remove('drag-over');
+      });
+      draggedGallery2Card = null;
+    }
+
+    function handleGallery2DragOver(e) {
+      e.preventDefault();
+      const card = e.target.closest('.gallery-card');
+      if (card && card !== draggedGallery2Card) {
+        card.classList.add('drag-over');
+      }
+    }
+
+    function handleGallery2DragLeave(e) {
+      const card = e.target.closest('.gallery-card');
+      if (card) {
+        card.classList.remove('drag-over');
+      }
+    }
+
+    async function handleGallery2Drop(e) {
+      e.preventDefault();
+      const targetCard = e.target.closest('.gallery-card');
+      if (!targetCard || !draggedGallery2Card || targetCard === draggedGallery2Card) return;
+
+      const draggedId = draggedGallery2Card.dataset.id;
+      const targetId = targetCard.dataset.id;
+      
+      const draggedIndex = gallery2Photos.findIndex(p => p.id === draggedId);
+      const targetIndex = gallery2Photos.findIndex(p => p.id === targetId);
+      
+      const [movedPhoto] = gallery2Photos.splice(draggedIndex, 1);
+      gallery2Photos.splice(targetIndex, 0, movedPhoto);
+      
+      renderGallery2Grid();
+      
+      const batch = db.batch();
+      gallery2Photos.forEach((photo, index) => {
+        batch.update(db.collection('gallery2').doc(photo.id), { order: index });
+      });
+      
+      try {
+        await batch.commit();
+        showSuccess('gallery2');
+      } catch (error) {
+        console.error('Error updating gallery2 order:', error);
+        await loadGallery2();
+      }
+    }
+
+    function openGallery2Modal(photo = null) {
+      const modal = document.getElementById('gallery2Modal');
+      const title = document.getElementById('gallery2ModalTitle');
+      const photoId = document.getElementById('gallery2PhotoId');
+      const photoUrl = document.getElementById('gallery2PhotoUrl');
+      const caption = document.getElementById('gallery2Caption');
+      const imageUrl = document.getElementById('gallery2ImageUrl');
+      const placeholder = document.getElementById('gallery2Placeholder');
+      const container = document.getElementById('gallery2PreviewContainer');
+      
+      if (photo) {
+        title.textContent = 'Edit Photo';
+        photoId.value = photo.id;
+        photoUrl.value = photo.imageUrl || '';
+        caption.value = photo.caption || '';
+        imageUrl.value = photo.imageUrl || '';
+        
+        if (photo.imageUrl) {
+          container.innerHTML = `<img src="${photo.imageUrl}" alt="Preview" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;">`;
+        }
+      } else {
+        title.textContent = 'Add Photo';
+        photoId.value = '';
+        photoUrl.value = '';
+        caption.value = '';
+        imageUrl.value = '';
+        container.innerHTML = '<div class="photo-preview-placeholder" id="gallery2Placeholder" style="width: 200px; height: 150px; border-radius: 8px; font-size: 3rem;">📷</div>';
+      }
+      
+      document.getElementById('gallery2UploadProgress').style.display = 'none';
+      modal.classList.add('active');
+    }
+
+    function closeGallery2Modal() {
+      document.getElementById('gallery2Modal').classList.remove('active');
+      document.getElementById('gallery2PhotoInput').value = '';
+    }
+
+    function editGallery2Photo(id) {
+      const photo = gallery2Photos.find(p => p.id === id);
+      if (photo) {
+        openGallery2Modal(photo);
+      }
+    }
+
+    function handleGallery2PhotoSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Photo must be less than 5MB');
+        return;
+      }
+      
+      const container = document.getElementById('gallery2PreviewContainer');
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        container.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;">`;
+      };
+      reader.readAsDataURL(file);
+      
+      document.getElementById('gallery2ImageUrl').value = '';
+    }
+
+    function previewGallery2Url() {
+      const url = document.getElementById('gallery2ImageUrl').value.trim();
+      const container = document.getElementById('gallery2PreviewContainer');
+      
+      if (url) {
+        container.innerHTML = `<img src="${url}" alt="Preview" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;" onerror="this.parentElement.innerHTML='<div class=\\'photo-preview-placeholder\\' style=\\'width: 200px; height: 150px; border-radius: 8px; font-size: 3rem;\\'>❌</div>'">`;
+        document.getElementById('gallery2PhotoInput').value = '';
+      }
+    }
+
+    async function saveGallery2Photo() {
+      const photoId = document.getElementById('gallery2PhotoId').value;
+      const caption = document.getElementById('gallery2Caption').value.trim();
+      const imageUrlInput = document.getElementById('gallery2ImageUrl').value.trim();
+      const fileInput = document.getElementById('gallery2PhotoInput');
+      const file = fileInput.files[0];
+      
+      if (!caption) {
+        alert('Please enter a caption');
+        return;
+      }
+      
+      if (!file && !imageUrlInput && !document.getElementById('gallery2PhotoUrl').value) {
+        alert('Please select a photo or enter an image URL');
+        return;
+      }
+      
+      const saveBtn = document.getElementById('saveGallery2Btn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+      
+      try {
+        let finalImageUrl = imageUrlInput || document.getElementById('gallery2PhotoUrl').value;
+        
+        if (file) {
+          const progressBar = document.getElementById('gallery2UploadProgress');
+          const progressBarInner = document.getElementById('gallery2UploadProgressBar');
+          progressBar.style.display = 'block';
+          
+          const timestamp = Date.now();
+          const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+          const storageRef = storage.ref(`gallery2/${timestamp}_${safeName}`);
+          
+          const uploadTask = storageRef.put(file);
+          
+          await new Promise((resolve, reject) => {
+            uploadTask.on('state_changed',
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressBarInner.style.width = progress + '%';
+              },
+              reject,
+              async () => {
+                finalImageUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                resolve();
+              }
+            );
+          });
+        }
+        
+        const photoData = {
+          caption,
+          imageUrl: finalImageUrl,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (photoId) {
+          await db.collection('gallery2').doc(photoId).update(photoData);
+        } else {
+          photoData.order = gallery2Photos.length;
+          photoData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          await db.collection('gallery2').add(photoData);
+        }
+        
+        closeGallery2Modal();
+        await loadGallery2();
+        showSuccess('gallery2');
+      } catch (error) {
+        console.error('Error saving photo:', error);
+        alert('Failed to save photo. Please try again.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Photo';
+      }
+    }
+
+    function deleteGallery2Photo(id, caption, imageUrl) {
+      document.getElementById('deleteGallery2Id').value = id;
+      document.getElementById('deleteGallery2PhotoUrl').value = imageUrl;
+      document.getElementById('deleteGallery2Preview').src = imageUrl;
+      document.getElementById('deleteGallery2Modal').classList.add('active');
+    }
+    
+    function closeDeleteGallery2Modal() {
+      document.getElementById('deleteGallery2Modal').classList.remove('active');
+    }
+    
+    async function confirmDeleteGallery2() {
+      const id = document.getElementById('deleteGallery2Id').value;
+      const photoUrl = document.getElementById('deleteGallery2PhotoUrl').value;
+      
+      try {
+        await db.collection('gallery2').doc(id).delete();
+        
+        if (photoUrl && photoUrl.includes('firebasestorage.googleapis.com')) {
+          try {
+            const storageRef = storage.refFromURL(photoUrl);
+            await storageRef.delete();
+          } catch (e) {
+            console.log('Could not delete from storage:', e);
+          }
+        }
+        
+        closeDeleteGallery2Modal();
+        await loadGallery2();
+        showSuccess('gallery2');
       } catch (error) {
         console.error('Error deleting photo:', error);
         alert('Failed to delete photo. Please try again.');
