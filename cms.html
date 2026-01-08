@@ -1321,12 +1321,12 @@
           
           <div class="success-message" id="gallery2Success">Changes saved successfully!</div>
           
-          <button class="btn-add-person" onclick="openGallery2Modal()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">+ Add Photo</button>
+          <button class="btn-add-person" onclick="openGallery2Modal()" style="background: linear-gradient(135deg, #10b981, #059669);">+ Add Photo</button>
           
           <div id="gallery2Loading" class="loading-spinner">Loading gallery...</div>
           <div id="gallery2Empty" class="empty-state" style="display:none;">
             <p>No photos in gallery 2 yet.</p>
-            <button class="btn-add-person" onclick="openGallery2Modal()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">+ Add Your First Photo</button>
+            <button class="btn-add-person" onclick="openGallery2Modal()" style="background: linear-gradient(135deg, #10b981, #059669);">+ Add Your First Photo</button>
           </div>
           <div id="gallery2Count" style="color: var(--text-light); margin-bottom: 1rem;"></div>
           <div class="gallery-cms-grid" id="gallery2Grid"></div>
@@ -1536,7 +1536,7 @@
                 <option value="viewed">Viewed</option>
                 <option value="acknowledged">Acknowledged</option>
               </select>
-              <button onclick="markAllPledgesViewed()" class="btn-add-person" style="padding: 0.5rem 1rem; background: #8b5cf6;">✓ Mark All Viewed</button>
+              <button onclick="markAllPledgesViewed()" class="btn-add-person" style="padding: 0.5rem 1rem; background: #10b981;">✓ Mark All Viewed</button>
               <button onclick="exportPledgesToCSV()" class="btn-export">📥 Export CSV</button>
             </div>
             <div id="pledgesLoading" class="loading-spinner">Loading pledges...</div>
@@ -1888,7 +1888,7 @@
   <!-- Add/Edit Gallery 2 Photo Modal -->
   <div class="modal-overlay" id="gallery2Modal">
     <div class="modal-box" style="max-width: 500px;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+      <div class="modal-header" style="background: linear-gradient(135deg, #10b981, #059669);">
         <h3 id="gallery2ModalTitle" style="color: white;">Add Photo</h3>
         <button class="modal-close" onclick="closeGallery2Modal()" style="color: white;">&times;</button>
       </div>
@@ -1901,7 +1901,7 @@
             <div class="photo-preview-placeholder" id="gallery2Placeholder" style="width: 200px; height: 150px; border-radius: 8px; font-size: 3rem;">📷</div>
           </div>
           <input type="file" id="gallery2PhotoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handleGallery2PhotoSelect(event)">
-          <button type="button" class="btn-upload-photo" onclick="document.getElementById('gallery2PhotoInput').click()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+          <button type="button" class="btn-upload-photo" onclick="document.getElementById('gallery2PhotoInput').click()" style="background: linear-gradient(135deg, #10b981, #059669);">
             📷 Choose Photo
           </button>
           <p class="photo-hint">Max 5MB. JPG, PNG, or WebP.</p>
@@ -1925,7 +1925,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeGallery2Modal()">Cancel</button>
-        <button class="btn-save" id="saveGallery2Btn" onclick="saveGallery2Photo()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">Save Photo</button>
+        <button class="btn-save" id="saveGallery2Btn" onclick="saveGallery2Photo()" style="background: linear-gradient(135deg, #10b981, #059669);">Save Photo</button>
       </div>
     </div>
   </div>
@@ -2178,7 +2178,7 @@
   <!-- Event Signups Modal -->
   <div class="modal-overlay" id="signupsModal">
     <div class="modal-box" style="max-width: 700px;">
-      <div class="modal-header" style="background: #8b5cf6;">
+      <div class="modal-header" style="background: #10b981;">
         <h3 id="signupsModalTitle" style="color: white;">Event Signups</h3>
         <button class="modal-close" onclick="closeSignupsModal()" style="color: white;">&times;</button>
       </div>
@@ -2199,7 +2199,7 @@
   <!-- Opportunity Editor Modal -->
   <div class="modal-overlay" id="opportunityModal">
     <div class="modal-box" style="max-width: 600px;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+      <div class="modal-header" style="background: linear-gradient(135deg, #10b981, #059669);">
         <h3 id="opportunityModalTitle" style="color: white;">Add Volunteer Opportunity</h3>
         <button class="modal-close" onclick="closeOpportunityModal()" style="color: white;">&times;</button>
       </div>
@@ -2255,7 +2255,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeOpportunityModal()">Cancel</button>
-        <button class="btn-save" onclick="saveOpportunity()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">Save Opportunity</button>
+        <button class="btn-save" onclick="saveOpportunity()" style="background: linear-gradient(135deg, #10b981, #059669);">Save Opportunity</button>
       </div>
     </div>
   </div>
@@ -2263,7 +2263,7 @@
   <!-- Applications for Opportunity Modal -->
   <div class="modal-overlay" id="opportunityAppsModal">
     <div class="modal-box" style="max-width: 700px;">
-      <div class="modal-header" style="background: #8b5cf6;">
+      <div class="modal-header" style="background: #10b981;">
         <h3 id="opportunityAppsModalTitle" style="color: white;">Applications</h3>
         <button class="modal-close" onclick="closeOpportunityAppsModal()" style="color: white;">&times;</button>
       </div>
@@ -3515,8 +3515,8 @@
             <h4>${photo.caption || 'Untitled'}</h4>
           </div>
           <div class="gallery-card-actions">
-            <button onclick="editGallery2Photo('${photo.id}')" title="Edit">✏️</button>
-            <button onclick="deleteGallery2Photo('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', '${photo.imageUrl || ''}')" title="Delete" style="color: var(--danger);">🗑️</button>
+            <button class="btn-edit" onclick="editGallery2Photo('${photo.id}')">✏️ Edit</button>
+            <button class="btn-delete" onclick="deleteGallery2Photo('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', '${photo.imageUrl || ''}')">🗑️</button>
           </div>
         </div>
       `).join('');
@@ -4297,7 +4297,7 @@
               </div>
             </div>
             <div style="padding: 0 1rem 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button class="btn-edit" onclick="openSignupsModal('${event.id}')" style="background: #8b5cf6; position: relative;">
+              <button class="btn-edit" onclick="openSignupsModal('${event.id}')" style="background: #10b981; position: relative;">
                 📁 Signups (${signups.length})
                 ${newSignups > 0 ? `<span class="badge" style="position: absolute; top: -8px; right: -8px;">${newSignups}</span>` : ''}
               </button>
@@ -4595,7 +4595,7 @@
                       <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; padding-top: 1rem; border-top: 1px solid #eee;">
                         <a href="mailto:${s.email}" class="btn-edit">📧 Email</a>
                         ${s.phone ? `<a href="tel:${s.phone}" class="btn-edit" style="background: #22c55e;">📞 Call</a>` : ''}
-                        ${s.phone ? `<a href="sms:${s.phone}" class="btn-edit" style="background: #8b5cf6;">💬 Text</a>` : ''}
+                        ${s.phone ? `<a href="sms:${s.phone}" class="btn-edit" style="background: #10b981;">💬 Text</a>` : ''}
                         <button class="btn-delete" onclick="deleteEventSignup('${eventId}', '${s.id}')">🗑️ Delete</button>
                       </div>
                     </div>
@@ -4781,7 +4781,7 @@
                 <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;">${opp.description || ''}</p>
                 ${opp.requirements ? `<p style="color: var(--text-light); font-size: 0.8rem; margin-top: 0.25rem;"><strong>Requirements:</strong> ${opp.requirements}</p>` : ''}
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;">
-                  <button class="btn-edit" onclick="openOpportunityAppsModal('${opp.id}')" style="background: #8b5cf6; position: relative;">
+                  <button class="btn-edit" onclick="openOpportunityAppsModal('${opp.id}')" style="background: #10b981; position: relative;">
                     📁 Applications (${oppApps.length})
                     ${newApps > 0 ? `<span class="badge" style="position: absolute; top: -8px; right: -8px;">${newApps}</span>` : ''}
                   </button>
