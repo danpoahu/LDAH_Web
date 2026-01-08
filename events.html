@@ -1145,8 +1145,8 @@
 
   <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">📅 Events & Workshops</h1>
-    <p class="page-subtitle">Join us for training, workshops, and community events</p>
+    <h1 class="page-title" id="events-heroTitle">📅 Events & Workshops</h1>
+    <p class="page-subtitle" id="events-heroSubtitle">Join us for training, workshops, and community events</p>
   </div>
 
   <!-- Main Content -->
@@ -1155,7 +1155,7 @@
     <div class="section" id="currentEventsSection">
       <div class="section-header">
         <span class="section-icon">🎯</span>
-        <h2 class="section-title">Upcoming Events</h2>
+        <h2 class="section-title" id="events-currentTitle">Upcoming Events</h2>
         <span class="section-count" id="currentCount">0</span>
       </div>
       
@@ -1171,7 +1171,7 @@
     <div class="section" id="pastEventsSection">
       <div class="section-header">
         <span class="section-icon">📚</span>
-        <h2 class="section-title">Past Events</h2>
+        <h2 class="section-title" id="events-pastTitle">Past Events</h2>
         <span class="section-count" id="pastCount">0</span>
       </div>
       
@@ -1196,6 +1196,29 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    
+    // Load CMS page content
+    async function loadPageContent() {
+      try {
+        const doc = await db.collection('pageContent').doc('events').get();
+        if (doc.exists) {
+          const data = doc.data();
+          // Update each element if content exists
+          const fields = ['heroTitle', 'heroSubtitle', 'currentTitle', 'pastTitle', 'calendarTitle', 'ctaTitle', 'ctaSubtitle', 'ctaButton'];
+          fields.forEach(field => {
+            const el = document.getElementById('events-' + field);
+            if (el && data[field]) {
+              el.innerHTML = data[field];
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error loading page content:', error);
+      }
+    }
+    
+    // Load page content on DOM ready
+    document.addEventListener('DOMContentLoaded', loadPageContent);
   </script>
   
   <!-- Events Page Logic -->
@@ -2417,7 +2440,7 @@
     <div class="calendar-container">
       <div class="section-header" style="justify-content: center; margin-bottom: 1.5rem;">
         <span class="section-icon">📅</span>
-        <h2 class="section-title">Event Calendar</h2>
+        <h2 class="section-title" id="events-calendarTitle">Event Calendar</h2>
       </div>
       <div class="calendar-header">
         <div class="calendar-nav">
@@ -2452,9 +2475,9 @@
 
     <!-- CTA Banner -->
     <section class="cta-banner">
-      <h2>Can't Find What You're Looking For?</h2>
-      <p>Contact us to learn about upcoming workshops, training sessions, and community events in your area.</p>
-      <a href="contact.html" class="cta-btn">Get in Touch</a>
+      <h2 id="events-ctaTitle">Can't Find What You're Looking For?</h2>
+      <p id="events-ctaSubtitle">Contact us to learn about upcoming workshops, training sessions, and community events in your area.</p>
+      <a href="contact.html" class="cta-btn" id="events-ctaButton">Get in Touch</a>
     </section>
 
   <!-- Footer Container - Auto-loaded -->

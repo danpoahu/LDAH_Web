@@ -211,18 +211,33 @@
     <div class="page" id="page-events"><div class="preview">
         <section class="hero">
             <div class="edit" onclick="ed('events','heroTitle','Page Title')"><span class="badge">✏️</span><h1 id="events-heroTitle">📅 Events & Workshops</h1></div>
-            <div class="edit" onclick="ed('events','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="events-heroSubtitle">Join us for training and community events.</p></div>
+            <div class="edit" onclick="ed('events','heroSubtitle','Page Subtitle')"><span class="badge">✏️</span><p id="events-heroSubtitle">Join us for training, workshops, and community events</p></div>
         </section>
         <section class="sec">
             <div class="sec-head">
-                <div class="edit" onclick="ed('events','currentTitle','Current Events Title')"><span class="badge">✏️</span><h2 id="events-currentTitle">Current Events</h2></div>
-                <div class="edit" onclick="ed('events','currentSubtitle','Current Events Subtitle')"><span class="badge">✏️</span><p id="events-currentSubtitle">Register today!</p></div>
+                <span class="sec-badge">🎯 Upcoming</span>
+                <div class="edit" onclick="ed('events','currentTitle','Upcoming Events Title')"><span class="badge">✏️</span><h2 id="events-currentTitle">Upcoming Events</h2></div>
             </div>
             <div class="ph">📅 Events loaded from Firebase (CMS Events tab)</div>
         </section>
+        <section class="sec" style="background: #f8f9fa;">
+            <div class="sec-head">
+                <span class="sec-badge">📚 Past</span>
+                <div class="edit" onclick="ed('events','pastTitle','Past Events Title')"><span class="badge">✏️</span><h2 id="events-pastTitle">Past Events</h2></div>
+            </div>
+            <div class="ph">📅 Past events loaded from Firebase</div>
+        </section>
+        <section class="sec">
+            <div class="sec-head">
+                <span class="sec-badge">📅 Calendar</span>
+                <div class="edit" onclick="ed('events','calendarTitle','Calendar Section Title')"><span class="badge">✏️</span><h2 id="events-calendarTitle">Event Calendar</h2></div>
+            </div>
+            <div class="ph">📅 Interactive calendar view</div>
+        </section>
         <section class="cta">
-            <div class="edit" onclick="ed('events','ctaTitle','CTA Title')"><span class="badge">✏️</span><h2 id="events-ctaTitle">Can't Find What You Need?</h2></div>
-            <div class="edit" onclick="ed('events','ctaSubtitle','CTA Subtitle')"><span class="badge">✏️</span><p id="events-ctaSubtitle">Contact us about upcoming events.</p></div>
+            <div class="edit" onclick="ed('events','ctaTitle','CTA Title')"><span class="badge">✏️</span><h2 id="events-ctaTitle">Can't Find What You're Looking For?</h2></div>
+            <div class="edit" onclick="ed('events','ctaSubtitle','CTA Subtitle')"><span class="badge">✏️</span><p id="events-ctaSubtitle">Contact us to learn about upcoming workshops, training sessions, and community events in your area.</p></div>
+            <div class="edit" onclick="ed('events','ctaButton','CTA Button Text')"><span class="badge">✏️</span><p id="events-ctaButton" style="display: inline-block; background: white; color: var(--primary); padding: 0.75rem 2rem; border-radius: 50px; font-weight: 600; margin-top: 1rem;">Get in Touch</p></div>
         </section>
     </div></div>
 
@@ -274,7 +289,7 @@
                     <div class="edit" onclick="ed('contact','honTitle','Honolulu Office Title')"><span class="badge">✏️</span><h3 id="contact-honTitle">Honolulu Office</h3></div>
                     <div class="edit" onclick="ed('contact','honSubtitle','Honolulu Subtitle')"><span class="badge">✏️</span><p id="contact-honSubtitle" style="color:var(--primary);font-weight:600">Main Office</p></div>
                     <div class="edit" onclick="ed('contact','honPhone','Honolulu Phone')"><span class="badge">✏️</span><p id="contact-honPhone" style="font-size:0.9rem;margin-top:1rem"><strong>Phone:</strong> (808) 532-5364<br><strong>Toll Free:</strong> 1-800-533-9684</p></div>
-                    <div class="edit" onclick="ed('contact','honEmail','Honolulu Email')"><span class="badge">✏️</span><p id="contact-honEmail" style="font-size:0.9rem"><strong>Email:</strong> info@ldahawaii.org</p></div>
+                    <div class="edit" onclick="ed('contact','honEmail','Honolulu Email')"><span class="badge">✏️</span><p id="contact-honEmail" style="font-size:0.9rem"><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c2abaca4ad82aea6a3aaa3b5a3ababecadb0a5">[email&#160;protected]</a></p></div>
                     <div class="edit" onclick="ed('contact','honAddress','Honolulu Address')"><span class="badge">✏️</span><p id="contact-honAddress" style="font-size:0.9rem"><strong>Address:</strong><br>Harry and Jeanette Weinberg Kukui Center<br>245 North Kukui Street, Suite 205<br>Honolulu, HI 96817</p></div>
                 </div>
                 <!-- Ma'ili Office -->
@@ -460,7 +475,7 @@
         </section>
     </div></div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         const cfg = { apiKey: "AIzaSyAU3CQ07bCVKlJ1qGak-150kaJEyPKldLk", authDomain: "ldah-932d5.firebaseapp.com", projectId: "ldah-932d5" };
         firebase.initializeApp(cfg);
         const db = firebase.firestore(), auth = firebase.auth();
@@ -494,8 +509,4 @@
         async function login() { const e = document.getElementById('email').value, p = document.getElementById('pass').value; if (!e||!p) return alert('Enter email & password'); try { await auth.signInWithEmailAndPassword(e,p); alert('✅ Logged in!'); } catch(err) { alert('❌ '+err.message); } }
         async function logout() { await auth.signOut(); alert('👋 Logged out'); }
         function ed(pg, fld, lbl) { if (!loggedIn) { alert('Login first'); togglePanel(); return; } document.getElementById('welcome').style.display='none'; document.getElementById('form').classList.add('active'); document.getElementById('lbl').textContent='Editing: '+lbl; document.getElementById('fld').value=fld; document.getElementById('pg').value=pg; document.getElementById('txt').value=(document.getElementById(pg+'-'+fld)?.innerHTML||'').trim(); if (!document.getElementById('panel').classList.contains('open')) togglePanel(); }
-        async function save() { const pg=document.getElementById('pg').value, fld=document.getElementById('fld').value, txt=document.getElementById('txt').value; try { await db.collection('pageContent').doc(pg).set({[fld]:txt,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); const el=document.getElementById(pg+'-'+fld); if(el)el.innerHTML=txt; data[pg][fld]=txt; alert('✅ Saved!'); cancel(); } catch(e) { alert('❌ '+e.message); } }
-        function cancel() { document.getElementById('form').classList.remove('active'); document.getElementById('welcome').style.display='block'; }
-    </script>
-</body>
-</html>
+        async function save() { const pg=document.getElementById('pg').value, fld=document.getElementById('fld').value, txt=document.getElementById('txt').value; try { await db.collection('pageContent').doc(pg).set({[fld]:txt,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); const el=document.getElementById(pg+'-'+fld); if(el)el.innerHTML=txt; data[pg][fld]=txt; alert('✅ Saved!'); c
