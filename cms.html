@@ -1227,15 +1227,27 @@
     }
     
     .activity-feed {
-      max-height: 300px;
+      max-height: 400px;
       overflow-y: auto;
     }
     
     .activity-item {
       display: flex;
       gap: 0.75rem;
-      padding: 0.75rem 0;
+      padding: 0.75rem;
       border-bottom: 1px solid #f0f0f0;
+      border-radius: 8px;
+      margin-bottom: 0.25rem;
+      transition: background 0.2s;
+    }
+    
+    .activity-item:hover {
+      background: #f9fafb;
+    }
+    
+    .activity-item.activity-new {
+      background: #fefce8;
+      border-left: 3px solid #eab308;
     }
     
     .activity-item:last-child {
@@ -1267,11 +1279,38 @@
     .activity-text {
       font-size: 0.85rem;
       color: var(--text-dark);
+      line-height: 1.3;
+    }
+    
+    .activity-text strong {
+      color: var(--primary-blue);
+    }
+    
+    .activity-new-badge {
+      display: inline-block;
+      background: #dc2626;
+      color: white;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    
+    .activity-detail {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .activity-time {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-light);
+      margin-top: 0.2rem;
     }
     
     .pledge-stats {
@@ -2066,22 +2105,20 @@
           </div>
           
           <!-- Date Range & Controls -->
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem;">
-            <select id="analyticsDateRange" onchange="updateAnalyticsDateRange()" style="padding: 0.5rem 1rem; border-radius: 8px; border: 2px solid #ddd; font-weight: 500;">
-              <option value="month">This Month</option>
-              <option value="quarter">This Quarter</option>
-              <option value="year" selected>This Year</option>
-              <option value="custom">Custom Range</option>
-            </select>
-            <div id="customDateRange" style="display: none; gap: 0.5rem; align-items: center;">
-              <input type="date" id="analyticsStartDate" style="padding: 0.5rem; border-radius: 8px; border: 2px solid #ddd;">
-              <span>to</span>
-              <input type="date" id="analyticsEndDate" style="padding: 0.5rem; border-radius: 8px; border: 2px solid #ddd;">
-            </div>
-            <button onclick="loadAnalytics()" class="btn-refresh-dashboard">🔄 Refresh</button>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem; justify-content: flex-end;">
+            <span style="color: var(--text-light); font-size: 0.85rem;">Data updates automatically</span>
+            <button onclick="refreshDashboard()" class="btn-refresh-dashboard">🔄 Refresh</button>
           </div>
           
           <div id="analyticsLoading" class="loading-spinner" style="display: none;">Loading dashboard...</div>
+          
+          <!-- Hidden date range elements for compatibility -->
+          <select id="analyticsDateRange" style="display: none;">
+            <option value="all" selected>All Time</option>
+          </select>
+          <div id="customDateRange" style="display: none;"></div>
+          <input type="hidden" id="analyticsStartDate">
+          <input type="hidden" id="analyticsEndDate">
           
           <!-- Main KPI Cards -->
           <div class="dashboard-kpi-grid">
@@ -2171,6 +2208,14 @@
               <div class="dashboard-card">
                 <h3 class="dashboard-card-title">📅 Event Performance</h3>
                 <div id="eventBreakdown" class="breakdown-list">
+                  <p style="color: var(--text-light); text-align: center; padding: 1rem;">Loading...</p>
+                </div>
+              </div>
+              
+              <!-- Volunteer Performance -->
+              <div class="dashboard-card">
+                <h3 class="dashboard-card-title">🤝 Volunteer Opportunities</h3>
+                <div id="volunteerBreakdown" class="breakdown-list">
                   <p style="color: var(--text-light); text-align: center; padding: 1rem;">Loading...</p>
                 </div>
               </div>
@@ -6387,34 +6432,42 @@
         let date;
         if (item[dateField]?.seconds) date = new Date(item[dateField].seconds * 1000);
         else if (item[dateField]) date = new Date(item[dateField]);
-        else return false;
+        else return true; // Include items without timestamps
         return date >= start && date <= end;
       });
     }
     
     function calculateAnalytics() {
-      const filteredSignups = filterByDate(allEventSignups);
-      const filteredVolunteers = filterByDate(applications);
-      const filteredContacts = filterByDate(contacts);
-      const filteredProviders = filterByDate(providers);
-      const filteredPledges = filterByDate(pledges);
+      // Build allEventSignups from cached data
+      allEventSignups = [];
+      for (const eventId in eventSignups) {
+        const event = events.find(e => e.id === eventId);
+        const eventTitle = event?.title || 'Unknown Event';
+        (eventSignups[eventId] || []).forEach(signup => {
+          allEventSignups.push({ ...signup, eventId, eventTitle });
+        });
+      }
       
-      const totalParticipants = filteredSignups.reduce((sum, s) => sum + (parseInt(s.numVolunteers) || 1), 0);
-      
-      // Calculate "needs attention" counts (items with new/pending status)
+      // Calculate "needs attention" counts (items with new/pending status) - ALL TIME
       let newSignupsCount = 0;
       for (const eventId in eventSignups) {
-        newSignupsCount += eventSignups[eventId].filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
+        newSignupsCount += (eventSignups[eventId] || []).filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
       }
       const newVolunteersCount = applications.filter(a => !a.status || a.status === 'new').length;
       const newContactsCount = contacts.filter(c => !c.status || c.status === 'new').length;
       const newProvidersCount = providers.filter(p => !p.status || p.status === 'new').length;
       
-      // Update main KPI cards
-      document.getElementById('statEventSignups').textContent = totalParticipants.toLocaleString();
-      document.getElementById('statVolunteerApps').textContent = filteredVolunteers.length.toLocaleString();
-      document.getElementById('statContacts').textContent = filteredContacts.length.toLocaleString();
-      document.getElementById('statProviders').textContent = filteredProviders.length.toLocaleString();
+      // Calculate totals - ALL TIME (not filtered by date for main KPIs)
+      const totalSignups = allEventSignups.length;
+      const totalVolunteers = applications.length;
+      const totalContacts = contacts.length;
+      const totalProviders = providers.length;
+      
+      // Update main KPI cards with ALL-TIME totals
+      document.getElementById('statEventSignups').textContent = totalSignups.toLocaleString();
+      document.getElementById('statVolunteerApps').textContent = totalVolunteers.toLocaleString();
+      document.getElementById('statContacts').textContent = totalContacts.toLocaleString();
+      document.getElementById('statProviders').textContent = totalProviders.toLocaleString();
       
       // Update attention badges
       updateAttentionBadge('eventSignupsAttention', newSignupsCount, 'need review');
@@ -6423,20 +6476,18 @@
       updateAttentionBadge('providersAttention', newProvidersCount, 'new');
       
       // Update KPI subtexts
-      const range = document.getElementById('analyticsDateRange')?.value || 'year';
-      const rangeText = range === 'month' ? 'this month' : range === 'quarter' ? 'this quarter' : 'this year';
-      document.getElementById('eventSignupsSubtext').textContent = `Total participants ${rangeText}`;
-      document.getElementById('volunteerAppsSubtext').textContent = `Applications ${rangeText}`;
-      document.getElementById('contactsSubtext').textContent = `Messages received ${rangeText}`;
-      document.getElementById('providersSubtext').textContent = `Provider requests ${rangeText}`;
+      document.getElementById('eventSignupsSubtext').textContent = `Total all-time signups`;
+      document.getElementById('volunteerAppsSubtext').textContent = `Total applications received`;
+      document.getElementById('contactsSubtext').textContent = `Total messages received`;
+      document.getElementById('providersSubtext').textContent = `Total provider requests`;
       
       // Update content overview counts
       document.getElementById('contentTeamCount').textContent = teamMembers.length;
       document.getElementById('contentBoardCount').textContent = boardMembers.length;
       document.getElementById('contentResourcesCount').textContent = resources.length;
       document.getElementById('contentEventsCount').textContent = events.filter(e => {
-        if (!e.date) return true;
-        const eventDate = new Date(e.date);
+        if (!e.date && !e.startDate && !e.eventDate) return true;
+        const eventDate = new Date(e.startDate || e.eventDate || e.date);
         return eventDate >= new Date();
       }).length;
       document.getElementById('contentOpportunitiesCount').textContent = opportunities.length;
@@ -6445,28 +6496,11 @@
       // Update action items banner
       updateActionItemsBanner();
       
-      // Event breakdown
-      const eventBreakdown = {};
-      filteredSignups.forEach(s => {
-        if (!eventBreakdown[s.eventTitle]) eventBreakdown[s.eventTitle] = { signups: 0, participants: 0 };
-        eventBreakdown[s.eventTitle].signups++;
-        eventBreakdown[s.eventTitle].participants += parseInt(s.numVolunteers) || 1;
-      });
+      // Event breakdown - show ALL events with signup counts
+      updateEventPerformance();
       
-      const breakdownEl = document.getElementById('eventBreakdown');
-      if (breakdownEl) {
-        if (Object.keys(eventBreakdown).length === 0) {
-          breakdownEl.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No event signups in this period.</p>';
-        } else {
-          const sorted = Object.entries(eventBreakdown).sort((a, b) => b[1].participants - a[1].participants);
-          breakdownEl.innerHTML = sorted.slice(0, 5).map(([title, data]) => `
-            <div class="breakdown-item">
-              <span style="font-weight: 500;">${title}</span>
-              <span><strong>${data.participants}</strong> participants</span>
-            </div>
-          `).join('');
-        }
-      }
+      // Volunteer opportunities breakdown
+      updateVolunteerPerformance();
       
       // Recent activity feed
       updateRecentActivityFeed();
@@ -6475,13 +6509,96 @@
       document.getElementById('totalPledgesCount').textContent = pledges.length.toLocaleString();
       const pledgesByMonthEl = document.getElementById('pledgesByMonth');
       if (pledgesByMonthEl) {
-        const thisMonth = filteredPledges.filter(p => {
-          const ts = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000) : new Date(p.timestamp);
-          const now = new Date();
+        const now = new Date();
+        const thisMonth = pledges.filter(p => {
+          const ts = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000) : (p.timestamp ? new Date(p.timestamp) : null);
+          if (!ts) return false;
           return ts.getMonth() === now.getMonth() && ts.getFullYear() === now.getFullYear();
         }).length;
         pledgesByMonthEl.innerHTML = `<strong>${thisMonth}</strong> new pledges this month`;
       }
+    }
+    
+    // Event Performance breakdown
+    function updateEventPerformance() {
+      const breakdownEl = document.getElementById('eventBreakdown');
+      if (!breakdownEl) return;
+      
+      if (events.length === 0) {
+        breakdownEl.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No events yet.</p>';
+        return;
+      }
+      
+      // Build event data with signup counts
+      const eventData = events.map(event => {
+        const signups = eventSignups[event.id] || [];
+        const totalParticipants = signups.reduce((sum, s) => sum + (parseInt(s.numVolunteers) || 1), 0);
+        const pendingCount = signups.filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
+        return {
+          id: event.id,
+          title: event.title || 'Untitled Event',
+          signupCount: signups.length,
+          participantCount: totalParticipants,
+          pendingCount,
+          date: event.startDate || event.eventDate || event.date
+        };
+      });
+      
+      // Sort by signup count descending
+      eventData.sort((a, b) => b.signupCount - a.signupCount);
+      
+      breakdownEl.innerHTML = eventData.slice(0, 8).map(e => `
+        <div class="breakdown-item" style="cursor: pointer;" onclick="document.querySelector('[data-tab=events]').click();">
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.title}</div>
+            <div style="font-size: 0.75rem; color: var(--text-light);">${e.date ? new Date(e.date).toLocaleDateString() : 'No date'}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; color: var(--primary-blue);">${e.signupCount} signups</div>
+            ${e.pendingCount > 0 ? `<div style="font-size: 0.75rem; color: #dc2626;">⚠️ ${e.pendingCount} pending</div>` : ''}
+          </div>
+        </div>
+      `).join('') || '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No events yet.</p>';
+    }
+    
+    // Volunteer Opportunities Performance breakdown
+    function updateVolunteerPerformance() {
+      const breakdownEl = document.getElementById('volunteerBreakdown');
+      if (!breakdownEl) return;
+      
+      if (opportunities.length === 0) {
+        breakdownEl.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No volunteer opportunities yet.</p>';
+        return;
+      }
+      
+      // Count applications per opportunity
+      const oppData = opportunities.map(opp => {
+        const oppApplications = applications.filter(a => a.opportunity === opp.title || a.opportunityId === opp.id);
+        const newCount = oppApplications.filter(a => !a.status || a.status === 'new').length;
+        return {
+          id: opp.id,
+          title: opp.title || 'Untitled Opportunity',
+          applicationCount: oppApplications.length,
+          newCount,
+          commitment: opp.commitment || ''
+        };
+      });
+      
+      // Sort by application count descending
+      oppData.sort((a, b) => b.applicationCount - a.applicationCount);
+      
+      breakdownEl.innerHTML = oppData.slice(0, 8).map(o => `
+        <div class="breakdown-item" style="cursor: pointer;" onclick="document.querySelector('[data-tab=volunteers]').click();">
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${o.title}</div>
+            <div style="font-size: 0.75rem; color: var(--text-light);">${o.commitment || 'Flexible'}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; color: #10b981;">${o.applicationCount} applications</div>
+            ${o.newCount > 0 ? `<div style="font-size: 0.75rem; color: #dc2626;">⚠️ ${o.newCount} new</div>` : ''}
+          </div>
+        </div>
+      `).join('') || '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No opportunities yet.</p>';
     }
     
     // Helper function to update attention badges on KPI cards
@@ -6583,63 +6700,107 @@
       
       const activities = [];
       
-      // Add recent signups
-      allEventSignups.slice(0, 10).forEach(s => {
-        const ts = s.timestamp?.seconds ? s.timestamp.seconds * 1000 : Date.now();
+      // Add recent signups with more details
+      allEventSignups.forEach(s => {
+        const ts = s.timestamp?.seconds ? s.timestamp.seconds * 1000 : (s.createdAt?.seconds ? s.createdAt.seconds * 1000 : null);
+        if (!ts) return;
+        const numPeople = parseInt(s.numVolunteers) || 1;
+        const peopleText = numPeople > 1 ? ` (${numPeople} people)` : '';
         activities.push({
           type: 'event',
           icon: '📅',
-          text: `${s.contactName || 'Someone'} signed up for ${s.eventTitle || 'an event'}`,
-          time: ts
+          title: s.contactName || s.name || 'Someone',
+          subtitle: `signed up for ${s.eventTitle || 'an event'}${peopleText}`,
+          detail: s.email || s.phone || '',
+          status: s.status || 'new',
+          time: ts,
+          action: () => document.querySelector('[data-tab="events"]').click()
         });
       });
       
-      // Add recent volunteer apps
-      applications.slice(0, 5).forEach(a => {
-        const ts = a.timestamp?.seconds ? a.timestamp.seconds * 1000 : Date.now();
+      // Add recent volunteer apps with more details
+      applications.forEach(a => {
+        const ts = a.timestamp?.seconds ? a.timestamp.seconds * 1000 : (a.createdAt?.seconds ? a.createdAt.seconds * 1000 : null);
+        if (!ts) return;
         activities.push({
           type: 'volunteer',
           icon: '🤝',
-          text: `${a.name || 'Someone'} applied to volunteer`,
-          time: ts
+          title: a.name || 'Someone',
+          subtitle: `applied for ${a.opportunity || 'volunteer position'}`,
+          detail: a.email || a.phone || '',
+          status: a.status || 'new',
+          time: ts,
+          action: () => { document.querySelector('[data-tab="volunteers"]').click(); setTimeout(() => switchVolunteerSubTab('applications'), 100); }
         });
       });
       
-      // Add recent contacts
-      contacts.slice(0, 5).forEach(c => {
-        const ts = c.timestamp?.seconds ? c.timestamp.seconds * 1000 : Date.now();
+      // Add recent contacts with more details
+      contacts.forEach(c => {
+        const ts = c.timestamp?.seconds ? c.timestamp.seconds * 1000 : (c.createdAt?.seconds ? c.createdAt.seconds * 1000 : null);
+        if (!ts) return;
+        const msgPreview = c.message ? (c.message.length > 50 ? c.message.substring(0, 50) + '...' : c.message) : '';
         activities.push({
           type: 'contact',
           icon: '✉️',
-          text: `${c.name || 'Someone'} sent a message`,
-          time: ts
+          title: c.name || 'Someone',
+          subtitle: 'sent a message',
+          detail: msgPreview,
+          status: c.status || 'new',
+          time: ts,
+          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('contacts'), 100); }
+        });
+      });
+      
+      // Add recent provider requests
+      providers.forEach(p => {
+        const ts = p.timestamp?.seconds ? p.timestamp.seconds * 1000 : (p.createdAt?.seconds ? p.createdAt.seconds * 1000 : null);
+        if (!ts) return;
+        activities.push({
+          type: 'provider',
+          icon: '📋',
+          title: p.organizationName || p.name || 'Provider',
+          subtitle: 'requested listing',
+          detail: p.serviceType || p.category || '',
+          status: p.status || 'new',
+          time: ts,
+          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('providers'), 100); }
         });
       });
       
       // Add recent pledges
-      pledges.slice(0, 5).forEach(p => {
-        const ts = p.timestamp?.seconds ? p.timestamp.seconds * 1000 : Date.now();
+      pledges.forEach(p => {
+        const ts = p.timestamp?.seconds ? p.timestamp.seconds * 1000 : (p.createdAt?.seconds ? p.createdAt.seconds * 1000 : null);
+        if (!ts) return;
         activities.push({
           type: 'pledge',
           icon: '✊',
-          text: `${p.name || 'Anonymous'} took the anti-bullying pledge`,
-          time: ts
+          title: p.name || 'Anonymous',
+          subtitle: 'took the anti-bullying pledge',
+          detail: p.location || '',
+          status: 'viewed',
+          time: ts,
+          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('pledges'), 100); }
         });
       });
       
-      // Sort by time
+      // Sort by time (newest first)
       activities.sort((a, b) => b.time - a.time);
       
       if (activities.length === 0) {
         feed.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No recent activity.</p>';
       } else {
-        feed.innerHTML = activities.slice(0, 8).map(a => {
+        feed.innerHTML = activities.slice(0, 10).map(a => {
           const timeAgo = getTimeAgo(a.time);
+          const isNew = a.status === 'new' || a.status === 'pending';
           return `
-            <div class="activity-item">
+            <div class="activity-item${isNew ? ' activity-new' : ''}" onclick="(${a.action.toString()})()" style="cursor: pointer;">
               <div class="activity-icon ${a.type}">${a.icon}</div>
               <div class="activity-content">
-                <div class="activity-text">${a.text}</div>
+                <div class="activity-text">
+                  <strong>${a.title}</strong> ${a.subtitle}
+                  ${isNew ? '<span class="activity-new-badge">NEW</span>' : ''}
+                </div>
+                ${a.detail ? `<div class="activity-detail">${a.detail}</div>` : ''}
                 <div class="activity-time">${timeAgo}</div>
               </div>
             </div>
@@ -6658,7 +6819,9 @@
       if (minutes < 1) return 'Just now';
       if (minutes < 60) return `${minutes}m ago`;
       if (hours < 24) return `${hours}h ago`;
-      if (days < 7) return `${days}d ago`;
+      if (days === 1) return 'Yesterday';
+      if (days < 7) return `${days} days ago`;
+      if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
       return new Date(timestamp).toLocaleDateString();
     }
     
