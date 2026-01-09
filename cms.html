@@ -972,6 +972,360 @@
       margin-bottom: 2rem;
     }
     
+    /* New Dashboard Styles */
+    .action-items-banner {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    
+    .action-items-header {
+      background: #f59e0b;
+      color: white;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+    }
+    
+    .action-items-list {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .action-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .action-item:hover {
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .action-item-badge {
+      background: #ef4444;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+      min-width: 24px;
+      text-align: center;
+    }
+    
+    .btn-refresh-dashboard {
+      padding: 0.5rem 1rem;
+      background: white;
+      border: 2px solid var(--primary-blue);
+      color: var(--primary-blue);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-refresh-dashboard:hover {
+      background: var(--primary-blue);
+      color: white;
+    }
+    
+    .dashboard-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .kpi-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-left: 4px solid;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    .kpi-primary { border-left-color: #3b82f6; }
+    .kpi-success { border-left-color: #10b981; }
+    .kpi-info { border-left-color: #8b5cf6; }
+    .kpi-warning { border-left-color: #f59e0b; }
+    
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .kpi-icon {
+      font-size: 1.5rem;
+    }
+    
+    .kpi-trend {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+    }
+    
+    .kpi-trend.up { background: #d1fae5; color: #059669; }
+    .kpi-trend.down { background: #fee2e2; color: #dc2626; }
+    .kpi-trend.neutral { background: #f3f4f6; color: #6b7280; }
+    
+    .kpi-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      line-height: 1.1;
+    }
+    
+    .kpi-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-top: 0.25rem;
+    }
+    
+    .kpi-subtext {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 0.25rem;
+    }
+    
+    .dashboard-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    @media (max-width: 900px) {
+      .dashboard-two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .dashboard-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .dashboard-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    .dashboard-card-title {
+      color: var(--primary-blue);
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .content-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    
+    .content-stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0.5rem;
+      background: #f9fafb;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .content-stat-item:hover {
+      background: #eff6ff;
+      transform: scale(1.02);
+    }
+    
+    .content-stat-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .content-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+    }
+    
+    .content-stat-label {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      text-align: center;
+    }
+    
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    
+    .quick-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      border: 2px solid #bae6fd;
+      border-radius: 10px;
+      font-weight: 600;
+      color: var(--primary-blue);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+    
+    .quick-action-btn:hover {
+      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,78,124,0.15);
+    }
+    
+    .activity-feed {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .activity-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    
+    .activity-icon.event { background: #dbeafe; }
+    .activity-icon.volunteer { background: #d1fae5; }
+    .activity-icon.contact { background: #ede9fe; }
+    .activity-icon.provider { background: #fef3c7; }
+    .activity-icon.pledge { background: #fce7f3; }
+    
+    .activity-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .activity-text {
+      font-size: 0.85rem;
+      color: var(--text-dark);
+    }
+    
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+    
+    .pledge-stats {
+      text-align: center;
+    }
+    
+    .pledge-stat-big {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      background: linear-gradient(135deg, #fdf4ff, #f5d0fe);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    
+    .pledge-stat-big span:first-child {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #a855f7;
+    }
+    
+    .pledge-stat-label {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+    
+    .pledge-stat-small {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    
+    .dashboard-export-section {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    .btn-export-full {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-export-full:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,78,124,0.3);
+    }
+    
+    .btn-firebase-link {
+      padding: 0.75rem 1.5rem;
+      background: white;
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .btn-firebase-link:hover {
+      background: #f0f9ff;
+    }
+    
     .stat-card {
       background: white;
       padding: 1.5rem;
@@ -1234,7 +1588,8 @@
     <div class="cms-container">
       <!-- Tabs -->
       <div class="cms-tabs">
-        <button class="tab active" data-tab="team">👥 Team</button>
+        <button class="tab" data-tab="analytics">📈 Dashboard</button>
+        <button class="tab" data-tab="team">👥 Team</button>
         <button class="tab" data-tab="board">🏆 Board</button>
         <button class="tab" data-tab="gallery">📸 Gallery</button>
         <button class="tab" data-tab="gallery2">📸 Gallery 2</button>
@@ -1244,11 +1599,10 @@
         <button class="tab" data-tab="volunteers">🤝 Volunteers <span id="volunteersTabBadge" class="badge" style="display: none;"></span></button>
         <button class="tab" data-tab="data">📊 Data <span id="dataTabBadge" class="badge" style="display: none;"></span></button>
         <button class="tab" data-tab="pages">📄 Pages</button>
-        <button class="tab" data-tab="analytics">📈 Analytics</button>
       </div>
       
       <!-- Team Tab -->
-      <div class="tab-content active" id="team-tab">
+      <div class="tab-content" id="team-tab">
         <div class="content-section">
           <h2>👥 Manage Our Team</h2>
           <p style="color: var(--text-light); margin-bottom: 1.5rem;">
@@ -1676,67 +2030,185 @@
       </div>
       
       <!-- Analytics Tab -->
-      <div class="tab-content" id="analytics-tab">
-        <div class="content-section">
-          <h2>📈 Analytics Dashboard</h2>
+      <div class="tab-content active" id="analytics-tab">
+        <div class="content-section" style="background: transparent; box-shadow: none; padding: 0;">
+          <h2 style="margin-bottom: 0.5rem;">📈 Dashboard</h2>
           <p style="color: var(--text-light); margin-bottom: 1.5rem;">
-            View website and app usage statistics.
+            Welcome back! Here's what's happening with LDAH.
           </p>
           
-          <!-- Date Range Selector -->
+          <!-- Action Items Banner -->
+          <div id="actionItemsBanner" class="action-items-banner" style="display: none;">
+            <div class="action-items-header">
+              <span>⚡ Needs Your Attention</span>
+            </div>
+            <div id="actionItemsList" class="action-items-list"></div>
+          </div>
+          
+          <!-- Date Range & Controls -->
           <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem;">
-            <select id="analyticsDateRange" onchange="updateAnalyticsDateRange()" style="padding: 0.5rem; border-radius: 8px; border: 2px solid #ddd;">
+            <select id="analyticsDateRange" onchange="updateAnalyticsDateRange()" style="padding: 0.5rem 1rem; border-radius: 8px; border: 2px solid #ddd; font-weight: 500;">
               <option value="month">This Month</option>
               <option value="quarter">This Quarter</option>
               <option value="year" selected>This Year</option>
               <option value="custom">Custom Range</option>
             </select>
-            <div id="customDateRange" style="display: none; gap: 0.5rem;">
+            <div id="customDateRange" style="display: none; gap: 0.5rem; align-items: center;">
               <input type="date" id="analyticsStartDate" style="padding: 0.5rem; border-radius: 8px; border: 2px solid #ddd;">
               <span>to</span>
               <input type="date" id="analyticsEndDate" style="padding: 0.5rem; border-radius: 8px; border: 2px solid #ddd;">
             </div>
-            <button onclick="loadAnalytics()" class="btn-add-person" style="padding: 0.5rem 1rem;">🔄 Refresh</button>
-            <button onclick="exportAnalyticsReport()" class="btn-export">📄 Export Report</button>
+            <button onclick="loadAnalytics()" class="btn-refresh-dashboard">🔄 Refresh</button>
           </div>
           
-          <div id="analyticsLoading" class="loading-spinner">Loading analytics...</div>
+          <div id="analyticsLoading" class="loading-spinner" style="display: none;">Loading dashboard...</div>
           
-          <!-- Stats Cards -->
-          <div class="analytics-grid" id="analyticsGrid">
-            <a href="https://console.firebase.google.com/project/ldah-932d5/analytics/app/web/overview" target="_blank" class="stat-card" style="text-decoration: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 20px rgba(0,78,124,0.2)';" onmouseout="this.style.transform=''; this.style.boxShadow='';">
-              <div class="stat-icon">👁️</div>
-              <div class="stat-number" style="font-size: 1rem; color: var(--primary-blue);">View in Firebase</div>
-              <div class="stat-label">Page Views & Traffic</div>
-              <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.5rem;">📊 Open Analytics Console →</div>
+          <!-- Main KPI Cards -->
+          <div class="dashboard-kpi-grid">
+            <div class="kpi-card kpi-primary">
+              <div class="kpi-header">
+                <span class="kpi-icon">📅</span>
+                <span class="kpi-trend" id="eventSignupsTrend"></span>
+              </div>
+              <div class="kpi-value" id="statEventSignups">-</div>
+              <div class="kpi-label">Event Participants</div>
+              <div class="kpi-subtext" id="eventSignupsSubtext">Total signups this period</div>
+            </div>
+            
+            <div class="kpi-card kpi-success">
+              <div class="kpi-header">
+                <span class="kpi-icon">🤝</span>
+                <span class="kpi-trend" id="volunteerAppsTrend"></span>
+              </div>
+              <div class="kpi-value" id="statVolunteerApps">-</div>
+              <div class="kpi-label">Volunteer Applications</div>
+              <div class="kpi-subtext" id="volunteerAppsSubtext">New applications</div>
+            </div>
+            
+            <div class="kpi-card kpi-info">
+              <div class="kpi-header">
+                <span class="kpi-icon">✉️</span>
+                <span class="kpi-trend" id="contactsTrend"></span>
+              </div>
+              <div class="kpi-value" id="statContacts">-</div>
+              <div class="kpi-label">Contact Messages</div>
+              <div class="kpi-subtext" id="contactsSubtext">People reaching out</div>
+            </div>
+            
+            <div class="kpi-card kpi-warning">
+              <div class="kpi-header">
+                <span class="kpi-icon">📋</span>
+                <span class="kpi-trend" id="providersTrend"></span>
+              </div>
+              <div class="kpi-value" id="statProviders">-</div>
+              <div class="kpi-label">Provider Requests</div>
+              <div class="kpi-subtext" id="providersSubtext">Service listings</div>
+            </div>
+          </div>
+          
+          <!-- Two Column Layout -->
+          <div class="dashboard-two-col">
+            <!-- Left Column -->
+            <div class="dashboard-col">
+              <!-- Content Overview -->
+              <div class="dashboard-card">
+                <h3 class="dashboard-card-title">📊 Content Overview</h3>
+                <div class="content-stats-grid">
+                  <div class="content-stat-item" onclick="document.querySelector('[data-tab=team]').click()">
+                    <span class="content-stat-icon">👥</span>
+                    <span class="content-stat-value" id="contentTeamCount">-</span>
+                    <span class="content-stat-label">Team Members</span>
+                  </div>
+                  <div class="content-stat-item" onclick="document.querySelector('[data-tab=board]').click()">
+                    <span class="content-stat-icon">🏆</span>
+                    <span class="content-stat-value" id="contentBoardCount">-</span>
+                    <span class="content-stat-label">Board Members</span>
+                  </div>
+                  <div class="content-stat-item" onclick="document.querySelector('[data-tab=resources]').click()">
+                    <span class="content-stat-icon">📚</span>
+                    <span class="content-stat-value" id="contentResourcesCount">-</span>
+                    <span class="content-stat-label">Resources</span>
+                  </div>
+                  <div class="content-stat-item" onclick="document.querySelector('[data-tab=events]').click()">
+                    <span class="content-stat-icon">📅</span>
+                    <span class="content-stat-value" id="contentEventsCount">-</span>
+                    <span class="content-stat-label">Active Events</span>
+                  </div>
+                  <div class="content-stat-item" onclick="document.querySelector('[data-tab=volunteers]').click()">
+                    <span class="content-stat-icon">💼</span>
+                    <span class="content-stat-value" id="contentOpportunitiesCount">-</span>
+                    <span class="content-stat-label">Volunteer Roles</span>
+                  </div>
+                  <div class="content-stat-item" onclick="document.querySelector('[data-tab=faq]').click()">
+                    <span class="content-stat-icon">❓</span>
+                    <span class="content-stat-value" id="contentFaqCount">-</span>
+                    <span class="content-stat-label">FAQs</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Event Breakdown -->
+              <div class="dashboard-card">
+                <h3 class="dashboard-card-title">📅 Event Performance</h3>
+                <div id="eventBreakdown" class="breakdown-list">
+                  <p style="color: var(--text-light); text-align: center; padding: 1rem;">Loading...</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="dashboard-col">
+              <!-- Quick Actions -->
+              <div class="dashboard-card">
+                <h3 class="dashboard-card-title">🚀 Quick Actions</h3>
+                <div class="quick-actions-grid">
+                  <button class="quick-action-btn" onclick="document.querySelector('[data-tab=events]').click(); setTimeout(() => openEventModal(), 100);">
+                    <span>📅</span> Add Event
+                  </button>
+                  <button class="quick-action-btn" onclick="document.querySelector('[data-tab=team]').click(); setTimeout(() => openPersonModal('team'), 100);">
+                    <span>👤</span> Add Team Member
+                  </button>
+                  <button class="quick-action-btn" onclick="document.querySelector('[data-tab=resources]').click(); setTimeout(() => openResourceModal(), 100);">
+                    <span>📚</span> Add Resource
+                  </button>
+                  <button class="quick-action-btn" onclick="window.open('https://console.firebase.google.com/project/ldah-932d5/analytics/app/web/overview', '_blank')">
+                    <span>📊</span> Firebase Analytics
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Recent Activity -->
+              <div class="dashboard-card">
+                <h3 class="dashboard-card-title">🕐 Recent Activity</h3>
+                <div id="recentActivityFeed" class="activity-feed">
+                  <p style="color: var(--text-light); text-align: center; padding: 1rem;">Loading...</p>
+                </div>
+              </div>
+              
+              <!-- Anti-Bullying Pledges -->
+              <div class="dashboard-card">
+                <h3 class="dashboard-card-title">✊ Anti-Bullying Pledges</h3>
+                <div class="pledge-stats">
+                  <div class="pledge-stat-big">
+                    <span id="totalPledgesCount">-</span>
+                    <span class="pledge-stat-label">Total Pledges</span>
+                  </div>
+                  <div class="pledge-stat-small" id="pledgesByMonth">
+                    <p style="color: var(--text-light);">Loading pledge data...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Export Section -->
+          <div class="dashboard-export-section">
+            <button onclick="exportAnalyticsReport()" class="btn-export-full">
+              📄 Export Full Report
+            </button>
+            <a href="https://console.firebase.google.com/project/ldah-932d5/analytics/app/web/overview" target="_blank" class="btn-firebase-link">
+              📊 View Detailed Analytics in Firebase →
             </a>
-            <div class="stat-card">
-              <div class="stat-icon">📅</div>
-              <div class="stat-number" id="statEventSignups">-</div>
-              <div class="stat-label">Event Signups</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">🤝</div>
-              <div class="stat-number" id="statVolunteerApps">-</div>
-              <div class="stat-label">Volunteer Apps</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">✉️</div>
-              <div class="stat-number" id="statContacts">-</div>
-              <div class="stat-label">Contact Messages</div>
-            </div>
-          </div>
-          
-          <!-- Event Breakdown -->
-          <div class="analytics-section" id="eventBreakdownSection" style="margin-top: 2rem;">
-            <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">📅 Event Breakdown</h3>
-            <div id="eventBreakdown" class="breakdown-list"></div>
-          </div>
-          
-          <!-- Monthly Trends -->
-          <div class="analytics-section" style="margin-top: 2rem;">
-            <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">📊 Monthly Trends</h3>
-            <div id="monthlyTrends" class="trends-list"></div>
           </div>
         </div>
       </div>
@@ -2459,6 +2931,9 @@
         document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
       });
     });
+    
+    // Set analytics tab as active on load
+    document.querySelector('.tab[data-tab="analytics"]').classList.add('active');
 
     // ===== Load Data =====
     async function loadTeamMembers() {
@@ -5867,13 +6342,39 @@
       const filteredSignups = filterByDate(allEventSignups);
       const filteredVolunteers = filterByDate(applications);
       const filteredContacts = filterByDate(contacts);
+      const filteredProviders = filterByDate(providers);
+      const filteredPledges = filterByDate(pledges);
       
       const totalParticipants = filteredSignups.reduce((sum, s) => sum + (parseInt(s.numVolunteers) || 1), 0);
       
-      // Page views now shown via Firebase Analytics Console link
+      // Update main KPI cards
       document.getElementById('statEventSignups').textContent = totalParticipants.toLocaleString();
       document.getElementById('statVolunteerApps').textContent = filteredVolunteers.length.toLocaleString();
       document.getElementById('statContacts').textContent = filteredContacts.length.toLocaleString();
+      document.getElementById('statProviders').textContent = filteredProviders.length.toLocaleString();
+      
+      // Update KPI subtexts
+      const range = document.getElementById('analyticsDateRange')?.value || 'year';
+      const rangeText = range === 'month' ? 'this month' : range === 'quarter' ? 'this quarter' : 'this year';
+      document.getElementById('eventSignupsSubtext').textContent = `Total participants ${rangeText}`;
+      document.getElementById('volunteerAppsSubtext').textContent = `Applications ${rangeText}`;
+      document.getElementById('contactsSubtext').textContent = `Messages received ${rangeText}`;
+      document.getElementById('providersSubtext').textContent = `Provider requests ${rangeText}`;
+      
+      // Update content overview counts
+      document.getElementById('contentTeamCount').textContent = teamMembers.length;
+      document.getElementById('contentBoardCount').textContent = boardMembers.length;
+      document.getElementById('contentResourcesCount').textContent = resources.length;
+      document.getElementById('contentEventsCount').textContent = events.filter(e => {
+        if (!e.date) return true;
+        const eventDate = new Date(e.date);
+        return eventDate >= new Date();
+      }).length;
+      document.getElementById('contentOpportunitiesCount').textContent = opportunities.length;
+      document.getElementById('contentFaqCount').textContent = faqs.length;
+      
+      // Update action items banner
+      updateActionItemsBanner();
       
       // Event breakdown
       const eventBreakdown = {};
@@ -5886,22 +6387,196 @@
       const breakdownEl = document.getElementById('eventBreakdown');
       if (breakdownEl) {
         if (Object.keys(eventBreakdown).length === 0) {
-          breakdownEl.innerHTML = '<p style="color: var(--text-light);">No event signups in this period.</p>';
+          breakdownEl.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No event signups in this period.</p>';
         } else {
-          breakdownEl.innerHTML = Object.entries(eventBreakdown).map(([title, data]) => `
+          const sorted = Object.entries(eventBreakdown).sort((a, b) => b[1].participants - a[1].participants);
+          breakdownEl.innerHTML = sorted.slice(0, 5).map(([title, data]) => `
             <div class="breakdown-item">
-              <span>${title}</span>
-              <span><strong>${data.signups}</strong> signups • <strong>${data.participants}</strong> participants</span>
+              <span style="font-weight: 500;">${title}</span>
+              <span><strong>${data.participants}</strong> participants</span>
             </div>
           `).join('');
         }
       }
       
-      // Monthly trends
-      const trendsEl = document.getElementById('monthlyTrends');
-      if (trendsEl) {
-        trendsEl.innerHTML = '<p style="color: var(--text-light);">Monthly trend data shown here.</p>';
+      // Recent activity feed
+      updateRecentActivityFeed();
+      
+      // Pledge stats
+      document.getElementById('totalPledgesCount').textContent = pledges.length.toLocaleString();
+      const pledgesByMonthEl = document.getElementById('pledgesByMonth');
+      if (pledgesByMonthEl) {
+        const thisMonth = filteredPledges.filter(p => {
+          const ts = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000) : new Date(p.timestamp);
+          const now = new Date();
+          return ts.getMonth() === now.getMonth() && ts.getFullYear() === now.getFullYear();
+        }).length;
+        pledgesByMonthEl.innerHTML = `<strong>${thisMonth}</strong> new pledges this month`;
       }
+    }
+    
+    function updateActionItemsBanner() {
+      const banner = document.getElementById('actionItemsBanner');
+      const list = document.getElementById('actionItemsList');
+      if (!banner || !list) return;
+      
+      const items = [];
+      
+      // Check for new volunteer applications
+      const newVolunteers = applications.filter(a => !a.status || a.status === 'new').length;
+      if (newVolunteers > 0) {
+        items.push({
+          icon: '🤝',
+          text: `${newVolunteers} new volunteer application${newVolunteers > 1 ? 's' : ''}`,
+          count: newVolunteers,
+          action: () => document.querySelector('[data-tab="volunteers"]').click()
+        });
+      }
+      
+      // Check for new contact messages
+      const newContacts = contacts.filter(c => !c.status || c.status === 'new').length;
+      if (newContacts > 0) {
+        items.push({
+          icon: '✉️',
+          text: `${newContacts} new contact message${newContacts > 1 ? 's' : ''}`,
+          count: newContacts,
+          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('contacts'), 100); }
+        });
+      }
+      
+      // Check for new provider requests
+      const newProviders = providers.filter(p => !p.status || p.status === 'new').length;
+      if (newProviders > 0) {
+        items.push({
+          icon: '📋',
+          text: `${newProviders} new provider request${newProviders > 1 ? 's' : ''}`,
+          count: newProviders,
+          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('providers'), 100); }
+        });
+      }
+      
+      // Check for pending event requests
+      const pendingEvents = eventRequests.filter(r => !r.status || r.status === 'pending').length;
+      if (pendingEvents > 0) {
+        items.push({
+          icon: '📅',
+          text: `${pendingEvents} pending event request${pendingEvents > 1 ? 's' : ''}`,
+          count: pendingEvents,
+          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('eventRequests'), 100); }
+        });
+      }
+      
+      // Check for new event signups
+      let newSignups = 0;
+      for (const eventId in eventSignups) {
+        newSignups += eventSignups[eventId].filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
+      }
+      if (newSignups > 0) {
+        items.push({
+          icon: '📝',
+          text: `${newSignups} new event signup${newSignups > 1 ? 's' : ''} to review`,
+          count: newSignups,
+          action: () => document.querySelector('[data-tab="events"]').click()
+        });
+      }
+      
+      if (items.length === 0) {
+        banner.style.display = 'none';
+      } else {
+        banner.style.display = 'block';
+        list.innerHTML = items.map(item => `
+          <div class="action-item" onclick="(${item.action.toString()})()">
+            <span>${item.icon}</span>
+            <span style="flex: 1;">${item.text}</span>
+            <span class="action-item-badge">${item.count}</span>
+          </div>
+        `).join('');
+      }
+    }
+    
+    function updateRecentActivityFeed() {
+      const feed = document.getElementById('recentActivityFeed');
+      if (!feed) return;
+      
+      const activities = [];
+      
+      // Add recent signups
+      allEventSignups.slice(0, 10).forEach(s => {
+        const ts = s.timestamp?.seconds ? s.timestamp.seconds * 1000 : Date.now();
+        activities.push({
+          type: 'event',
+          icon: '📅',
+          text: `${s.contactName || 'Someone'} signed up for ${s.eventTitle || 'an event'}`,
+          time: ts
+        });
+      });
+      
+      // Add recent volunteer apps
+      applications.slice(0, 5).forEach(a => {
+        const ts = a.timestamp?.seconds ? a.timestamp.seconds * 1000 : Date.now();
+        activities.push({
+          type: 'volunteer',
+          icon: '🤝',
+          text: `${a.name || 'Someone'} applied to volunteer`,
+          time: ts
+        });
+      });
+      
+      // Add recent contacts
+      contacts.slice(0, 5).forEach(c => {
+        const ts = c.timestamp?.seconds ? c.timestamp.seconds * 1000 : Date.now();
+        activities.push({
+          type: 'contact',
+          icon: '✉️',
+          text: `${c.name || 'Someone'} sent a message`,
+          time: ts
+        });
+      });
+      
+      // Add recent pledges
+      pledges.slice(0, 5).forEach(p => {
+        const ts = p.timestamp?.seconds ? p.timestamp.seconds * 1000 : Date.now();
+        activities.push({
+          type: 'pledge',
+          icon: '✊',
+          text: `${p.name || 'Anonymous'} took the anti-bullying pledge`,
+          time: ts
+        });
+      });
+      
+      // Sort by time
+      activities.sort((a, b) => b.time - a.time);
+      
+      if (activities.length === 0) {
+        feed.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No recent activity.</p>';
+      } else {
+        feed.innerHTML = activities.slice(0, 8).map(a => {
+          const timeAgo = getTimeAgo(a.time);
+          return `
+            <div class="activity-item">
+              <div class="activity-icon ${a.type}">${a.icon}</div>
+              <div class="activity-content">
+                <div class="activity-text">${a.text}</div>
+                <div class="activity-time">${timeAgo}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+    
+    function getTimeAgo(timestamp) {
+      const now = Date.now();
+      const diff = now - timestamp;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      if (days < 7) return `${days}d ago`;
+      return new Date(timestamp).toLocaleDateString();
     }
     
     function exportAnalyticsReport() {
