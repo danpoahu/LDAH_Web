@@ -2055,11 +2055,27 @@
         </div>
         
         <div class="form-group">
-          <label>Logo URL (optional)</label>
-          <input type="url" id="resourceLogoInput" placeholder="https://example.com/logo.png">
+          <label>Logo / Image (optional)</label>
+          <div class="resource-logo-upload-area" style="margin-bottom: 1rem;">
+            <div id="resourceLogoPreviewContainer" style="margin-bottom: 0.75rem;">
+              <div id="resourceLogoPlaceholder" style="width: 100px; height: 100px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #999;">🏢</div>
+              <img id="resourceLogoPreview" src="" alt="Logo preview" style="display: none; max-width: 150px; max-height: 100px; border-radius: 8px; object-fit: contain; border: 2px solid #ddd;">
+            </div>
+            <input type="file" id="resourceLogoFileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;" onchange="handleResourceLogoSelect(event)">
+            <button type="button" class="btn-upload-photo" onclick="document.getElementById('resourceLogoFileInput').click()" style="background: linear-gradient(135deg, var(--primary-blue), var(--light-blue)); padding: 0.5rem 1rem; font-size: 0.9rem;">
+              📷 Upload Logo
+            </button>
+            <p class="photo-hint" style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.5rem;">Max 2MB. JPG, PNG, WebP, or GIF.</p>
+            <div class="upload-progress" id="resourceLogoUploadProgress" style="display: none; margin-top: 0.5rem;">
+              <div class="upload-progress-bar" id="resourceLogoUploadProgressBar"></div>
+            </div>
+          </div>
+          <div style="text-align: center; color: var(--text-light); margin: 0.5rem 0; font-size: 0.85rem;">— OR —</div>
+          <input type="url" id="resourceLogoInput" placeholder="https://example.com/logo.png" oninput="previewResourceLogoUrl()">
           <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">
             Paste a direct link to the organization's logo image
           </p>
+          <input type="hidden" id="resourceLogoUrl">
         </div>
       </div>
       <div class="modal-footer">
@@ -2991,6 +3007,12 @@
     function openResourceModal(resource = null) {
       document.getElementById('resourceModal').classList.add('active');
       
+      // Reset file input and preview
+      document.getElementById('resourceLogoFileInput').value = '';
+      const preview = document.getElementById('resourceLogoPreview');
+      const placeholder = document.getElementById('resourceLogoPlaceholder');
+      document.getElementById('resourceLogoUploadProgress').style.display = 'none';
+      
       if (resource) {
         document.getElementById('resourceModalTitle').textContent = 'Edit Resource';
         document.getElementById('resourceId').value = resource.id;
@@ -3010,6 +3032,16 @@
         document.getElementById('resourceNotes').value = resource.notes || '';
         document.getElementById('resourceLogoInput').value = resource.logo || '';
         document.getElementById('resourceLogoUrl').value = resource.logo || '';
+        
+        // Show existing logo preview
+        if (resource.logo) {
+          preview.src = resource.logo;
+          preview.style.display = 'block';
+          placeholder.style.display = 'none';
+        } else {
+          preview.style.display = 'none';
+          placeholder.style.display = 'flex';
+        }
       } else {
         document.getElementById('resourceModalTitle').textContent = 'Add Resource';
         document.getElementById('resourceId').value = '';
@@ -3029,6 +3061,10 @@
         document.getElementById('resourceNotes').value = '';
         document.getElementById('resourceLogoInput').value = '';
         document.getElementById('resourceLogoUrl').value = '';
+        
+        // Reset preview
+        preview.style.display = 'none';
+        placeholder.style.display = 'flex';
       }
     }
 
@@ -3059,6 +3095,39 @@
       saveBtn.textContent = 'Saving...';
       
       try {
+        // Handle logo upload if file selected
+        let finalLogoUrl = document.getElementById('resourceLogoInput').value.trim() || document.getElementById('resourceLogoUrl').value.trim();
+        const fileInput = document.getElementById('resourceLogoFileInput');
+        const file = fileInput.files[0];
+        
+        if (file) {
+          const progressBar = document.getElementById('resourceLogoUploadProgress');
+          const progressBarInner = document.getElementById('resourceLogoUploadProgressBar');
+          progressBar.style.display = 'block';
+          
+          const timestamp = Date.now();
+          const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+          const storageRef = storage.ref(`resources/${timestamp}_${safeName}`);
+          
+          const uploadTask = storageRef.put(file);
+          
+          await new Promise((resolve, reject) => {
+            uploadTask.on('state_changed',
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressBarInner.style.width = progress + '%';
+              },
+              reject,
+              async () => {
+                finalLogoUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                resolve();
+              }
+            );
+          });
+          
+          progressBar.style.display = 'none';
+        }
+        
         const resourceData = {
           name,
           type,
@@ -3074,7 +3143,7 @@
           island: document.getElementById('resourceIsland').value,
           services: document.getElementById('resourceServices').value.trim(),
           notes: document.getElementById('resourceNotes').value.trim(),
-          logo: document.getElementById('resourceLogoInput').value.trim(),
+          logo: finalLogoUrl,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         
@@ -3121,6 +3190,62 @@
       } catch (error) {
         console.error('Error deleting resource:', error);
         alert('Failed to delete resource. Please try again.');
+      }
+    }
+    
+    // Handle resource logo file selection
+    function handleResourceLogoSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      // Check file size (2MB max)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Logo file must be less than 2MB');
+        event.target.value = '';
+        return;
+      }
+      
+      // Check file type
+      if (!file.type.match(/^image\/(jpeg|png|webp|gif)$/)) {
+        alert('Please select a JPG, PNG, WebP, or GIF image');
+        event.target.value = '';
+        return;
+      }
+      
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('resourceLogoPreview');
+        const placeholder = document.getElementById('resourceLogoPlaceholder');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+        
+        // Clear URL input since we're using file upload
+        document.getElementById('resourceLogoInput').value = '';
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    // Preview resource logo from URL input
+    function previewResourceLogoUrl() {
+      const url = document.getElementById('resourceLogoInput').value.trim();
+      const preview = document.getElementById('resourceLogoPreview');
+      const placeholder = document.getElementById('resourceLogoPlaceholder');
+      
+      if (url) {
+        preview.src = url;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+        
+        // Clear file input since we're using URL
+        document.getElementById('resourceLogoFileInput').value = '';
+        
+        // Store the URL in hidden field
+        document.getElementById('resourceLogoUrl').value = url;
+      } else {
+        preview.style.display = 'none';
+        placeholder.style.display = 'flex';
       }
     }
 
