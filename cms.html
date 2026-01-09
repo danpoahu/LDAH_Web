@@ -1075,6 +1075,26 @@
       font-size: 1.5rem;
     }
     
+    .kpi-attention {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #dc2626;
+      display: none;
+    }
+    
+    .kpi-attention.has-items {
+      display: inline-block;
+      animation: pulse-attention 2s infinite;
+    }
+    
+    @keyframes pulse-attention {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
     .kpi-trend {
       font-size: 0.8rem;
       font-weight: 600;
@@ -2065,40 +2085,40 @@
           
           <!-- Main KPI Cards -->
           <div class="dashboard-kpi-grid">
-            <div class="kpi-card kpi-primary">
+            <div class="kpi-card kpi-primary" onclick="document.querySelector('[data-tab=events]').click()" style="cursor: pointer;">
               <div class="kpi-header">
                 <span class="kpi-icon">📅</span>
-                <span class="kpi-trend" id="eventSignupsTrend"></span>
+                <span class="kpi-attention" id="eventSignupsAttention"></span>
               </div>
               <div class="kpi-value" id="statEventSignups">-</div>
-              <div class="kpi-label">Event Participants</div>
+              <div class="kpi-label">Event Signups</div>
               <div class="kpi-subtext" id="eventSignupsSubtext">Total signups this period</div>
             </div>
             
-            <div class="kpi-card kpi-success">
+            <div class="kpi-card kpi-success" onclick="document.querySelector('[data-tab=volunteers]').click()" style="cursor: pointer;">
               <div class="kpi-header">
                 <span class="kpi-icon">🤝</span>
-                <span class="kpi-trend" id="volunteerAppsTrend"></span>
+                <span class="kpi-attention" id="volunteerAppsAttention"></span>
               </div>
               <div class="kpi-value" id="statVolunteerApps">-</div>
               <div class="kpi-label">Volunteer Applications</div>
               <div class="kpi-subtext" id="volunteerAppsSubtext">New applications</div>
             </div>
             
-            <div class="kpi-card kpi-info">
+            <div class="kpi-card kpi-info" onclick="document.querySelector('[data-tab=data]').click(); setTimeout(() => switchDataSubTab('contacts'), 100);" style="cursor: pointer;">
               <div class="kpi-header">
                 <span class="kpi-icon">✉️</span>
-                <span class="kpi-trend" id="contactsTrend"></span>
+                <span class="kpi-attention" id="contactsAttention"></span>
               </div>
               <div class="kpi-value" id="statContacts">-</div>
               <div class="kpi-label">Contact Messages</div>
               <div class="kpi-subtext" id="contactsSubtext">People reaching out</div>
             </div>
             
-            <div class="kpi-card kpi-warning">
+            <div class="kpi-card kpi-warning" onclick="document.querySelector('[data-tab=data]').click(); setTimeout(() => switchDataSubTab('providers'), 100);" style="cursor: pointer;">
               <div class="kpi-header">
                 <span class="kpi-icon">📋</span>
-                <span class="kpi-trend" id="providersTrend"></span>
+                <span class="kpi-attention" id="providersAttention"></span>
               </div>
               <div class="kpi-value" id="statProviders">-</div>
               <div class="kpi-label">Provider Requests</div>
@@ -2165,14 +2185,14 @@
                   <button class="quick-action-btn" onclick="document.querySelector('[data-tab=events]').click(); setTimeout(() => openEventModal(), 100);">
                     <span>📅</span> Add Event
                   </button>
+                  <button class="quick-action-btn" onclick="document.querySelector('[data-tab=volunteers]').click(); setTimeout(() => openOpportunityModal(), 100);">
+                    <span>💼</span> Add Volunteer Role
+                  </button>
                   <button class="quick-action-btn" onclick="document.querySelector('[data-tab=team]').click(); setTimeout(() => openPersonModal('team'), 100);">
                     <span>👤</span> Add Team Member
                   </button>
                   <button class="quick-action-btn" onclick="document.querySelector('[data-tab=resources]').click(); setTimeout(() => openResourceModal(), 100);">
                     <span>📚</span> Add Resource
-                  </button>
-                  <button class="quick-action-btn" onclick="window.open('https://console.firebase.google.com/project/ldah-932d5/analytics/app/web/overview', '_blank')">
-                    <span>📊</span> Firebase Analytics
                   </button>
                 </div>
               </div>
@@ -2897,10 +2917,22 @@
     }
 
     // ===== Initialize CMS =====
+    // Dashboard refresh debounce
+    let dashboardRefreshTimeout = null;
+    
+    function scheduleDashboardRefresh() {
+      // Debounce: wait for data loads to settle, then refresh dashboard
+      if (dashboardRefreshTimeout) clearTimeout(dashboardRefreshTimeout);
+      dashboardRefreshTimeout = setTimeout(() => {
+        refreshDashboard();
+      }, 500);
+    }
+    
     async function initializeCMS() {
       try {
         await auth.signInAnonymously();
-        // Load all data
+        
+        // Load all data - dashboard will auto-refresh after loads complete
         loadTeamMembers();
         loadBoardMembers();
         loadGallery();
@@ -2908,14 +2940,16 @@
         loadResources();
         loadCategories();
         loadFaqs();
-        loadEvents();
+        loadEvents(); // This loads eventSignups too
         loadOpportunities();
         loadApplications();
         loadProviders();
         loadPledges();
         loadEventRequests();
         loadContacts();
-        loadAnalytics();
+        
+        // Schedule dashboard refresh after data loads settle
+        scheduleDashboardRefresh();
       } catch (error) {
         console.error('Firebase auth error:', error);
       }
@@ -6278,25 +6312,45 @@
       if (custom) custom.style.display = range === 'custom' ? 'flex' : 'none';
     }
     
+    // Refresh dashboard using already-loaded data (no extra Firebase reads)
+    function refreshDashboard() {
+      const loading = document.getElementById('analyticsLoading');
+      if (loading) loading.style.display = 'none';
+      
+      // Build allEventSignups from already-loaded eventSignups object
+      allEventSignups = [];
+      for (const eventId in eventSignups) {
+        const event = events.find(e => e.id === eventId);
+        const eventTitle = event?.title || 'Unknown Event';
+        eventSignups[eventId].forEach(signup => {
+          allEventSignups.push({ ...signup, eventId, eventTitle });
+        });
+      }
+      
+      calculateAnalytics();
+    }
+    
+    // Manual refresh button - only re-fetch if user explicitly asks
     async function loadAnalytics() {
       const loading = document.getElementById('analyticsLoading');
       if (loading) loading.style.display = 'block';
       
       try {
-        // Page views are now tracked via Firebase Analytics Console
-        // Only load event signups data from Firestore
+        // Re-fetch event signups fresh from Firebase (only on manual refresh)
         allEventSignups = [];
         for (const event of events) {
           const signupsSnap = await db.collection('events').doc(event.id).collection('signups').get();
           signupsSnap.docs.forEach(doc => {
             allEventSignups.push({ ...doc.data(), eventId: event.id, eventTitle: event.title });
           });
+          // Update the cached eventSignups too
+          eventSignups[event.id] = signupsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         }
         
         if (loading) loading.style.display = 'none';
         calculateAnalytics();
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error refreshing analytics:', error);
         if (loading) loading.style.display = 'none';
       }
     }
@@ -6347,11 +6401,26 @@
       
       const totalParticipants = filteredSignups.reduce((sum, s) => sum + (parseInt(s.numVolunteers) || 1), 0);
       
+      // Calculate "needs attention" counts (items with new/pending status)
+      let newSignupsCount = 0;
+      for (const eventId in eventSignups) {
+        newSignupsCount += eventSignups[eventId].filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
+      }
+      const newVolunteersCount = applications.filter(a => !a.status || a.status === 'new').length;
+      const newContactsCount = contacts.filter(c => !c.status || c.status === 'new').length;
+      const newProvidersCount = providers.filter(p => !p.status || p.status === 'new').length;
+      
       // Update main KPI cards
       document.getElementById('statEventSignups').textContent = totalParticipants.toLocaleString();
       document.getElementById('statVolunteerApps').textContent = filteredVolunteers.length.toLocaleString();
       document.getElementById('statContacts').textContent = filteredContacts.length.toLocaleString();
       document.getElementById('statProviders').textContent = filteredProviders.length.toLocaleString();
+      
+      // Update attention badges
+      updateAttentionBadge('eventSignupsAttention', newSignupsCount, 'need review');
+      updateAttentionBadge('volunteerAppsAttention', newVolunteersCount, 'new');
+      updateAttentionBadge('contactsAttention', newContactsCount, 'unread');
+      updateAttentionBadge('providersAttention', newProvidersCount, 'new');
       
       // Update KPI subtexts
       const range = document.getElementById('analyticsDateRange')?.value || 'year';
@@ -6412,6 +6481,20 @@
           return ts.getMonth() === now.getMonth() && ts.getFullYear() === now.getFullYear();
         }).length;
         pledgesByMonthEl.innerHTML = `<strong>${thisMonth}</strong> new pledges this month`;
+      }
+    }
+    
+    // Helper function to update attention badges on KPI cards
+    function updateAttentionBadge(elementId, count, label) {
+      const badge = document.getElementById(elementId);
+      if (!badge) return;
+      
+      if (count > 0) {
+        badge.textContent = `${count} ${label}`;
+        badge.classList.add('has-items');
+      } else {
+        badge.textContent = '';
+        badge.classList.remove('has-items');
       }
     }
     
