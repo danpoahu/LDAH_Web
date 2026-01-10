@@ -4934,6 +4934,9 @@
           if (countEl) countEl.textContent = `${events.length} events`;
           renderEvents();
         }
+        
+        // Refresh dashboard now that event signups are loaded
+        scheduleDashboardRefresh();
       } catch (error) {
         console.error('Error loading events:', error);
         loading.style.display = 'none';
@@ -5426,6 +5429,9 @@
         } else {
           renderOpportunities();
         }
+        
+        // Refresh dashboard
+        scheduleDashboardRefresh();
       } catch (error) {
         console.error('Error:', error);
         loading.style.display = 'none';
@@ -5703,6 +5709,9 @@
         // Re-render opportunities to update application counts and badges
         renderOpportunities();
         
+        // Refresh dashboard
+        scheduleDashboardRefresh();
+        
       } catch (error) {
         console.error('Error:', error);
         loading.style.display = 'none';
@@ -5889,6 +5898,9 @@
           if (countEl) countEl.textContent = `${providers.length} requests`;
           renderProviders();
         }
+        
+        // Refresh dashboard
+        scheduleDashboardRefresh();
       } catch (error) {
         console.error('Error:', error);
         loading.style.display = 'none';
@@ -6244,6 +6256,9 @@
           if (countEl) countEl.textContent = `${contacts.length} messages`;
           renderContacts();
         }
+        
+        // Refresh dashboard
+        scheduleDashboardRefresh();
       } catch (error) {
         console.error('Error:', error);
         loading.style.display = 'none';
