@@ -7164,7 +7164,6 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('p', 'mm', 'a4');
       const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
       const margin = 15;
       let y = margin;
       
@@ -7176,39 +7175,28 @@
       const dangerRed = [220, 38, 38];
       const textDark = [30, 41, 59];
       const textLight = [100, 116, 139];
-      const bgLight = [249, 250, 251];
+      const purple = [168, 85, 247];
       
       // Helper functions
       const setColor = (rgb) => doc.setTextColor(rgb[0], rgb[1], rgb[2]);
-      const setFillColor = (rgb) => doc.setFillColor(rgb[0], rgb[1], rgb[2]);
       const setDrawColor = (rgb) => doc.setDrawColor(rgb[0], rgb[1], rgb[2]);
       
-      // Check if we need a new page
-      const checkNewPage = (needed) => {
-        if (y + needed > pageHeight - margin) {
-          doc.addPage();
-          y = margin;
-          return true;
-        }
-        return false;
-      };
-      
       // ===== HEADER =====
-      doc.setFontSize(24);
+      doc.setFontSize(22);
       doc.setFont('helvetica', 'bold');
       setColor(primaryBlue);
-      doc.text('📊 LDAH Dashboard Report', margin, y);
-      y += 10;
+      doc.text('LDAH Dashboard Report', margin, y);
+      y += 8;
       
-      doc.setFontSize(11);
+      doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
       setColor(textLight);
       doc.text(`Generated: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, margin, y);
-      y += 15;
+      y += 12;
       
       // ===== KPI CARDS =====
       const cardWidth = (pageWidth - margin * 2 - 15) / 4;
-      const cardHeight = 28;
+      const cardHeight = 24;
       
       // Calculate values
       const totalSignups = allEventSignups.length;
@@ -7227,56 +7215,57 @@
       const incompleteProviders = providers.filter(p => !p.status || p.status === 'new' || p.status === 'reviewed' || p.status === 'contacted').length;
       
       const kpiData = [
-        { label: 'Event Signups', total: totalSignups, pending: pendingSignups, pendingLabel: 'pending', color: primaryBlue },
-        { label: 'Volunteer Apps', total: totalVolunteers, pending: incompleteVolunteers, pendingLabel: 'in progress', color: successGreen },
-        { label: 'Contact Messages', total: totalContacts, pending: unreadContacts, pendingLabel: 'unread', color: infoColor },
-        { label: 'Provider Requests', total: totalProviders, pending: incompleteProviders, pendingLabel: 'incomplete', color: warningOrange }
+        { label: 'Event Signups', total: totalSignups, pending: pendingSignups, pendingLabel: 'PENDING', color: primaryBlue },
+        { label: 'Volunteer Apps', total: totalVolunteers, pending: incompleteVolunteers, pendingLabel: 'IN PROGRESS', color: successGreen },
+        { label: 'Contact Messages', total: totalContacts, pending: unreadContacts, pendingLabel: 'UNREAD', color: infoColor },
+        { label: 'Provider Requests', total: totalProviders, pending: incompleteProviders, pendingLabel: 'INCOMPLETE', color: warningOrange }
       ];
       
       kpiData.forEach((kpi, i) => {
         const x = margin + i * (cardWidth + 5);
         
-        // Card background
+        // Card background with colored border
         doc.setFillColor(255, 255, 255);
         setDrawColor(kpi.color);
-        doc.setLineWidth(0.8);
-        doc.roundedRect(x, y, cardWidth, cardHeight, 3, 3, 'FD');
+        doc.setLineWidth(1);
+        doc.roundedRect(x, y, cardWidth, cardHeight, 2, 2, 'FD');
         
         // Total number
-        doc.setFontSize(20);
+        doc.setFontSize(18);
         doc.setFont('helvetica', 'bold');
         setColor(textDark);
-        doc.text(String(kpi.total), x + 5, y + 12);
+        doc.text(String(kpi.total), x + 4, y + 10);
         
         // Pending number (if any)
         if (kpi.pending > 0) {
-          doc.setFontSize(14);
+          doc.setFontSize(12);
           setColor(dangerRed);
-          doc.text(String(kpi.pending), x + cardWidth - 5, y + 12, { align: 'right' });
+          doc.text(String(kpi.pending), x + cardWidth - 4, y + 10, { align: 'right' });
           
-          doc.setFontSize(6);
-          doc.text(kpi.pendingLabel.toUpperCase(), x + cardWidth - 5, y + 17, { align: 'right' });
+          doc.setFontSize(5);
+          doc.text(kpi.pendingLabel, x + cardWidth - 4, y + 14, { align: 'right' });
         }
         
-        // Label
-        doc.setFontSize(7);
+        // "TOTAL" label
+        doc.setFontSize(6);
         setColor(textLight);
-        doc.text('TOTAL', x + 5, y + 17);
+        doc.text('TOTAL', x + 4, y + 14);
         
-        doc.setFontSize(9);
+        // Main label
+        doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
         setColor(textDark);
-        doc.text(kpi.label, x + 5, y + 24);
+        doc.text(kpi.label, x + 4, y + 20);
       });
       
-      y += cardHeight + 12;
+      y += cardHeight + 10;
       
       // ===== CONTENT OVERVIEW =====
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       setColor(primaryBlue);
-      doc.text('📊 Content Overview', margin, y);
-      y += 8;
+      doc.text('Content Overview', margin, y);
+      y += 6;
       
       const now = new Date();
       const activeEvents = events.filter(e => {
@@ -7300,47 +7289,46 @@
         const col = i % 3;
         const row = Math.floor(i / 3);
         const x = margin + col * colWidth;
-        const itemY = y + row * 12;
+        const itemY = y + row * 8;
         
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setFont('helvetica', 'bold');
         setColor(primaryBlue);
-        doc.text(String(item.value), x + 5, itemY);
+        doc.text(String(item.value), x, itemY);
         
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
         setColor(textLight);
-        doc.text(item.label, x + 15, itemY);
+        doc.text(item.label, x + 10, itemY);
       });
       
-      y += 30;
+      y += 22;
       
       // ===== EVENT PERFORMANCE =====
-      checkNewPage(60);
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       setColor(primaryBlue);
-      doc.text('📅 Event Performance', margin, y);
-      y += 8;
+      doc.text('Event Performance', margin, y);
+      y += 6;
       
       // Table header
-      doc.setFillColor(bgLight[0], bgLight[1], bgLight[2]);
-      doc.rect(margin, y, pageWidth - margin * 2, 7, 'F');
-      doc.setFontSize(8);
+      doc.setFillColor(249, 250, 251);
+      doc.rect(margin, y, pageWidth - margin * 2, 6, 'F');
+      doc.setFontSize(7);
       doc.setFont('helvetica', 'bold');
       setColor(textDark);
-      doc.text('Event Name', margin + 3, y + 5);
-      doc.text('Date', margin + 90, y + 5);
-      doc.text('Signups', margin + 130, y + 5);
-      doc.text('Pending', margin + 155, y + 5);
-      y += 9;
+      doc.text('Event Name', margin + 2, y + 4);
+      doc.text('Date', margin + 85, y + 4);
+      doc.text('Signups', margin + 120, y + 4);
+      doc.text('Pending', margin + 145, y + 4);
+      y += 7;
       
       // Event rows
       const eventData = events.map(event => {
         const signups = eventSignups[event.id] || [];
         const pending = signups.filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
         return {
-          title: (event.title || 'Untitled').substring(0, 40),
+          title: (event.title || 'Untitled').substring(0, 45),
           date: event.startDate || event.eventDate || event.date,
           signups: signups.length,
           pending
@@ -7348,57 +7336,55 @@
       }).sort((a, b) => b.signups - a.signups);
       
       doc.setFont('helvetica', 'normal');
-      eventData.slice(0, 10).forEach((e, i) => {
-        checkNewPage(7);
+      eventData.slice(0, 8).forEach((e, i) => {
         if (i % 2 === 0) {
           doc.setFillColor(249, 250, 251);
-          doc.rect(margin, y - 4, pageWidth - margin * 2, 7, 'F');
+          doc.rect(margin, y - 3, pageWidth - margin * 2, 6, 'F');
         }
         
         doc.setFontSize(8);
         setColor(textDark);
-        doc.text(e.title, margin + 3, y);
+        doc.text(e.title, margin + 2, y);
         setColor(textLight);
-        doc.text(e.date ? new Date(e.date).toLocaleDateString() : 'No date', margin + 90, y);
+        doc.text(e.date ? new Date(e.date).toLocaleDateString() : 'No date', margin + 85, y);
         setColor(primaryBlue);
         doc.setFont('helvetica', 'bold');
-        doc.text(String(e.signups), margin + 130, y);
+        doc.text(String(e.signups), margin + 125, y);
         if (e.pending > 0) {
           setColor(dangerRed);
-          doc.text(String(e.pending), margin + 155, y);
+          doc.text(String(e.pending), margin + 152, y);
         }
         doc.setFont('helvetica', 'normal');
-        y += 7;
+        y += 6;
       });
       
-      y += 8;
+      y += 6;
       
       // ===== VOLUNTEER OPPORTUNITIES =====
-      checkNewPage(60);
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       setColor(primaryBlue);
-      doc.text('🤝 Volunteer Opportunities', margin, y);
-      y += 8;
+      doc.text('Volunteer Opportunities', margin, y);
+      y += 6;
       
       // Table header
-      doc.setFillColor(bgLight[0], bgLight[1], bgLight[2]);
-      doc.rect(margin, y, pageWidth - margin * 2, 7, 'F');
-      doc.setFontSize(8);
+      doc.setFillColor(249, 250, 251);
+      doc.rect(margin, y, pageWidth - margin * 2, 6, 'F');
+      doc.setFontSize(7);
       doc.setFont('helvetica', 'bold');
       setColor(textDark);
-      doc.text('Opportunity', margin + 3, y + 5);
-      doc.text('Commitment', margin + 90, y + 5);
-      doc.text('Applications', margin + 130, y + 5);
-      doc.text('New', margin + 160, y + 5);
-      y += 9;
+      doc.text('Opportunity', margin + 2, y + 4);
+      doc.text('Commitment', margin + 85, y + 4);
+      doc.text('Applications', margin + 120, y + 4);
+      doc.text('New', margin + 155, y + 4);
+      y += 7;
       
       // Opportunity rows
       const oppData = opportunities.map(opp => {
         const oppApps = applications.filter(a => a.opportunity === opp.title || a.opportunityId === opp.id);
         const newApps = oppApps.filter(a => !a.status || a.status === 'new').length;
         return {
-          title: (opp.title || 'Untitled').substring(0, 40),
+          title: (opp.title || 'Untitled').substring(0, 45),
           commitment: (opp.commitment || 'Flexible').substring(0, 20),
           applications: oppApps.length,
           newApps
@@ -7406,106 +7392,49 @@
       }).sort((a, b) => b.applications - a.applications);
       
       doc.setFont('helvetica', 'normal');
-      oppData.forEach((o, i) => {
-        checkNewPage(7);
+      oppData.slice(0, 8).forEach((o, i) => {
         if (i % 2 === 0) {
           doc.setFillColor(249, 250, 251);
-          doc.rect(margin, y - 4, pageWidth - margin * 2, 7, 'F');
+          doc.rect(margin, y - 3, pageWidth - margin * 2, 6, 'F');
         }
         
         doc.setFontSize(8);
         setColor(textDark);
-        doc.text(o.title, margin + 3, y);
+        doc.text(o.title, margin + 2, y);
         setColor(textLight);
-        doc.text(o.commitment, margin + 90, y);
+        doc.text(o.commitment, margin + 85, y);
         setColor(successGreen);
         doc.setFont('helvetica', 'bold');
-        doc.text(String(o.applications), margin + 130, y);
+        doc.text(String(o.applications), margin + 128, y);
         if (o.newApps > 0) {
           setColor(dangerRed);
-          doc.text(String(o.newApps), margin + 160, y);
+          doc.text(String(o.newApps), margin + 158, y);
         }
         doc.setFont('helvetica', 'normal');
-        y += 7;
-      });
-      
-      y += 8;
-      
-      // ===== RECENT ACTIVITY =====
-      checkNewPage(60);
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      setColor(primaryBlue);
-      doc.text('🕐 Recent Activity', margin, y);
-      y += 8;
-      
-      // Build activity list
-      const activities = [];
-      allEventSignups.forEach(s => {
-        const ts = s.timestamp?.seconds ? s.timestamp.seconds * 1000 : null;
-        if (ts) activities.push({
-          text: `${s.contactName || s.name || 'Someone'} signed up for ${s.eventTitle || 'an event'}`,
-          detail: s.email || '',
-          time: ts,
-          type: 'event'
-        });
-      });
-      applications.forEach(a => {
-        const ts = a.timestamp?.seconds ? a.timestamp.seconds * 1000 : null;
-        if (ts) activities.push({
-          text: `${a.name || 'Someone'} applied for ${a.opportunity || 'volunteer position'}`,
-          detail: a.email || '',
-          time: ts,
-          type: 'volunteer'
-        });
-      });
-      contacts.forEach(c => {
-        const ts = c.timestamp?.seconds ? c.timestamp.seconds * 1000 : null;
-        if (ts) activities.push({
-          text: `${c.name || 'Someone'} sent a message`,
-          detail: c.email || '',
-          time: ts,
-          type: 'contact'
-        });
-      });
-      
-      activities.sort((a, b) => b.time - a.time);
-      
-      doc.setFont('helvetica', 'normal');
-      activities.slice(0, 10).forEach((a, i) => {
-        checkNewPage(10);
-        doc.setFontSize(8);
-        setColor(textDark);
-        doc.text(a.text.substring(0, 70), margin + 3, y);
-        setColor(textLight);
-        doc.setFontSize(7);
-        const timeStr = new Date(a.time).toLocaleDateString();
-        doc.text(`${a.detail} • ${timeStr}`, margin + 3, y + 4);
-        y += 10;
+        y += 6;
       });
       
       y += 8;
       
       // ===== ANTI-BULLYING PLEDGES =====
-      checkNewPage(30);
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       setColor(primaryBlue);
-      doc.text('✊ Anti-Bullying Pledges', margin, y);
-      y += 10;
+      doc.text('Anti-Bullying Pledges', margin, y);
+      y += 8;
       
       // Pledge box
       doc.setFillColor(253, 244, 255);
-      doc.roundedRect(margin, y, 60, 20, 3, 3, 'F');
+      doc.roundedRect(margin, y, 50, 18, 2, 2, 'F');
       
-      doc.setFontSize(24);
+      doc.setFontSize(20);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(168, 85, 247);
-      doc.text(String(pledges.length), margin + 30, y + 13, { align: 'center' });
+      doc.setTextColor(purple[0], purple[1], purple[2]);
+      doc.text(String(pledges.length), margin + 25, y + 11, { align: 'center' });
       
-      doc.setFontSize(8);
+      doc.setFontSize(7);
       doc.setFont('helvetica', 'normal');
-      doc.text('Total Pledges', margin + 30, y + 18, { align: 'center' });
+      doc.text('Total Pledges', margin + 25, y + 15, { align: 'center' });
       
       const thisMonthPledges = pledges.filter(p => {
         const ts = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000) : null;
@@ -7515,12 +7444,12 @@
       
       doc.setFontSize(9);
       setColor(textLight);
-      doc.text(`${thisMonthPledges} new pledges this month`, margin + 70, y + 12);
+      doc.text(`${thisMonthPledges} new pledges this month`, margin + 58, y + 10);
       
       // ===== FOOTER =====
       doc.setFontSize(8);
       setColor(textLight);
-      doc.text('Learning Disabilities Association of Hawaii', pageWidth / 2, pageHeight - 10, { align: 'center' });
+      doc.text('Learning Disabilities Association of Hawaii', pageWidth / 2, 285, { align: 'center' });
       
       // Save
       doc.save(`ldah_dashboard_report_${new Date().toISOString().split('T')[0]}.pdf`);
