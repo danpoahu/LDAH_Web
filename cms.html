@@ -1075,6 +1075,50 @@
       font-size: 1.5rem;
     }
     
+    .kpi-value-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    
+    .kpi-value-col {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .kpi-value-label {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .kpi-pending-col {
+      display: none;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    
+    .kpi-pending-col.has-pending {
+      display: flex;
+    }
+    
+    .kpi-pending {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #dc2626;
+    }
+    
+    .kpi-pending-label {
+      font-size: 0.65rem;
+      color: #dc2626;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
     .kpi-attention {
       font-size: 0.75rem;
       font-weight: 700;
@@ -2125,41 +2169,69 @@
             <div class="kpi-card kpi-primary" onclick="document.querySelector('[data-tab=events]').click()" style="cursor: pointer;">
               <div class="kpi-header">
                 <span class="kpi-icon">📅</span>
-                <span class="kpi-attention" id="eventSignupsAttention"></span>
               </div>
-              <div class="kpi-value" id="statEventSignups">-</div>
+              <div class="kpi-value-row">
+                <div class="kpi-value-col">
+                  <span class="kpi-value" id="statEventSignups">-</span>
+                  <span class="kpi-value-label">total</span>
+                </div>
+                <div class="kpi-pending-col" id="eventSignupsPendingCol">
+                  <span class="kpi-pending" id="eventSignupsPending"></span>
+                  <span class="kpi-pending-label">pending</span>
+                </div>
+              </div>
               <div class="kpi-label">Event Signups</div>
-              <div class="kpi-subtext" id="eventSignupsSubtext">Total signups this period</div>
             </div>
             
             <div class="kpi-card kpi-success" onclick="document.querySelector('[data-tab=volunteers]').click()" style="cursor: pointer;">
               <div class="kpi-header">
                 <span class="kpi-icon">🤝</span>
-                <span class="kpi-attention" id="volunteerAppsAttention"></span>
               </div>
-              <div class="kpi-value" id="statVolunteerApps">-</div>
+              <div class="kpi-value-row">
+                <div class="kpi-value-col">
+                  <span class="kpi-value" id="statVolunteerApps">-</span>
+                  <span class="kpi-value-label">total</span>
+                </div>
+                <div class="kpi-pending-col" id="volunteerAppsPendingCol">
+                  <span class="kpi-pending" id="volunteerAppsPending"></span>
+                  <span class="kpi-pending-label">in progress</span>
+                </div>
+              </div>
               <div class="kpi-label">Volunteer Applications</div>
-              <div class="kpi-subtext" id="volunteerAppsSubtext">New applications</div>
             </div>
             
             <div class="kpi-card kpi-info" onclick="document.querySelector('[data-tab=data]').click(); setTimeout(() => switchDataSubTab('contacts'), 100);" style="cursor: pointer;">
               <div class="kpi-header">
                 <span class="kpi-icon">✉️</span>
-                <span class="kpi-attention" id="contactsAttention"></span>
               </div>
-              <div class="kpi-value" id="statContacts">-</div>
+              <div class="kpi-value-row">
+                <div class="kpi-value-col">
+                  <span class="kpi-value" id="statContacts">-</span>
+                  <span class="kpi-value-label">total</span>
+                </div>
+                <div class="kpi-pending-col" id="contactsPendingCol">
+                  <span class="kpi-pending" id="contactsPending"></span>
+                  <span class="kpi-pending-label">unread</span>
+                </div>
+              </div>
               <div class="kpi-label">Contact Messages</div>
-              <div class="kpi-subtext" id="contactsSubtext">People reaching out</div>
             </div>
             
             <div class="kpi-card kpi-warning" onclick="document.querySelector('[data-tab=data]').click(); setTimeout(() => switchDataSubTab('providers'), 100);" style="cursor: pointer;">
               <div class="kpi-header">
                 <span class="kpi-icon">📋</span>
-                <span class="kpi-attention" id="providersAttention"></span>
               </div>
-              <div class="kpi-value" id="statProviders">-</div>
+              <div class="kpi-value-row">
+                <div class="kpi-value-col">
+                  <span class="kpi-value" id="statProviders">-</span>
+                  <span class="kpi-value-label">total</span>
+                </div>
+                <div class="kpi-pending-col" id="providersPendingCol">
+                  <span class="kpi-pending" id="providersPending"></span>
+                  <span class="kpi-pending-label">incomplete</span>
+                </div>
+              </div>
               <div class="kpi-label">Provider Requests</div>
-              <div class="kpi-subtext" id="providersSubtext">Service listings</div>
             </div>
           </div>
           
@@ -6139,6 +6211,9 @@
           if (countEl) countEl.textContent = `${eventRequests.length} requests`;
           renderEventRequests();
         }
+        
+        // Refresh dashboard (for Active Events count)
+        scheduleDashboardRefresh();
       } catch (error) {
         console.error('Error:', error);
         loading.style.display = 'none';
@@ -6463,16 +6538,27 @@
         });
       }
       
-      // Calculate "needs attention" counts (items with new/pending status) - ALL TIME
-      let newSignupsCount = 0;
+      // Calculate pending/incomplete counts
+      // Event signups: pending status
+      let pendingSignupsCount = 0;
       for (const eventId in eventSignups) {
-        newSignupsCount += (eventSignups[eventId] || []).filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
+        pendingSignupsCount += (eventSignups[eventId] || []).filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
       }
-      const newVolunteersCount = applications.filter(a => !a.status || a.status === 'new').length;
-      const newContactsCount = contacts.filter(c => !c.status || c.status === 'new').length;
-      const newProvidersCount = providers.filter(p => !p.status || p.status === 'new').length;
       
-      // Calculate totals - ALL TIME (not filtered by date for main KPIs)
+      // Volunteer applications: not completed or declined (i.e., still in progress)
+      const incompleteVolunteersCount = applications.filter(a => 
+        !a.status || a.status === 'new' || a.status === 'contacted' || a.status === 'interviewing'
+      ).length;
+      
+      // Contact messages: not responded/completed
+      const unreadContactsCount = contacts.filter(c => !c.status || c.status === 'new').length;
+      
+      // Provider requests: not completed
+      const incompleteProvidersCount = providers.filter(p => 
+        !p.status || p.status === 'new' || p.status === 'reviewed' || p.status === 'contacted'
+      ).length;
+      
+      // Calculate totals - ALL TIME
       const totalSignups = allEventSignups.length;
       const totalVolunteers = applications.length;
       const totalContacts = contacts.length;
@@ -6484,11 +6570,11 @@
       document.getElementById('statContacts').textContent = totalContacts.toLocaleString();
       document.getElementById('statProviders').textContent = totalProviders.toLocaleString();
       
-      // Update attention badges
-      updateAttentionBadge('eventSignupsAttention', newSignupsCount, 'need review');
-      updateAttentionBadge('volunteerAppsAttention', newVolunteersCount, 'new');
-      updateAttentionBadge('contactsAttention', newContactsCount, 'unread');
-      updateAttentionBadge('providersAttention', newProvidersCount, 'new');
+      // Update pending counts (red numbers)
+      updatePendingCount('eventSignupsPending', pendingSignupsCount);
+      updatePendingCount('volunteerAppsPending', incompleteVolunteersCount);
+      updatePendingCount('contactsPending', unreadContactsCount);
+      updatePendingCount('providersPending', incompleteProvidersCount);
       
       // Update KPI subtexts
       document.getElementById('eventSignupsSubtext').textContent = `Total all-time signups`;
@@ -6500,11 +6586,24 @@
       document.getElementById('contentTeamCount').textContent = teamMembers.length;
       document.getElementById('contentBoardCount').textContent = boardMembers.length;
       document.getElementById('contentResourcesCount').textContent = resources.length;
-      document.getElementById('contentEventsCount').textContent = events.filter(e => {
+      
+      // Active Events = upcoming events (based on moveToPastDate) + approved/scheduled event requests
+      const now = new Date();
+      const upcomingEvents = events.filter(e => {
+        // Use moveToPastDate if available, otherwise fall back to event date
+        if (e.moveToPastDate) {
+          return new Date(e.moveToPastDate) >= now;
+        }
+        // If no moveToPastDate, check event date
         if (!e.date && !e.startDate && !e.eventDate) return true;
         const eventDate = new Date(e.startDate || e.eventDate || e.date);
-        return eventDate >= new Date();
+        return eventDate >= now;
       }).length;
+      const approvedRequests = eventRequests.filter(r => 
+        r.status === 'approved' || r.status === 'scheduled'
+      ).length;
+      document.getElementById('contentEventsCount').textContent = upcomingEvents + approvedRequests;
+      
       document.getElementById('contentOpportunitiesCount').textContent = opportunities.length;
       document.getElementById('contentFaqCount').textContent = faqs.length;
       
@@ -6627,6 +6726,21 @@
       } else {
         badge.textContent = '';
         badge.classList.remove('has-items');
+      }
+    }
+    
+    // Helper function to update red pending counts on KPI cards
+    function updatePendingCount(elementId, count) {
+      const el = document.getElementById(elementId);
+      const colEl = document.getElementById(elementId + 'Col');
+      if (!el) return;
+      
+      if (count > 0) {
+        el.textContent = count.toLocaleString();
+        if (colEl) colEl.classList.add('has-pending');
+      } else {
+        el.textContent = '';
+        if (colEl) colEl.classList.remove('has-pending');
       }
     }
     
