@@ -6576,12 +6576,6 @@
       updatePendingCount('contactsPending', unreadContactsCount);
       updatePendingCount('providersPending', incompleteProvidersCount);
       
-      // Update KPI subtexts
-      document.getElementById('eventSignupsSubtext').textContent = `Total all-time signups`;
-      document.getElementById('volunteerAppsSubtext').textContent = `Total applications received`;
-      document.getElementById('contactsSubtext').textContent = `Total messages received`;
-      document.getElementById('providersSubtext').textContent = `Total provider requests`;
-      
       // Update content overview counts
       document.getElementById('contentTeamCount').textContent = teamMembers.length;
       document.getElementById('contentBoardCount').textContent = boardMembers.length;
