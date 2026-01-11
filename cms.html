@@ -6117,7 +6117,12 @@
       try {
         const snapshot = await db.collection('pledges').get();
         pledges = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        pledges.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+        // Sort by submittedAt (newest first), fall back to timestamp
+        pledges.sort((a, b) => {
+          const aTime = a.submittedAt?.seconds || a.timestamp?.seconds || 0;
+          const bTime = b.submittedAt?.seconds || b.timestamp?.seconds || 0;
+          return bTime - aTime;
+        });
         loading.style.display = 'none';
         
         const newCount = pledges.filter(p => !p.status || p.status === 'new').length;
@@ -6243,7 +6248,12 @@
       try {
         const snapshot = await db.collection('eventRequests').get();
         eventRequests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        eventRequests.sort((a, b) => (b.timestamp?.seconds || b.timestamp || 0) - (a.timestamp?.seconds || a.timestamp || 0));
+        // Sort by submittedAt (newest first), fall back to timestamp
+        eventRequests.sort((a, b) => {
+          const aTime = a.submittedAt?.seconds || a.timestamp?.seconds || 0;
+          const bTime = b.submittedAt?.seconds || b.timestamp?.seconds || 0;
+          return bTime - aTime;
+        });
         loading.style.display = 'none';
         
         const newCount = eventRequests.filter(r => !r.status || r.status === 'pending').length;
@@ -6363,7 +6373,12 @@
       try {
         const snapshot = await db.collection('contactSubmissions').get();
         contacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        contacts.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+        // Sort by submittedAt (newest first), fall back to timestamp
+        contacts.sort((a, b) => {
+          const aTime = a.submittedAt?.seconds || a.timestamp?.seconds || 0;
+          const bTime = b.submittedAt?.seconds || b.timestamp?.seconds || 0;
+          return bTime - aTime;
+        });
         loading.style.display = 'none';
         
         const newCount = contacts.filter(c => !c.status || c.status === 'new').length;
