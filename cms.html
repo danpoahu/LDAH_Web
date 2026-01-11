@@ -5959,7 +5959,12 @@
       try {
         const snapshot = await db.collection('providers').get();
         providers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        providers.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+        // Sort by submittedAt (newest first), fall back to timestamp
+        providers.sort((a, b) => {
+          const aTime = a.submittedAt?.seconds || a.timestamp?.seconds || 0;
+          const bTime = b.submittedAt?.seconds || b.timestamp?.seconds || 0;
+          return bTime - aTime;
+        });
         loading.style.display = 'none';
         
         const newCount = providers.filter(p => !p.status || p.status === 'new').length;
@@ -5997,29 +6002,51 @@
       }
       
       list.innerHTML = filtered.map(p => {
-        const date = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000).toLocaleDateString() : 'Unknown';
+        // Handle date from submittedAt or timestamp
+        let date = 'Unknown';
+        if (p.submittedAt?.seconds) {
+          date = new Date(p.submittedAt.seconds * 1000).toLocaleDateString();
+        } else if (p.timestamp?.seconds) {
+          date = new Date(p.timestamp.seconds * 1000).toLocaleDateString();
+        }
+        
+        // Build full name from firstName/lastName or use name field
+        let fullName = p.name || '';
+        if (p.firstName || p.lastName) {
+          fullName = [p.firstName, p.lastName].filter(Boolean).join(' ');
+        }
+        
         const status = p.status || 'new';
+        const orgName = p.organizationName || p.orgName || '';
+        
         return `
           <div class="data-card ${status}">
             <div class="data-card-header" onclick="toggleDataExpand('prov-${p.id}')">
               <div style="flex: 1;">
-                <strong>${p.name || p.orgName || 'Unknown'}</strong>
+                <strong>${orgName || fullName || 'Unknown'}</strong>
+                ${orgName && fullName ? `<span style="color: var(--text-light);"> — ${fullName}</span>` : ''}
                 <span class="status-badge status-${status}">${status}</span>
-                <p style="color: var(--text-light); font-size: 0.85rem;">📧 ${p.email} • ${date}</p>
+                <p style="color: var(--text-light); font-size: 0.85rem;">📧 ${p.email || 'No email'} • ${date}</p>
               </div>
               <span id="prov-${p.id}-arrow">▶</span>
             </div>
             <div id="prov-${p.id}-body" class="data-card-body" style="display: none;">
+              ${fullName ? `<p><strong>Contact Name:</strong> ${fullName}</p>` : ''}
+              ${orgName ? `<p><strong>Organization:</strong> ${orgName}</p>` : ''}
+              <p><strong>Email:</strong> ${p.email || 'N/A'}</p>
               <p><strong>Phone:</strong> ${p.phone || 'N/A'}</p>
-              <p><strong>Service Type:</strong> ${p.serviceType || 'N/A'}</p>
-              <p><strong>Details:</strong> ${p.details || p.message || 'N/A'}</p>
+              ${p.serviceType ? `<p><strong>Service Type:</strong> ${p.serviceType}</p>` : ''}
+              ${p.category ? `<p><strong>Category:</strong> ${p.category}</p>` : ''}
+              ${(p.message || p.details) ? `<p><strong>Message:</strong> ${p.message || p.details}</p>` : ''}
+              <p><strong>Submitted:</strong> ${date}</p>
               <div class="status-buttons">
                 ${['new', 'contacted', 'in-progress', 'completed', 'archived'].map(s => `
                   <button class="status-btn ${status === s ? 'active' : ''}" onclick="updateProviderStatus('${p.id}', '${s}')">${s}</button>
                 `).join('')}
               </div>
               <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                <a href="mailto:${p.email}" class="btn-edit">📧 Email</a>
+                ${p.email ? `<a href="mailto:${p.email}" class="btn-edit">📧 Email</a>` : ''}
+                ${p.phone ? `<a href="tel:${p.phone}" class="btn-edit">📞 Call</a>` : ''}
                 <button class="btn-delete" onclick="deleteProvider('${p.id}')">🗑️</button>
               </div>
             </div>
@@ -6052,10 +6079,26 @@
     }
     
     function exportProvidersToCSV() {
-      const headers = ['Name', 'Email', 'Phone', 'Service Type', 'Status', 'Details', 'Date'];
+      const headers = ['First Name', 'Last Name', 'Organization', 'Email', 'Phone', 'Service Type', 'Category', 'Status', 'Message', 'Date'];
       const rows = providers.map(p => {
-        const date = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000).toLocaleDateString() : '';
-        return [p.name || p.orgName || '', p.email || '', p.phone || '', p.serviceType || '', p.status || 'new', (p.details || '').replace(/"/g, '""'), date];
+        let date = '';
+        if (p.submittedAt?.seconds) {
+          date = new Date(p.submittedAt.seconds * 1000).toLocaleDateString();
+        } else if (p.timestamp?.seconds) {
+          date = new Date(p.timestamp.seconds * 1000).toLocaleDateString();
+        }
+        return [
+          p.firstName || '', 
+          p.lastName || '', 
+          p.organizationName || p.orgName || '', 
+          p.email || '', 
+          p.phone || '', 
+          p.serviceType || '', 
+          p.category || '',
+          p.status || 'new', 
+          (p.message || p.details || '').replace(/"/g, '""'), 
+          date
+        ];
       });
       downloadCSV('provider_requests.csv', headers, rows);
     }
@@ -6755,7 +6798,7 @@
           icon: '🤝',
           text: `${newVolunteers} new volunteer application${newVolunteers > 1 ? 's' : ''}`,
           count: newVolunteers,
-          action: () => document.querySelector('[data-tab="volunteers"]').click()
+          nav: 'volunteers-applications'
         });
       }
       
@@ -6766,7 +6809,7 @@
           icon: '✉️',
           text: `${newContacts} new contact message${newContacts > 1 ? 's' : ''}`,
           count: newContacts,
-          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('contacts'), 100); }
+          nav: 'data-contacts'
         });
       }
       
@@ -6777,7 +6820,7 @@
           icon: '📋',
           text: `${newProviders} new provider request${newProviders > 1 ? 's' : ''}`,
           count: newProviders,
-          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('providers'), 100); }
+          nav: 'data-providers'
         });
       }
       
@@ -6788,7 +6831,7 @@
           icon: '📅',
           text: `${pendingEvents} pending event request${pendingEvents > 1 ? 's' : ''}`,
           count: pendingEvents,
-          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('eventRequests'), 100); }
+          nav: 'data-eventRequests'
         });
       }
       
@@ -6802,7 +6845,7 @@
           icon: '📝',
           text: `${newSignups} new event signup${newSignups > 1 ? 's' : ''} to review`,
           count: newSignups,
-          action: () => document.querySelector('[data-tab="events"]').click()
+          nav: 'events'
         });
       }
       
@@ -6811,7 +6854,7 @@
       } else {
         banner.style.display = 'block';
         list.innerHTML = items.map(item => `
-          <div class="action-item" onclick="(${item.action.toString()})()">
+          <div class="action-item" onclick="navigateToActivity('${item.nav}')">
             <span>${item.icon}</span>
             <span style="flex: 1;">${item.text}</span>
             <span class="action-item-badge">${item.count}</span>
@@ -6879,14 +6922,34 @@
       
       // Add recent provider requests
       providers.forEach(p => {
-        const ts = p.timestamp?.seconds ? p.timestamp.seconds * 1000 : (p.createdAt?.seconds ? p.createdAt.seconds * 1000 : null);
-        if (!ts) return;
+        let ts = null;
+        if (p.submittedAt?.seconds) {
+          ts = p.submittedAt.seconds * 1000;
+        } else if (p.timestamp?.seconds) {
+          ts = p.timestamp.seconds * 1000;
+        } else if (p.createdAt?.seconds) {
+          ts = p.createdAt.seconds * 1000;
+        } else if (p.submittedAt) {
+          ts = new Date(p.submittedAt).getTime();
+        } else if (p.timestamp) {
+          ts = new Date(p.timestamp).getTime();
+        } else if (p.createdAt) {
+          ts = new Date(p.createdAt).getTime();
+        }
+        if (!ts || isNaN(ts)) return;
+        
+        // Build name from firstName/lastName or fall back to name field
+        let name = p.name;
+        if (p.firstName || p.lastName) {
+          name = [p.firstName, p.lastName].filter(Boolean).join(' ');
+        }
+        
         activities.push({
           type: 'provider',
           icon: '📋',
-          title: p.organizationName || p.name || 'Provider',
-          subtitle: 'requested listing',
-          detail: p.serviceType || p.category || '',
+          title: p.organizationName || name || 'Provider',
+          subtitle: name && p.organizationName ? `(${name}) requested listing` : 'requested listing',
+          detail: p.serviceType || p.category || p.message || '',
           status: p.status || 'new',
           time: ts,
           nav: 'data-providers'
