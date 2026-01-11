@@ -6626,7 +6626,7 @@
           if (!ts) return false;
           return ts.getMonth() === now.getMonth() && ts.getFullYear() === now.getFullYear();
         }).length;
-        pledgesByMonthEl.innerHTML = `<strong>${thisMonth}</strong> new pledges this month`;
+        pledgesByMonthEl.innerHTML = `<strong>${thisMonth}</strong> pledges this month`;
       }
     }
     
@@ -6840,7 +6840,7 @@
           detail: s.email || s.phone || '',
           status: s.status || 'new',
           time: ts,
-          action: () => document.querySelector('[data-tab="events"]').click()
+          nav: 'events'
         });
       });
       
@@ -6856,7 +6856,7 @@
           detail: a.email || a.phone || '',
           status: a.status || 'new',
           time: ts,
-          action: () => { document.querySelector('[data-tab="volunteers"]').click(); setTimeout(() => switchVolunteerSubTab('applications'), 100); }
+          nav: 'volunteers-applications'
         });
       });
       
@@ -6873,7 +6873,7 @@
           detail: msgPreview,
           status: c.status || 'new',
           time: ts,
-          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('contacts'), 100); }
+          nav: 'data-contacts'
         });
       });
       
@@ -6889,23 +6889,54 @@
           detail: p.serviceType || p.category || '',
           status: p.status || 'new',
           time: ts,
-          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('providers'), 100); }
+          nav: 'data-providers'
         });
       });
       
       // Add recent pledges
       pledges.forEach(p => {
-        const ts = p.timestamp?.seconds ? p.timestamp.seconds * 1000 : (p.createdAt?.seconds ? p.createdAt.seconds * 1000 : null);
-        if (!ts) return;
+        let ts = null;
+        if (p.submittedAt?.seconds) {
+          ts = p.submittedAt.seconds * 1000;
+        } else if (p.timestamp?.seconds) {
+          ts = p.timestamp.seconds * 1000;
+        } else if (p.createdAt?.seconds) {
+          ts = p.createdAt.seconds * 1000;
+        } else if (p.submittedAt) {
+          ts = new Date(p.submittedAt).getTime();
+        } else if (p.timestamp) {
+          ts = new Date(p.timestamp).getTime();
+        } else if (p.createdAt) {
+          ts = new Date(p.createdAt).getTime();
+        } else if (p.date) {
+          ts = new Date(p.date).getTime();
+        }
+        if (!ts || isNaN(ts)) return;
         activities.push({
           type: 'pledge',
           icon: '✊',
           title: p.name || 'Anonymous',
           subtitle: 'took the anti-bullying pledge',
-          detail: p.location || '',
-          status: 'viewed',
+          detail: p.location || p.zipCode || '',
+          status: p.status || 'new',
           time: ts,
-          action: () => { document.querySelector('[data-tab="data"]').click(); setTimeout(() => switchDataSubTab('pledges'), 100); }
+          nav: 'data-pledges'
+        });
+      });
+      
+      // Add recent event requests
+      eventRequests.forEach(r => {
+        const ts = r.timestamp?.seconds ? r.timestamp.seconds * 1000 : (r.createdAt?.seconds ? r.createdAt.seconds * 1000 : null);
+        if (!ts) return;
+        activities.push({
+          type: 'eventRequest',
+          icon: '📅',
+          title: r.contactName || r.organizationName || r.name || 'Someone',
+          subtitle: 'requested an event',
+          detail: r.eventTitle || r.eventType || '',
+          status: r.status === 'pending' ? 'new' : r.status,
+          time: ts,
+          nav: 'data-eventRequests'
         });
       });
       
@@ -6915,11 +6946,11 @@
       if (activities.length === 0) {
         feed.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem;">No recent activity.</p>';
       } else {
-        feed.innerHTML = activities.slice(0, 10).map(a => {
+        feed.innerHTML = activities.slice(0, 12).map(a => {
           const timeAgo = getTimeAgo(a.time);
           const isNew = a.status === 'new' || a.status === 'pending';
           return `
-            <div class="activity-item${isNew ? ' activity-new' : ''}" onclick="(${a.action.toString()})()" style="cursor: pointer;">
+            <div class="activity-item${isNew ? ' activity-new' : ''}" onclick="navigateToActivity('${a.nav}')" style="cursor: pointer;">
               <div class="activity-icon ${a.type}">${a.icon}</div>
               <div class="activity-content">
                 <div class="activity-text">
@@ -6932,6 +6963,24 @@
             </div>
           `;
         }).join('');
+      }
+    }
+    
+    function navigateToActivity(nav) {
+      const parts = nav.split('-');
+      const tab = parts[0];
+      const subtab = parts[1];
+      
+      document.querySelector(`[data-tab="${tab}"]`).click();
+      
+      if (subtab) {
+        setTimeout(() => {
+          if (tab === 'data') {
+            switchDataSubTab(subtab);
+          } else if (tab === 'volunteers') {
+            switchVolunteerSubTab(subtab);
+          }
+        }, 100);
       }
     }
     
