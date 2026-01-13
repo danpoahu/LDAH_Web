@@ -708,14 +708,6 @@
       background: linear-gradient(135deg, #9ca3af, #6b7280);
     }
     
-    .day-event.additional-date {
-      background: linear-gradient(135deg, #9ca3af, #6b7280);
-    }
-    
-    .day-event.additional-date:hover {
-      background: linear-gradient(135deg, #6b7280, #4b5563);
-    }
-    
     .day-event.event-request {
       background: linear-gradient(135deg, #14b8a6, #0d9488);
       border-left: 3px solid #0f766e;
@@ -1690,20 +1682,15 @@
           displayEvents.forEach(event => {
             const isPast = new Date(event.eventDate + 'T00:00:00') < today;
             const isRequest = event.isEventRequest === true;
-            const isAdditional = event.isAdditionalDate === true;
-            
-            // Build class string
-            let eventClasses = 'day-event';
-            if (isPast) eventClasses += ' past-event';
-            if (isAdditional) eventClasses += ' additional-date';
-            if (isRequest) eventClasses += ' event-request';
+            // Add different class for event requests vs regular events
+            const eventClass = isRequest ? 'event-request' : '';
             
             if (isRequest) {
               // Event requests open modal
-              html += `<div class="${eventClasses}" onclick="showCalendarEventDetail('${event.id}', true)" title="${event.title}">${event.title}</div>`;
+              html += `<div class="day-event${isPast ? ' past-event' : ''} ${eventClass}" onclick="showCalendarEventDetail('${event.id}', true)" title="${event.title}">${event.title}</div>`;
             } else {
               // Regular events scroll to current events section
-              html += `<div class="${eventClasses}" onclick="scrollToCurrentEvents()" title="${event.title}">${event.title}</div>`;
+              html += `<div class="day-event${isPast ? ' past-event' : ''}" onclick="scrollToCurrentEvents()" title="${event.title}">${event.title}</div>`;
             }
           });
           if (dayEvents.length > 2) {
@@ -1725,125 +1712,10 @@
     }
     
     function getEventsForDate(dateStr, allCalendarItems) {
-      const results = [];
-      
-      allCalendarItems.forEach(item => {
-        // Check primary eventDate
-        if (item.eventDate && item.eventDate === dateStr) {
-          results.push({ ...item, isAdditionalDate: false });
-        }
-        
-        // Check signupDates array for additional dates
-        if (item.signupDates && Array.isArray(item.signupDates)) {
-          item.signupDates.forEach(signupDateStr => {
-            // Parse the signup date string
-            const parsedDate = parseSignupDateString(signupDateStr);
-            
-            // Debug logging (can remove later)
-            if (parsedDate) {
-              console.log(`📅 Parsed "${signupDateStr}" → ${parsedDate}`);
-            }
-            
-            if (parsedDate === dateStr) {
-              // Only add if not already added as primary date
-              const alreadyAdded = results.find(r => r.id === item.id && !r.isAdditionalDate);
-              if (!alreadyAdded) {
-                results.push({ ...item, isAdditionalDate: true, displayDate: signupDateStr });
-              }
-            }
-          });
-        }
+      return allCalendarItems.filter(item => {
+        if (!item.eventDate) return false;
+        return item.eventDate === dateStr;
       });
-      
-      return results;
-    }
-    
-    // Helper function to parse signup date strings into "YYYY-MM-DD"
-    // Handles formats like:
-    // - "OAHU. Monday January 12th 3pm - 5pm"
-    // - "OAHU, Thursday January 15th 8am - 11am"
-    // - "Hawai'i, Thursday January 8th 9am - 11am. **HILO**"
-    // - "October 11, 2025 - 2:00 p.m."
-    function parseSignupDateString(dateStr) {
-      if (!dateStr) return null;
-      
-      const months = {
-        'january': 0, 'february': 1, 'march': 2, 'april': 3,
-        'may': 4, 'june': 5, 'july': 6, 'august': 7,
-        'september': 8, 'october': 9, 'november': 10, 'december': 11
-      };
-      
-      // Get current year for dates without year specified
-      const currentYear = new Date().getFullYear();
-      const currentMonth = new Date().getMonth();
-      
-      // Try to find month and day in the string
-      // Match patterns like "January 12th", "January 12", "January 8th"
-      const monthDayMatch = dateStr.match(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2})(?:st|nd|rd|th)?\b/i);
-      
-      if (monthDayMatch) {
-        const monthName = monthDayMatch[1].toLowerCase();
-        const day = parseInt(monthDayMatch[2], 10);
-        const monthNum = months[monthName];
-        
-        if (monthNum !== undefined && day >= 1 && day <= 31) {
-          // Check if year is specified in the string
-          const yearMatch = dateStr.match(/\b(20\d{2})\b/);
-          let year = currentYear;
-          
-          if (yearMatch) {
-            year = parseInt(yearMatch[1], 10);
-          } else {
-            // If no year specified, assume current year
-            // But if the month is before current month, assume next year
-            if (monthNum < currentMonth) {
-              year = currentYear + 1;
-            }
-          }
-          
-          const monthStr = String(monthNum + 1).padStart(2, '0');
-          const dayStr = String(day).padStart(2, '0');
-          return `${year}-${monthStr}-${dayStr}`;
-        }
-      }
-      
-      // Fallback: Try "Month Day, Year" format (e.g., "October 11, 2025")
-      const fullDateMatch = dateStr.match(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2}),?\s+(\d{4})\b/i);
-      if (fullDateMatch) {
-        const monthName = fullDateMatch[1].toLowerCase();
-        const day = parseInt(fullDateMatch[2], 10);
-        const year = parseInt(fullDateMatch[3], 10);
-        const monthNum = months[monthName];
-        
-        if (monthNum !== undefined) {
-          const monthStr = String(monthNum + 1).padStart(2, '0');
-          const dayStr = String(day).padStart(2, '0');
-          return `${year}-${monthStr}-${dayStr}`;
-        }
-      }
-      
-      // Last resort: try native Date parsing
-      try {
-        // Clean up the string - remove location prefixes and time ranges
-        let cleanDate = dateStr
-          .replace(/^[A-Za-z']+[.,]\s*/i, '') // Remove location prefix like "OAHU. " or "Hawai'i, "
-          .replace(/\d{1,2}(?:am|pm)\s*-\s*\d{1,2}(?:am|pm)/i, '') // Remove time range
-          .replace(/\*\*.*?\*\*/g, '') // Remove **HILO** markers
-          .trim();
-        
-        const parsed = new Date(cleanDate);
-        if (!isNaN(parsed.getTime())) {
-          const year = parsed.getFullYear();
-          const month = String(parsed.getMonth() + 1).padStart(2, '0');
-          const dayParsed = String(parsed.getDate()).padStart(2, '0');
-          return `${year}-${month}-${dayParsed}`;
-        }
-      } catch (e) {
-        // Ignore parsing errors
-      }
-      
-      console.log('⚠️ Could not parse signup date:', dateStr);
-      return null;
     }
     
     function showCalendarEventDetail(eventId, isEventRequest = false) {
