@@ -7263,6 +7263,17 @@
         });
       }
       
+      // Check for new anti-bullying pledges
+      const newPledges = pledges.filter(p => !p.status || p.status === 'new').length;
+      if (newPledges > 0) {
+        items.push({
+          icon: '✊',
+          text: `${newPledges} new anti-bullying pledge${newPledges > 1 ? 's' : ''}`,
+          count: newPledges,
+          nav: 'data-pledges'
+        });
+      }
+      
       if (items.length === 0) {
         banner.style.display = 'none';
       } else {
@@ -7303,13 +7314,39 @@
       
       // Add recent volunteer apps with more details
       applications.forEach(a => {
-        const ts = a.timestamp?.seconds ? a.timestamp.seconds * 1000 : (a.createdAt?.seconds ? a.createdAt.seconds * 1000 : null);
-        if (!ts) return;
+        // Try multiple timestamp field names
+        let ts = null;
+        if (a.timestamp?.seconds) {
+          ts = a.timestamp.seconds * 1000;
+        } else if (a.createdAt?.seconds) {
+          ts = a.createdAt.seconds * 1000;
+        } else if (a.submittedAt?.seconds) {
+          ts = a.submittedAt.seconds * 1000;
+        } else if (a.timestamp) {
+          ts = new Date(a.timestamp).getTime();
+        } else if (a.createdAt) {
+          ts = new Date(a.createdAt).getTime();
+        } else if (a.submittedAt) {
+          ts = new Date(a.submittedAt).getTime();
+        } else if (a.date) {
+          ts = new Date(a.date).getTime();
+        }
+        
+        // If still no timestamp, use current time minus index to at least show the item
+        if (!ts || isNaN(ts)) {
+          ts = Date.now() - (applications.indexOf(a) * 1000);
+        }
+        
+        // Get name from firstName/lastName or fall back to name field
+        const appName = (a.firstName && a.lastName) ? `${a.firstName} ${a.lastName}` : (a.firstName || a.lastName || a.name || 'Someone');
+        // Get opportunity title from the opportunities array
+        const opp = opportunities.find(o => o.id === a.opportunityId);
+        const oppTitle = opp?.title || a.opportunity || a.opportunityTitle || 'volunteer position';
         activities.push({
           type: 'volunteer',
           icon: '🤝',
-          title: a.name || 'Someone',
-          subtitle: `applied for ${a.opportunity || 'volunteer position'}`,
+          title: appName,
+          subtitle: `applied for ${oppTitle}`,
           detail: a.email || a.phone || '',
           status: a.status || 'new',
           time: ts,
