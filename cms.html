@@ -922,6 +922,14 @@
       margin-left: 4px;
     }
     
+    .badge-new {
+      background: #ef4444;
+    }
+    
+    .badge-attention {
+      background: #f59e0b;
+    }
+    
     /* Data Lists */
     .data-list, .events-list, .applications-list, .opportunities-list, .faqs-list, .categories-list {
       display: flex;
@@ -5219,16 +5227,8 @@
         
         loading.style.display = 'none';
         
-        // Calculate total new signups across all events (pending = new for signups)
-        let totalNewSignups = 0;
-        for (const eventId in eventSignups) {
-          totalNewSignups += eventSignups[eventId].filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
-        }
-        const eventsBadge = document.getElementById('eventsTabBadge');
-        if (eventsBadge) {
-          eventsBadge.textContent = totalNewSignups;
-          eventsBadge.style.display = totalNewSignups > 0 ? 'inline' : 'none';
-        }
+        // Update tab badge using shared function
+        updateEventsTabBadge();
         
         if (events.length === 0) {
           empty.style.display = 'block';
@@ -5251,12 +5251,63 @@
       if (!list) return;
       const now = new Date();
       
+      // Helper to categorize signups
+      function categorizeSignups(signups) {
+        const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+        let newCount = 0;
+        let attentionCount = 0;
+        
+        signups.filter(s => !s.archived).forEach(s => {
+          const status = s.status || 'new';
+          
+          // Skip confirmed or cancelled
+          if (status === 'confirmed' || status === 'cancelled') return;
+          
+          // Get submission date
+          const submitDate = s.timestamp?.seconds 
+            ? new Date(s.timestamp.seconds * 1000) 
+            : (s.submittedAt?.seconds ? new Date(s.submittedAt.seconds * 1000) : null);
+          
+          // Truly NEW = status is 'new' or no status, submitted within last 3 days
+          if ((status === 'new' || !s.status) && submitDate && submitDate > threeDaysAgo) {
+            newCount++;
+          }
+          // NEEDS ATTENTION = pending/new but older than 3 days, OR has admin notes but still pending, OR missing contact info
+          else if (status === 'pending' || status === 'new' || !s.status) {
+            const isOld = !submitDate || submitDate <= threeDaysAgo;
+            const hasNotesNoAction = s.adminNotes && s.adminNotes.trim().length > 0;
+            const missingContact = !s.email && !s.phone;
+            
+            if (isOld || hasNotesNoAction || missingContact) {
+              attentionCount++;
+            } else {
+              newCount++; // Still new if none of the attention triggers
+            }
+          }
+        });
+        
+        return { newCount, attentionCount };
+      }
+      
       list.innerHTML = events.map(event => {
         const moveToPast = event.moveToPastDate ? new Date(event.moveToPastDate) : null;
         const isPast = moveToPast && moveToPast < now;
         const signups = eventSignups[event.id] || [];
         const totalVolunteers = signups.reduce((sum, s) => sum + (parseInt(s.numVolunteers) || 1), 0);
-        const newSignups = signups.filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
+        const { newCount, attentionCount } = categorizeSignups(signups);
+        
+        // Build badge HTML
+        let badgeHtml = '';
+        if (newCount > 0 || attentionCount > 0) {
+          badgeHtml = '<span style="position: absolute; top: -8px; right: -8px; display: flex; gap: 2px;">';
+          if (newCount > 0) {
+            badgeHtml += `<span class="badge badge-new" title="${newCount} new signup${newCount !== 1 ? 's' : ''}">${newCount}</span>`;
+          }
+          if (attentionCount > 0) {
+            badgeHtml += `<span class="badge badge-attention" title="${attentionCount} need${attentionCount !== 1 ? '' : 's'} attention">${attentionCount}</span>`;
+          }
+          badgeHtml += '</span>';
+        }
         
         return `
           <div class="event-card" style="${isPast ? 'opacity: 0.7;' : ''}">
@@ -5284,7 +5335,7 @@
             <div style="padding: 0 1rem 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <button class="btn-edit" onclick="openSignupsModal('${event.id}')" style="background: #10b981; position: relative;">
                 📁 Signups (${signups.length})
-                ${newSignups > 0 ? `<span class="badge" style="position: absolute; top: -8px; right: -8px;">${newSignups}</span>` : ''}
+                ${badgeHtml}
               </button>
               <button class="btn-edit" onclick="editEvent('${event.id}')">✏️ Edit</button>
               <button class="btn-archive" onclick="archiveEvent('${event.id}', '${event.title.replace(/'/g, "\\'")}')">📦</button>
@@ -5513,6 +5564,8 @@
         
         list.innerHTML = Object.entries(groupedByDate).map(([dateStr, dateSignups]) => {
           const totalVolunteers = dateSignups.reduce((sum, s) => sum + (parseInt(s.groupSize) || parseInt(s.numVolunteers) || 1), 0);
+          const now = new Date();
+          const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
           
           return `
             <div style="margin-bottom: 1.5rem;">
@@ -5522,11 +5575,30 @@
                 <span style="background: #4DD0E1; color: #004E7C; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${totalVolunteers} volunteer${totalVolunteers !== 1 ? 's' : ''}</span>
               </div>
               ${dateSignups.map(s => {
-                const submitDate = s.timestamp?.seconds ? new Date(s.timestamp.seconds * 1000) : null;
+                const submitDate = s.timestamp?.seconds ? new Date(s.timestamp.seconds * 1000) : (s.submittedAt?.seconds ? new Date(s.submittedAt.seconds * 1000) : null);
                 const submitDateStr = submitDate ? submitDate.toLocaleString() : 'Unknown';
                 const status = s.status || 'pending';
                 const isGroup = s.participationType === 'Group' || s.groupName;
                 const volunteerCount = parseInt(s.groupSize) || parseInt(s.numVolunteers) || 1;
+                
+                // Determine if NEW or NEEDS ATTENTION
+                let attentionTag = '';
+                if (status !== 'confirmed' && status !== 'cancelled' && !s.archived) {
+                  const isRecent = submitDate && submitDate > threeDaysAgo;
+                  const isOld = !submitDate || submitDate <= threeDaysAgo;
+                  const hasNotesNoAction = s.adminNotes && s.adminNotes.trim().length > 0;
+                  const missingContact = !s.email && !s.phone;
+                  
+                  if (isRecent && !hasNotesNoAction && !missingContact) {
+                    attentionTag = '<span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600;">🆕 NEW</span>';
+                  } else if (isOld || hasNotesNoAction || missingContact) {
+                    let reason = '';
+                    if (isOld) reason = 'Older than 3 days';
+                    else if (missingContact) reason = 'Missing contact info';
+                    else if (hasNotesNoAction) reason = 'Has notes, awaiting action';
+                    attentionTag = `<span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600;" title="${reason}">⚠️ ATTENTION</span>`;
+                  }
+                }
                 
                 return `
                   <div class="data-card ${status}" style="margin-bottom: 0.75rem; border-left: 4px solid ${status === 'confirmed' ? '#22c55e' : status === 'cancelled' ? '#ef4444' : '#f59e0b'};">
@@ -5534,6 +5606,7 @@
                       <div style="flex: 1;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                           <strong>${s.name || (s.firstName ? s.firstName + ' ' + s.lastName : 'Unknown')}</strong>
+                          ${attentionTag}
                           <select onchange="updateSignupStatus('${eventId}', '${s.id}', this.value)" style="padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; border: none; cursor: pointer; font-weight: 600; ${status === 'confirmed' ? 'background: #dcfce7; color: #166534;' : status === 'cancelled' ? 'background: #fee2e2; color: #991b1b;' : 'background: #fef3c7; color: #92400e;'}">
                             <option value="pending" ${status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
                             <option value="confirmed" ${status === 'confirmed' ? 'selected' : ''}>✅ Confirmed</option>
@@ -5541,7 +5614,7 @@
                           </select>
                         </div>
                         <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.25rem;">
-                          📧 ${s.email} ${s.phone ? '• 📱 ' + s.phone : ''}
+                          📧 ${s.email || '(no email)'} ${s.phone ? '• 📱 ' + s.phone : ''}
                         </p>
                         ${isGroup ? `<p style="color: var(--text-light); font-size: 0.85rem;">👥 ${s.groupName || 'Group'} (${volunteerCount} volunteers)</p>` : `<p style="color: var(--text-light); font-size: 0.85rem;">👤 Individual</p>`}
                         ${s.adminNotes ? '<span style="background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem;">📝 Notes</span>' : ''}
@@ -6103,7 +6176,29 @@
       const filterEl = document.getElementById('applicationStatusFilter');
       if (!list) return;
       const filter = filterEl ? filterEl.value : 'all';
-      let filtered = filter === 'all' ? applications : applications.filter(a => (a.status || 'new') === filter);
+      let filtered = filter === 'all' ? [...applications] : applications.filter(a => (a.status || 'new') === filter);
+      
+      // Sort by status priority, then by timestamp (newest first) within each status
+      const statusOrder = ['new', 'read', 'contacted', 'interviewing', 'accepted', 'declined'];
+      filtered.sort((a, b) => {
+        const aStatus = a.status || 'new';
+        const bStatus = b.status || 'new';
+        const aOrder = statusOrder.indexOf(aStatus);
+        const bOrder = statusOrder.indexOf(bStatus);
+        
+        // If different status, sort by status order
+        if (aOrder !== bOrder) {
+          // Handle unknown statuses by putting them at the end
+          const aIdx = aOrder === -1 ? 999 : aOrder;
+          const bIdx = bOrder === -1 ? 999 : bOrder;
+          return aIdx - bIdx;
+        }
+        
+        // Within same status, sort by timestamp (newest first)
+        const aTime = a.timestamp?.seconds || a.submittedAt?.seconds || a.createdAt?.seconds || 0;
+        const bTime = b.timestamp?.seconds || b.submittedAt?.seconds || b.createdAt?.seconds || 0;
+        return bTime - aTime;
+      });
       
       if (filtered.length === 0) {
         list.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 2rem;">No applications found.</p>';
@@ -7007,7 +7102,7 @@
       
       // Volunteer applications: not completed or declined (i.e., still in progress)
       const incompleteVolunteersCount = applications.filter(a => 
-        !a.status || a.status === 'new' || a.status === 'contacted' || a.status === 'interviewing'
+        !a.status || a.status === 'new' || a.status === 'pending' || a.status === 'read' || a.status === 'contacted' || a.status === 'interviewing'
       ).length;
       
       // Contact messages: not responded/completed
@@ -7079,8 +7174,24 @@
       if (pledgesByMonthEl) {
         const now = new Date();
         const thisMonth = pledges.filter(p => {
-          const ts = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000) : (p.timestamp ? new Date(p.timestamp) : null);
-          if (!ts) return false;
+          // Try multiple timestamp field names
+          let ts = null;
+          if (p.submittedAt?.seconds) {
+            ts = new Date(p.submittedAt.seconds * 1000);
+          } else if (p.timestamp?.seconds) {
+            ts = new Date(p.timestamp.seconds * 1000);
+          } else if (p.createdAt?.seconds) {
+            ts = new Date(p.createdAt.seconds * 1000);
+          } else if (p.submittedAt) {
+            ts = new Date(p.submittedAt);
+          } else if (p.timestamp) {
+            ts = new Date(p.timestamp);
+          } else if (p.createdAt) {
+            ts = new Date(p.createdAt);
+          } else if (p.date) {
+            ts = new Date(p.date);
+          }
+          if (!ts || isNaN(ts.getTime())) return false;
           return ts.getMonth() === now.getMonth() && ts.getFullYear() === now.getFullYear();
         }).length;
         pledgesByMonthEl.innerHTML = `<strong>${thisMonth}</strong> pledges this month`;
@@ -7545,7 +7656,7 @@
       rows.push(['Event Signups', totalSignups, pendingSignups]);
       
       const totalVolunteers = applications.length;
-      const incompleteVolunteers = applications.filter(a => !a.status || a.status === 'new' || a.status === 'contacted' || a.status === 'interviewing').length;
+      const incompleteVolunteers = applications.filter(a => !a.status || a.status === 'new' || a.status === 'pending' || a.status === 'read' || a.status === 'contacted' || a.status === 'interviewing').length;
       rows.push(['Volunteer Applications', totalVolunteers, incompleteVolunteers]);
       
       const totalContacts = contacts.length;
@@ -7703,8 +7814,24 @@
       rows.push(['=== ANTI-BULLYING PLEDGES ===']);
       rows.push(['Total Pledges', pledges.length]);
       const thisMonth = pledges.filter(p => {
-        const ts = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000) : (p.timestamp ? new Date(p.timestamp) : null);
-        if (!ts) return false;
+        // Try multiple timestamp field names
+        let ts = null;
+        if (p.submittedAt?.seconds) {
+          ts = new Date(p.submittedAt.seconds * 1000);
+        } else if (p.timestamp?.seconds) {
+          ts = new Date(p.timestamp.seconds * 1000);
+        } else if (p.createdAt?.seconds) {
+          ts = new Date(p.createdAt.seconds * 1000);
+        } else if (p.submittedAt) {
+          ts = new Date(p.submittedAt);
+        } else if (p.timestamp) {
+          ts = new Date(p.timestamp);
+        } else if (p.createdAt) {
+          ts = new Date(p.createdAt);
+        } else if (p.date) {
+          ts = new Date(p.date);
+        }
+        if (!ts || isNaN(ts.getTime())) return false;
         return ts.getMonth() === now.getMonth() && ts.getFullYear() === now.getFullYear();
       }).length;
       rows.push(['This Month', thisMonth]);
@@ -7769,7 +7896,7 @@
       }
       
       const totalVolunteers = applications.length;
-      const incompleteVolunteers = applications.filter(a => !a.status || a.status === 'new' || a.status === 'contacted' || a.status === 'interviewing').length;
+      const incompleteVolunteers = applications.filter(a => !a.status || a.status === 'new' || a.status === 'pending' || a.status === 'read' || a.status === 'contacted' || a.status === 'interviewing').length;
       
       const totalContacts = contacts.length;
       const unreadContacts = contacts.filter(c => !c.status || c.status === 'new').length;
@@ -8000,8 +8127,24 @@
       doc.text('Total Pledges', margin + 25, y + 15, { align: 'center' });
       
       const thisMonthPledges = pledges.filter(p => {
-        const ts = p.timestamp?.seconds ? new Date(p.timestamp.seconds * 1000) : null;
-        if (!ts) return false;
+        // Try multiple timestamp field names
+        let ts = null;
+        if (p.submittedAt?.seconds) {
+          ts = new Date(p.submittedAt.seconds * 1000);
+        } else if (p.timestamp?.seconds) {
+          ts = new Date(p.timestamp.seconds * 1000);
+        } else if (p.createdAt?.seconds) {
+          ts = new Date(p.createdAt.seconds * 1000);
+        } else if (p.submittedAt) {
+          ts = new Date(p.submittedAt);
+        } else if (p.timestamp) {
+          ts = new Date(p.timestamp);
+        } else if (p.createdAt) {
+          ts = new Date(p.createdAt);
+        } else if (p.date) {
+          ts = new Date(p.date);
+        }
+        if (!ts || isNaN(ts.getTime())) return false;
         return ts.getMonth() === now.getMonth() && ts.getFullYear() === now.getFullYear();
       }).length;
       
@@ -8054,14 +8197,59 @@
     
     // Update Events tab badge
     function updateEventsTabBadge() {
-      let totalNewSignups = 0;
+      const now = new Date();
+      const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+      let totalNew = 0;
+      let totalAttention = 0;
+      
       for (const eventId in eventSignups) {
-        totalNewSignups += eventSignups[eventId].filter(s => !s.status || s.status === 'new' || s.status === 'pending').length;
+        eventSignups[eventId].filter(s => !s.archived).forEach(s => {
+          const status = s.status || 'new';
+          
+          // Skip confirmed or cancelled
+          if (status === 'confirmed' || status === 'cancelled') return;
+          
+          // Get submission date
+          const submitDate = s.timestamp?.seconds 
+            ? new Date(s.timestamp.seconds * 1000) 
+            : (s.submittedAt?.seconds ? new Date(s.submittedAt.seconds * 1000) : null);
+          
+          // Truly NEW = status is 'new' or no status, submitted within last 3 days
+          if ((status === 'new' || !s.status) && submitDate && submitDate > threeDaysAgo) {
+            totalNew++;
+          }
+          // NEEDS ATTENTION = pending/new but older than 3 days, OR has admin notes but still pending, OR missing contact info
+          else if (status === 'pending' || status === 'new' || !s.status) {
+            const isOld = !submitDate || submitDate <= threeDaysAgo;
+            const hasNotesNoAction = s.adminNotes && s.adminNotes.trim().length > 0;
+            const missingContact = !s.email && !s.phone;
+            
+            if (isOld || hasNotesNoAction || missingContact) {
+              totalAttention++;
+            } else {
+              totalNew++;
+            }
+          }
+        });
       }
-      const badge = document.getElementById('eventsTabBadge');
-      if (badge) {
-        badge.textContent = totalNewSignups;
-        badge.style.display = totalNewSignups > 0 ? 'inline' : 'none';
+      
+      const badgeContainer = document.getElementById('eventsTabBadge');
+      if (badgeContainer) {
+        if (totalNew > 0 || totalAttention > 0) {
+          let html = '';
+          if (totalNew > 0) {
+            html += `<span class="badge badge-new" title="${totalNew} new">${totalNew}</span>`;
+          }
+          if (totalAttention > 0) {
+            html += `<span class="badge badge-attention" title="${totalAttention} need attention">${totalAttention}</span>`;
+          }
+          badgeContainer.innerHTML = html;
+          badgeContainer.style.display = 'inline-flex';
+          badgeContainer.style.gap = '2px';
+        } else {
+          badgeContainer.innerHTML = '';
+          badgeContainer.style.display = 'none';
+        }
       }
     }
 
