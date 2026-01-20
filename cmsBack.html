@@ -377,77 +377,6 @@
       background: #c82333;
     }
     
-    .btn-archive {
-      background: #6c757d;
-      color: white;
-    }
-    
-    .btn-archive:hover {
-      background: #545b62;
-    }
-    
-    .btn-restore {
-      background: var(--success);
-      color: white;
-    }
-    
-    .btn-restore:hover {
-      background: #218838;
-    }
-    
-    .archived-toggle {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      padding: 0.75rem 1rem;
-      background: #f8f9fa;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    
-    .archived-toggle input {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-    }
-    
-    .archived-toggle label {
-      cursor: pointer;
-      font-weight: 500;
-      color: var(--text-dark);
-    }
-    
-    .archived-badge {
-      background: #6c757d;
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-left: 0.5rem;
-    }
-    
-    .person-card.archived,
-    .resource-card.archived,
-    tr.archived {
-      opacity: 0.7;
-      background: #f0f0f0;
-    }
-    
-    .person-card.archived::after {
-      content: 'ARCHIVED';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #6c757d;
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-    
     .btn-add-person {
       padding: 1rem 2rem;
       background: var(--accent-teal);
@@ -2479,23 +2408,23 @@
     </div>
   </div>
 
-  <!-- Archive Confirmation Modal -->
-  <div class="modal-overlay" id="archiveModal">
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
     <div class="modal-box" style="max-width: 400px;">
-      <div class="modal-header" style="background: #6c757d;">
-        <h3 style="color: white;">Confirm Archive</h3>
-        <button class="modal-close" onclick="closeArchiveModal()" style="color: white;">&times;</button>
+      <div class="modal-header">
+        <h3>Confirm Delete</h3>
+        <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to archive <strong id="archivePersonName"></strong>?</p>
-        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This item will be hidden from public view but preserved for reporting. You can restore it anytime within the archive section.</p>
-        <input type="hidden" id="archivePersonId">
-        <input type="hidden" id="archivePersonType">
-        <input type="hidden" id="archivePhotoUrl">
+        <p>Are you sure you want to remove <strong id="deletePersonName"></strong>?</p>
+        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This will also delete their photo. This action cannot be undone.</p>
+        <input type="hidden" id="deletePersonId">
+        <input type="hidden" id="deletePersonType">
+        <input type="hidden" id="deletePhotoUrl">
       </div>
       <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeArchiveModal()">Cancel</button>
-        <button class="btn-archive" onclick="confirmArchive()" style="flex: none; padding: 0.75rem 1.5rem;">📦 Archive</button>
+        <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDelete()" style="flex: none; padding: 0.75rem 1.5rem;">Delete</button>
       </div>
     </div>
   </div>
@@ -2545,25 +2474,25 @@
     </div>
   </div>
 
-  <!-- Archive Gallery Photo Modal -->
-  <div class="modal-overlay" id="archiveGalleryModal">
+  <!-- Delete Gallery Photo Modal -->
+  <div class="modal-overlay" id="deleteGalleryModal">
     <div class="modal-box" style="max-width: 400px;">
-      <div class="modal-header" style="background: #6c757d;">
-        <h3 style="color: white;">Archive Photo</h3>
-        <button class="modal-close" onclick="closeArchiveGalleryModal()" style="color: white;">&times;</button>
+      <div class="modal-header" style="background: var(--danger);">
+        <h3 style="color: white;">Delete Photo</h3>
+        <button class="modal-close" onclick="closeDeleteGalleryModal()" style="color: white;">&times;</button>
       </div>
       <div class="modal-body">
         <div style="text-align: center; margin-bottom: 1rem;">
-          <img id="archiveGalleryPreview" src="" alt="" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;">
+          <img id="deleteGalleryPreview" src="" alt="" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;">
         </div>
-        <p>Are you sure you want to archive this photo?</p>
-        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">The photo will be hidden from the gallery but preserved for reporting. You can restore it anytime.</p>
-        <input type="hidden" id="archiveGalleryId">
-        <input type="hidden" id="archiveGalleryPhotoUrl">
+        <p>Are you sure you want to remove this photo?</p>
+        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This action cannot be undone.</p>
+        <input type="hidden" id="deleteGalleryId">
+        <input type="hidden" id="deleteGalleryPhotoUrl">
       </div>
       <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeArchiveGalleryModal()">Cancel</button>
-        <button class="btn-archive" onclick="confirmArchiveGallery()" style="flex: none; padding: 0.75rem 1.5rem;">📦 Archive</button>
+        <button class="btn-cancel" onclick="closeDeleteGalleryModal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDeleteGallery()" style="flex: none; padding: 0.75rem 1.5rem;">Delete</button>
       </div>
     </div>
   </div>
@@ -2613,25 +2542,25 @@
     </div>
   </div>
 
-  <!-- Archive Gallery 2 Photo Modal -->
-  <div class="modal-overlay" id="archiveGallery2Modal">
+  <!-- Delete Gallery 2 Photo Modal -->
+  <div class="modal-overlay" id="deleteGallery2Modal">
     <div class="modal-box" style="max-width: 400px;">
-      <div class="modal-header" style="background: #6c757d;">
-        <h3 style="color: white;">Archive Photo</h3>
-        <button class="modal-close" onclick="closeArchiveGallery2Modal()" style="color: white;">&times;</button>
+      <div class="modal-header" style="background: var(--danger);">
+        <h3 style="color: white;">Delete Photo</h3>
+        <button class="modal-close" onclick="closeDeleteGallery2Modal()" style="color: white;">&times;</button>
       </div>
       <div class="modal-body">
         <div style="text-align: center; margin-bottom: 1rem;">
-          <img id="archiveGallery2Preview" src="" alt="" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;">
+          <img id="deleteGallery2Preview" src="" alt="" style="max-width: 200px; max-height: 150px; border-radius: 8px; object-fit: cover;">
         </div>
-        <p>Are you sure you want to archive this photo?</p>
-        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">The photo will be hidden from the gallery but preserved for reporting. You can restore it anytime.</p>
-        <input type="hidden" id="archiveGallery2Id">
-        <input type="hidden" id="archiveGallery2PhotoUrl">
+        <p>Are you sure you want to remove this photo?</p>
+        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This action cannot be undone.</p>
+        <input type="hidden" id="deleteGallery2Id">
+        <input type="hidden" id="deleteGallery2PhotoUrl">
       </div>
       <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeArchiveGallery2Modal()">Cancel</button>
-        <button class="btn-archive" onclick="confirmArchiveGallery2()" style="flex: none; padding: 0.75rem 1.5rem;">📦 Archive</button>
+        <button class="btn-cancel" onclick="closeDeleteGallery2Modal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDeleteGallery2()" style="flex: none; padding: 0.75rem 1.5rem;">Delete</button>
       </div>
     </div>
   </div>
@@ -2768,21 +2697,21 @@
     </div>
   </div>
 
-  <!-- Archive Resource Confirmation Modal -->
-  <div class="modal-overlay" id="archiveResourceModal">
+  <!-- Delete Resource Confirmation Modal -->
+  <div class="modal-overlay" id="deleteResourceModal">
     <div class="modal-box" style="max-width: 400px;">
-      <div class="modal-header" style="background: #6c757d;">
-        <h3 style="color: white;">Confirm Archive</h3>
-        <button class="modal-close" onclick="closeArchiveResourceModal()" style="color: white;">&times;</button>
+      <div class="modal-header">
+        <h3>Confirm Delete</h3>
+        <button class="modal-close" onclick="closeDeleteResourceModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to archive <strong id="archiveResourceName"></strong>?</p>
-        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">The resource will be hidden from the website but preserved for reporting. You can restore it anytime.</p>
-        <input type="hidden" id="archiveResourceId">
+        <p>Are you sure you want to remove <strong id="deleteResourceName"></strong>?</p>
+        <p style="color: var(--text-light); margin-top: 0.5rem; font-size: 0.9rem;">This action cannot be undone.</p>
+        <input type="hidden" id="deleteResourceId">
       </div>
       <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeArchiveResourceModal()">Cancel</button>
-        <button class="btn-archive" onclick="confirmArchiveResource()" style="flex: none; padding: 0.75rem 1.5rem;">📦 Archive</button>
+        <button class="btn-cancel" onclick="closeDeleteResourceModal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDeleteResource()" style="flex: none; padding: 0.75rem 1.5rem;">Delete</button>
       </div>
     </div>
   </div>
@@ -3237,18 +3166,9 @@
     function renderPeopleGrid(people, type, container) {
       container.innerHTML = '';
       
-      // Filter by archive status based on toggle
-      const showArchived = document.getElementById(`show${type.charAt(0).toUpperCase() + type.slice(1)}Archived`)?.checked || false;
-      const filteredPeople = showArchived ? people : people.filter(p => !p.archived);
-      
-      if (filteredPeople.length === 0) {
-        container.innerHTML = `<p style="text-align: center; color: var(--text-light); padding: 2rem;">${showArchived ? 'No archived items.' : 'No items to display.'}</p>`;
-        return;
-      }
-      
-      filteredPeople.forEach((person, index) => {
+      people.forEach((person, index) => {
         const card = document.createElement('div');
-        card.className = 'person-card' + (person.archived ? ' archived' : '');
+        card.className = 'person-card';
         card.draggable = true;
         card.dataset.id = person.id;
         card.dataset.type = type;
@@ -3265,11 +3185,6 @@
           </div>
         ` : '';
         
-        const actionButtons = person.archived 
-          ? `<button class="btn-restore" onclick="restorePerson('${type}', '${person.id}')">♻️ Restore</button>`
-          : `<button class="btn-edit" onclick="editPerson('${type}', '${person.id}')">✏️ Edit</button>
-             <button class="btn-archive" onclick="archivePerson('${type}', '${person.id}', '${person.name}', '${person.photoUrl || ''}')">📦 Archive</button>`;
-        
         card.innerHTML = `
           <div class="order-badge">${index + 1}</div>
           <div class="drag-handle">⋮⋮</div>
@@ -3282,7 +3197,8 @@
             </div>
           </div>
           <div class="person-actions">
-            ${actionButtons}
+            <button class="btn-edit" onclick="editPerson('${type}', '${person.id}')">✏️ Edit</button>
+            <button class="btn-delete" onclick="deletePerson('${type}', '${person.id}', '${person.name}', '${person.photoUrl || ''}')">🗑️ Delete</button>
           </div>
         `;
         
@@ -3561,35 +3477,36 @@
       }
     }
 
-    // ===== Archive Person =====
-    function archivePerson(type, id, name, photoUrl) {
-      document.getElementById('archivePersonId').value = id;
-      document.getElementById('archivePersonType').value = type;
-      document.getElementById('archivePersonName').textContent = name;
-      document.getElementById('archivePhotoUrl').value = photoUrl;
-      document.getElementById('archiveModal').classList.add('active');
+    // ===== Delete Person =====
+    function deletePerson(type, id, name, photoUrl) {
+      document.getElementById('deletePersonId').value = id;
+      document.getElementById('deletePersonType').value = type;
+      document.getElementById('deletePersonName').textContent = name;
+      document.getElementById('deletePhotoUrl').value = photoUrl;
+      document.getElementById('deleteModal').classList.add('active');
     }
 
-    function closeArchiveModal() {
-      document.getElementById('archiveModal').classList.remove('active');
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').classList.remove('active');
     }
 
-    async function confirmArchive() {
-      const id = document.getElementById('archivePersonId').value;
-      const type = document.getElementById('archivePersonType').value;
+    async function confirmDelete() {
+      const id = document.getElementById('deletePersonId').value;
+      const type = document.getElementById('deletePersonType').value;
+      const photoUrl = document.getElementById('deletePhotoUrl').value;
       
       try {
         const collection = type === 'team' ? 'teamMembers' : 'boardMembers';
         
-        // Archive in Firestore (don't delete, just mark as archived)
-        await db.collection(collection).doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        // Delete from Firestore
+        await db.collection(collection).doc(id).delete();
         
-        // Note: We keep the photo in storage for reporting purposes
+        // Delete photo from storage
+        if (photoUrl) {
+          await deletePhotoFromStorage(photoUrl);
+        }
         
-        closeArchiveModal();
+        closeDeleteModal();
         
         if (type === 'team') {
           await loadTeamMembers();
@@ -3600,35 +3517,8 @@
         showSuccess(type);
         
       } catch (error) {
-        console.error('Error archiving person:', error);
-        alert('Failed to archive. Please try again.');
-      }
-    }
-    
-    // Restore archived person
-    async function restorePerson(type, id) {
-      if (!confirm('Restore this person to active status?')) return;
-      
-      try {
-        const collection = type === 'team' ? 'teamMembers' : 'boardMembers';
-        
-        await db.collection(collection).doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        if (type === 'team') {
-          await loadTeamMembers();
-        } else {
-          await loadBoardMembers();
-        }
-        
-        showSuccess(type);
-        
-      } catch (error) {
-        console.error('Error restoring person:', error);
-        alert('Failed to restore. Please try again.');
+        console.error('Error deleting person:', error);
+        alert('Failed to delete. Please try again.');
       }
     }
 
@@ -3703,18 +3593,14 @@
       const grid = document.getElementById('resourcesGrid');
       grid.innerHTML = '';
       
-      // Filter by archive status based on toggle
-      const showArchived = document.getElementById('showResourcesArchived')?.checked || false;
-      const displayResources = showArchived ? filteredResources : filteredResources.filter(r => !r.archived);
-      
-      if (displayResources.length === 0) {
-        grid.innerHTML = `<div class="empty-state"><p>${showArchived ? 'No archived resources.' : 'No matching resources found.'}</p></div>`;
+      if (filteredResources.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><p>No matching resources found.</p></div>';
         return;
       }
       
-      displayResources.forEach(resource => {
+      filteredResources.forEach(resource => {
         const card = document.createElement('div');
-        card.className = 'resource-card' + (resource.archived ? ' archived' : '');
+        card.className = 'resource-card';
         
         const logoHtml = resource.logo 
           ? `<img src="${resource.logo}" alt="${resource.name}" class="resource-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -3725,15 +3611,10 @@
         const phone = resource.phone || '';
         const email = resource.email || '';
         
-        const actionButtons = resource.archived
-          ? `<button class="btn-restore" onclick="restoreResource('${resource.id}')">♻️ Restore</button>`
-          : `<button class="btn-edit" onclick="editResource('${resource.id}')">✏️ Edit</button>
-             <button class="btn-archive" onclick="archiveResource('${resource.id}', '${(resource.name || '').replace(/'/g, "\\'")}')">📦</button>`;
-        
         card.innerHTML = `
           ${logoHtml}
           <div class="resource-info">
-            <div class="resource-type-badge">${resource.type || 'Specialized Resources'}${resource.archived ? '<span class="archived-badge">ARCHIVED</span>' : ''}</div>
+            <div class="resource-type-badge">${resource.type || 'Specialized Resources'}</div>
             <h4>${resource.name || 'Unnamed Resource'}</h4>
             <div class="resource-meta">
               <span>📍 ${island}</span>
@@ -3742,7 +3623,8 @@
             </div>
           </div>
           <div class="resource-actions">
-            ${actionButtons}
+            <button class="btn-edit" onclick="editResource('${resource.id}')">✏️ Edit</button>
+            <button class="btn-delete" onclick="deleteResource('${resource.id}', '${(resource.name || '').replace(/'/g, "\\'")}')">🗑️</button>
           </div>
         `;
         
@@ -3915,49 +3797,28 @@
       }
     }
 
-    // Archive resource
-    function archiveResource(id, name) {
-      document.getElementById('archiveResourceId').value = id;
-      document.getElementById('archiveResourceName').textContent = name;
-      document.getElementById('archiveResourceModal').classList.add('active');
+    // Delete resource
+    function deleteResource(id, name) {
+      document.getElementById('deleteResourceId').value = id;
+      document.getElementById('deleteResourceName').textContent = name;
+      document.getElementById('deleteResourceModal').classList.add('active');
     }
 
-    function closeArchiveResourceModal() {
-      document.getElementById('archiveResourceModal').classList.remove('active');
+    function closeDeleteResourceModal() {
+      document.getElementById('deleteResourceModal').classList.remove('active');
     }
 
-    async function confirmArchiveResource() {
-      const id = document.getElementById('archiveResourceId').value;
+    async function confirmDeleteResource() {
+      const id = document.getElementById('deleteResourceId').value;
       
       try {
-        await db.collection('resources').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        closeArchiveResourceModal();
+        await db.collection('resources').doc(id).delete();
+        closeDeleteResourceModal();
         await loadResources();
         showSuccess('resources');
       } catch (error) {
-        console.error('Error archiving resource:', error);
-        alert('Failed to archive resource. Please try again.');
-      }
-    }
-    
-    // Restore archived resource
-    async function restoreResource(id) {
-      if (!confirm('Restore this resource to active status?')) return;
-      
-      try {
-        await db.collection('resources').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await loadResources();
-        showSuccess('resources');
-      } catch (error) {
-        console.error('Error restoring resource:', error);
-        alert('Failed to restore resource. Please try again.');
+        console.error('Error deleting resource:', error);
+        alert('Failed to delete resource. Please try again.');
       }
     }
     
@@ -4064,18 +3925,9 @@
       const grid = document.getElementById('galleryGrid');
       grid.innerHTML = '';
       
-      // Filter by archive status based on toggle
-      const showArchived = document.getElementById('showGalleryArchived')?.checked || false;
-      const displayPhotos = showArchived ? galleryPhotos : galleryPhotos.filter(p => !p.archived);
-      
-      if (displayPhotos.length === 0) {
-        grid.innerHTML = `<p style="text-align: center; color: var(--text-light); padding: 2rem; grid-column: 1/-1;">${showArchived ? 'No archived photos.' : 'No photos to display.'}</p>`;
-        return;
-      }
-      
-      displayPhotos.forEach((photo, index) => {
+      galleryPhotos.forEach((photo, index) => {
         const card = document.createElement('div');
-        card.className = 'gallery-card' + (photo.archived ? ' archived' : '');
+        card.className = 'gallery-card';
         card.draggable = true;
         card.dataset.id = photo.id;
         card.dataset.index = index;
@@ -4087,11 +3939,6 @@
         card.addEventListener('dragleave', handleGalleryDragLeave);
         card.addEventListener('drop', handleGalleryDrop);
         
-        const actionButtons = photo.archived
-          ? `<button class="btn-restore" onclick="restoreGalleryPhoto('${photo.id}')">♻️ Restore</button>`
-          : `<button class="btn-edit" onclick="editGalleryPhoto('${photo.id}')">✏️ Edit</button>
-             <button class="btn-archive" onclick="archiveGalleryPhoto('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', '${photo.imageUrl || ''}')">📦</button>`;
-        
         card.innerHTML = `
           <div class="gallery-order-badge">${index + 1}</div>
           <div class="gallery-drag-handle">⋮⋮</div>
@@ -4100,10 +3947,11 @@
             : '<div class="gallery-card-placeholder">📷</div>'
           }
           <div class="gallery-card-info">
-            <h4>${photo.caption || 'Untitled'}${photo.archived ? ' <span class="archived-badge">ARCHIVED</span>' : ''}</h4>
+            <h4>${photo.caption || 'Untitled'}</h4>
           </div>
           <div class="gallery-card-actions">
-            ${actionButtons}
+            <button class="btn-edit" onclick="editGalleryPhoto('${photo.id}')">✏️ Edit</button>
+            <button class="btn-delete" onclick="deleteGalleryPhoto('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', '${photo.imageUrl || ''}')">🗑️</button>
           </div>
         `;
         
@@ -4332,53 +4180,41 @@
       }
     }
     
-    function archiveGalleryPhoto(id, caption, imageUrl) {
-      document.getElementById('archiveGalleryId').value = id;
-      document.getElementById('archiveGalleryPhotoUrl').value = imageUrl;
-      document.getElementById('archiveGalleryPreview').src = imageUrl;
-      document.getElementById('archiveGalleryModal').classList.add('active');
+    function deleteGalleryPhoto(id, caption, imageUrl) {
+      document.getElementById('deleteGalleryId').value = id;
+      document.getElementById('deleteGalleryPhotoUrl').value = imageUrl;
+      document.getElementById('deleteGalleryPreview').src = imageUrl;
+      document.getElementById('deleteGalleryModal').classList.add('active');
     }
     
-    function closeArchiveGalleryModal() {
-      document.getElementById('archiveGalleryModal').classList.remove('active');
+    function closeDeleteGalleryModal() {
+      document.getElementById('deleteGalleryModal').classList.remove('active');
     }
     
-    async function confirmArchiveGallery() {
-      const id = document.getElementById('archiveGalleryId').value;
+    async function confirmDeleteGallery() {
+      const id = document.getElementById('deleteGalleryId').value;
+      const photoUrl = document.getElementById('deleteGalleryPhotoUrl').value;
       
       try {
-        // Archive in Firestore (don't delete, preserve for reporting)
-        await db.collection('gallery').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        // Delete from Firestore
+        await db.collection('gallery').doc(id).delete();
         
-        // Note: We keep the photo in storage for reporting purposes
+        // Try to delete from Storage if it's a Firebase Storage URL
+        if (photoUrl && photoUrl.includes('firebasestorage.googleapis.com')) {
+          try {
+            const storageRef = storage.refFromURL(photoUrl);
+            await storageRef.delete();
+          } catch (e) {
+            console.log('Could not delete from storage:', e);
+          }
+        }
         
-        closeArchiveGalleryModal();
+        closeDeleteGalleryModal();
         await loadGallery();
         showSuccess('gallery');
       } catch (error) {
-        console.error('Error archiving photo:', error);
-        alert('Failed to archive photo. Please try again.');
-      }
-    }
-    
-    // Restore archived gallery photo
-    async function restoreGalleryPhoto(id) {
-      if (!confirm('Restore this photo to the gallery?')) return;
-      
-      try {
-        await db.collection('gallery').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await loadGallery();
-        showSuccess('gallery');
-      } catch (error) {
-        console.error('Error restoring photo:', error);
-        alert('Failed to restore photo. Please try again.');
+        console.error('Error deleting photo:', error);
+        alert('Failed to delete photo. Please try again.');
       }
     }
 
@@ -4418,24 +4254,8 @@
 
     function renderGallery2Grid() {
       const grid = document.getElementById('gallery2Grid');
-      
-      // Filter by archive status based on toggle
-      const showArchived = document.getElementById('showGallery2Archived')?.checked || false;
-      const displayPhotos = showArchived ? gallery2Photos : gallery2Photos.filter(p => !p.archived);
-      
-      if (displayPhotos.length === 0) {
-        grid.innerHTML = `<p style="text-align: center; color: var(--text-light); padding: 2rem; grid-column: 1/-1;">${showArchived ? 'No archived photos.' : 'No photos to display.'}</p>`;
-        return;
-      }
-      
-      grid.innerHTML = displayPhotos.map((photo, index) => {
-        const actionButtons = photo.archived
-          ? `<button class="btn-restore" onclick="restoreGallery2Photo('${photo.id}')">♻️ Restore</button>`
-          : `<button class="btn-edit" onclick="editGallery2Photo('${photo.id}')">✏️ Edit</button>
-             <button class="btn-archive" onclick="archiveGallery2Photo('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', '${photo.imageUrl || ''}')">📦</button>`;
-        
-        return `
-        <div class="gallery-card${photo.archived ? ' archived' : ''}" draggable="true" data-id="${photo.id}" data-index="${index}"
+      grid.innerHTML = gallery2Photos.map((photo, index) => `
+        <div class="gallery-card" draggable="true" data-id="${photo.id}" data-index="${index}"
              ondragstart="handleGallery2DragStart(event)" ondragend="handleGallery2DragEnd(event)"
              ondragover="handleGallery2DragOver(event)" ondragleave="handleGallery2DragLeave(event)"
              ondrop="handleGallery2Drop(event)">
@@ -4446,13 +4266,14 @@
             : `<div class="gallery-card-placeholder">📷</div>`
           }
           <div class="gallery-card-info">
-            <h4>${photo.caption || 'Untitled'}${photo.archived ? ' <span class="archived-badge">ARCHIVED</span>' : ''}</h4>
+            <h4>${photo.caption || 'Untitled'}</h4>
           </div>
           <div class="gallery-card-actions">
-            ${actionButtons}
+            <button class="btn-edit" onclick="editGallery2Photo('${photo.id}')">✏️ Edit</button>
+            <button class="btn-delete" onclick="deleteGallery2Photo('${photo.id}', '${(photo.caption || '').replace(/'/g, "\\'")}', '${photo.imageUrl || ''}')">🗑️</button>
           </div>
         </div>
-      `}).join('');
+      `).join('');
     }
 
     function handleGallery2DragStart(e) {
@@ -4666,52 +4487,39 @@
       }
     }
 
-    function archiveGallery2Photo(id, caption, imageUrl) {
-      document.getElementById('archiveGallery2Id').value = id;
-      document.getElementById('archiveGallery2PhotoUrl').value = imageUrl;
-      document.getElementById('archiveGallery2Preview').src = imageUrl;
-      document.getElementById('archiveGallery2Modal').classList.add('active');
+    function deleteGallery2Photo(id, caption, imageUrl) {
+      document.getElementById('deleteGallery2Id').value = id;
+      document.getElementById('deleteGallery2PhotoUrl').value = imageUrl;
+      document.getElementById('deleteGallery2Preview').src = imageUrl;
+      document.getElementById('deleteGallery2Modal').classList.add('active');
     }
     
-    function closeArchiveGallery2Modal() {
-      document.getElementById('archiveGallery2Modal').classList.remove('active');
+    function closeDeleteGallery2Modal() {
+      document.getElementById('deleteGallery2Modal').classList.remove('active');
     }
     
-    async function confirmArchiveGallery2() {
-      const id = document.getElementById('archiveGallery2Id').value;
+    async function confirmDeleteGallery2() {
+      const id = document.getElementById('deleteGallery2Id').value;
+      const photoUrl = document.getElementById('deleteGallery2PhotoUrl').value;
       
       try {
-        await db.collection('gallery2').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        await db.collection('gallery2').doc(id).delete();
         
-        // Note: Keep photo in storage for reporting purposes
+        if (photoUrl && photoUrl.includes('firebasestorage.googleapis.com')) {
+          try {
+            const storageRef = storage.refFromURL(photoUrl);
+            await storageRef.delete();
+          } catch (e) {
+            console.log('Could not delete from storage:', e);
+          }
+        }
         
-        closeArchiveGallery2Modal();
+        closeDeleteGallery2Modal();
         await loadGallery2();
         showSuccess('gallery2');
       } catch (error) {
-        console.error('Error archiving photo:', error);
-        alert('Failed to archive photo. Please try again.');
-      }
-    }
-    
-    // Restore archived gallery2 photo
-    async function restoreGallery2Photo(id) {
-      if (!confirm('Restore this photo to the gallery?')) return;
-      
-      try {
-        await db.collection('gallery2').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await loadGallery2();
-        showSuccess('gallery2');
-      } catch (error) {
-        console.error('Error restoring photo:', error);
-        alert('Failed to restore photo. Please try again.');
+        console.error('Error deleting photo:', error);
+        alert('Failed to delete photo. Please try again.');
       }
     }
 
@@ -4788,7 +4596,7 @@
           </div>
           <div style="display: flex; gap: 0.5rem;">
             <button class="btn-edit" onclick="editCategory('${cat.id}')">✏️</button>
-            <button class="btn-archive" onclick="archiveCategory('${cat.id}', '${cat.name.replace(/'/g, "\\'")}')">📦</button>
+            <button class="btn-delete" onclick="deleteCategory('${cat.id}', '${cat.name.replace(/'/g, "\\'")}')">🗑️</button>
           </div>
         </div>
       `).join('');
@@ -4916,7 +4724,7 @@
               ${faq.contact ? `<p style="margin-bottom: 1rem;"><strong>Contact:</strong> ${faq.contact}</p>` : ''}
               <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                 <button class="btn-edit" onclick="editFaq('${faq.id}')">✏️ Edit</button>
-                <button class="btn-archive" onclick="archiveFaq('${faq.id}')">📦 Archive</button>
+                <button class="btn-delete" onclick="deleteFaq('${faq.id}')">🗑️ Delete</button>
               </div>
             </div>
           </div>
@@ -5026,37 +4834,19 @@
       }
     }
     
-    async function archiveCategory(id, name) {
-      const faqCount = faqs.filter(f => f.categoryId === id && !f.archived).length;
+    async function deleteCategory(id, name) {
+      const faqCount = faqs.filter(f => f.categoryId === id).length;
       if (faqCount > 0) {
-        alert(`Cannot archive "${name}" - it has ${faqCount} active FAQ(s). Archive or reassign them first.`);
+        alert(`Cannot delete "${name}" - it has ${faqCount} FAQ(s). Delete or reassign them first.`);
         return;
       }
-      if (!confirm(`Archive category "${name}"? It will be hidden but preserved for reporting.`)) return;
+      if (!confirm(`Delete category "${name}"?`)) return;
       try {
-        await db.collection('categories').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        await db.collection('categories').doc(id).delete();
         await loadCategories();
         showSuccess('faq');
       } catch (error) {
-        console.error('Error archiving category:', error);
-      }
-    }
-    
-    async function restoreCategory(id) {
-      if (!confirm('Restore this category to active status?')) return;
-      try {
-        await db.collection('categories').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await loadCategories();
-        showSuccess('faq');
-      } catch (error) {
-        console.error('Error restoring category:', error);
+        console.error('Error deleting category:', error);
       }
     }
     
@@ -5161,32 +4951,14 @@
       }
     }
     
-    async function archiveFaq(id) {
-      if (!confirm('Archive this FAQ? It will be hidden but preserved for reporting.')) return;
+    async function deleteFaq(id) {
+      if (!confirm('Delete this FAQ?')) return;
       try {
-        await db.collection('faqs').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        await db.collection('faqs').doc(id).delete();
         await loadFaqs();
         showSuccess('faq');
       } catch (error) {
-        console.error('Error archiving FAQ:', error);
-      }
-    }
-    
-    async function restoreFaq(id) {
-      if (!confirm('Restore this FAQ to active status?')) return;
-      try {
-        await db.collection('faqs').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await loadFaqs();
-        showSuccess('faq');
-      } catch (error) {
-        console.error('Error restoring FAQ:', error);
+        console.error('Error deleting FAQ:', error);
       }
     }
 
@@ -5287,7 +5059,7 @@
                 ${newSignups > 0 ? `<span class="badge" style="position: absolute; top: -8px; right: -8px;">${newSignups}</span>` : ''}
               </button>
               <button class="btn-edit" onclick="editEvent('${event.id}')">✏️ Edit</button>
-              <button class="btn-archive" onclick="archiveEvent('${event.id}', '${event.title.replace(/'/g, "\\'")}')">📦</button>
+              <button class="btn-delete" onclick="deleteEvent('${event.id}', '${event.title.replace(/'/g, "\\'")}')">🗑️</button>
             </div>
           </div>
         `;
@@ -5457,33 +5229,18 @@
       }
     }
     
-    async function archiveEvent(id, title) {
-      if (!confirm(`Archive event "${title}"? The event and all signups will be hidden but preserved for reporting.`)) return;
+    async function deleteEvent(id, title) {
+      if (!confirm(`Delete event "${title}"? This will also delete all signups.`)) return;
       try {
-        // Archive the event (don't delete signups, just mark event as archived)
-        await db.collection('events').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        const signupsSnap = await db.collection('events').doc(id).collection('signups').get();
+        const batch = db.batch();
+        signupsSnap.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+        await db.collection('events').doc(id).delete();
         await loadEvents();
         showSuccess('events');
       } catch (error) {
-        console.error('Error archiving event:', error);
-      }
-    }
-    
-    async function restoreEvent(id) {
-      if (!confirm('Restore this event to active status?')) return;
-      try {
-        await db.collection('events').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await loadEvents();
-        showSuccess('events');
-      } catch (error) {
-        console.error('Error restoring event:', error);
+        console.error('Error:', error);
       }
     }
     
@@ -5596,7 +5353,7 @@
                         <a href="mailto:${s.email}" class="btn-edit">📧 Email</a>
                         ${s.phone ? `<a href="tel:${s.phone}" class="btn-edit" style="background: #22c55e;">📞 Call</a>` : ''}
                         ${s.phone ? `<a href="sms:${s.phone}" class="btn-edit" style="background: #10b981;">💬 Text</a>` : ''}
-                        <button class="btn-archive" onclick="archiveEventSignup('${eventId}', '${s.id}')">📦 Archive</button>
+                        <button class="btn-delete" onclick="deleteEventSignup('${eventId}', '${s.id}')">🗑️ Delete</button>
                       </div>
                     </div>
                   </div>
@@ -5672,35 +5429,12 @@
       document.getElementById('signupsModal').classList.remove('active');
     }
     
-    async function archiveEventSignup(eventId, signupId) {
-      if (!confirm('Archive this signup? It will be hidden but preserved for reporting.')) return;
+    async function deleteEventSignup(eventId, signupId) {
+      if (!confirm('Delete this signup?')) return;
       try {
-        await db.collection('events').doc(eventId).collection('signups').doc(signupId).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        // Update local data
-        const signup = eventSignups[eventId].find(s => s.id === signupId);
-        if (signup) signup.archived = true;
+        await db.collection('events').doc(eventId).collection('signups').doc(signupId).delete();
+        eventSignups[eventId] = eventSignups[eventId].filter(s => s.id !== signupId);
         openSignupsModal(eventId); // Refresh
-        renderEvents();
-        updateEventsTabBadge();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    
-    async function restoreEventSignup(eventId, signupId) {
-      if (!confirm('Restore this signup?')) return;
-      try {
-        await db.collection('events').doc(eventId).collection('signups').doc(signupId).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const signup = eventSignups[eventId].find(s => s.id === signupId);
-        if (signup) signup.archived = false;
-        openSignupsModal(eventId);
         renderEvents();
         updateEventsTabBadge();
       } catch (err) {
@@ -5812,7 +5546,7 @@
                     ${newApps > 0 ? `<span class="badge" style="position: absolute; top: -8px; right: -8px;">${newApps}</span>` : ''}
                   </button>
                   <button class="btn-edit" onclick="editOpportunity('${opp.id}')">✏️ Edit</button>
-                  <button class="btn-archive" onclick="archiveOpportunity('${opp.id}')">📦</button>
+                  <button class="btn-delete" onclick="deleteOpportunity('${opp.id}')">🗑️</button>
                 </div>
               </div>
             </div>
@@ -5937,26 +5671,10 @@
       }
     }
     
-    async function archiveOpportunity(id) {
-      if (!confirm('Archive this volunteer opportunity? It will be hidden but preserved for reporting.')) return;
+    async function deleteOpportunity(id) {
+      if (!confirm('Delete this volunteer opportunity?')) return;
       try {
-        await db.collection('volunteerOpportunities').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await loadOpportunities();
-        showSuccess('volunteers');
-      } catch (error) { console.error('Error:', error); }
-    }
-    
-    async function restoreOpportunity(id) {
-      if (!confirm('Restore this opportunity to active status?')) return;
-      try {
-        await db.collection('volunteerOpportunities').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        await db.collection('volunteerOpportunities').doc(id).delete();
         await loadOpportunities();
         showSuccess('volunteers');
       } catch (error) { console.error('Error:', error); }
@@ -6004,7 +5722,7 @@
                 </div>
                 <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                   <a href="mailto:${app.email}" class="btn-edit">📧 Email</a>
-                  <button class="btn-archive" onclick="archiveApplicationFromModal('${app.id}', '${oppId}')">📦</button>
+                  <button class="btn-delete" onclick="deleteApplicationFromModal('${app.id}', '${oppId}')">🗑️</button>
                 </div>
               </div>
             </div>
@@ -6019,32 +5737,11 @@
       document.getElementById('opportunityAppsModal').classList.remove('active');
     }
     
-    async function archiveApplicationFromModal(appId, oppId) {
-      if (!confirm('Archive this application? It will be hidden but preserved for reporting.')) return;
+    async function deleteApplicationFromModal(appId, oppId) {
+      if (!confirm('Delete this application?')) return;
       try {
-        await db.collection('volunteers').doc(appId).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const app = applications.find(a => a.id === appId);
-        if (app) app.archived = true;
-        openOpportunityAppsModal(oppId);
-        renderOpportunities();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    
-    async function restoreApplicationFromModal(appId, oppId) {
-      if (!confirm('Restore this application?')) return;
-      try {
-        await db.collection('volunteers').doc(appId).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const app = applications.find(a => a.id === appId);
-        if (app) app.archived = false;
+        await db.collection('volunteers').doc(appId).delete();
+        applications = applications.filter(a => a.id !== appId);
         openOpportunityAppsModal(oppId);
         renderOpportunities();
       } catch (err) {
@@ -6142,7 +5839,7 @@
               </div>
               <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                 <a href="mailto:${app.email}" class="btn-edit">📧 Email</a>
-                <button class="btn-archive" onclick="archiveApplication('${app.id}')">📦</button>
+                <button class="btn-delete" onclick="deleteApplication('${app.id}')">🗑️</button>
               </div>
             </div>
           </div>
@@ -6212,31 +5909,11 @@
       }
     }
     
-    async function archiveApplication(id) {
-      if (!confirm('Archive this application? It will be hidden but preserved for reporting.')) return;
+    async function deleteApplication(id) {
+      if (!confirm('Delete this application?')) return;
       try {
-        await db.collection('volunteers').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const app = applications.find(a => a.id === id);
-        if (app) app.archived = true;
-        renderApplications();
-        renderOpportunities();
-        showSuccess('volunteers');
-      } catch (error) { console.error('Error:', error); }
-    }
-    
-    async function restoreApplication(id) {
-      if (!confirm('Restore this application to active status?')) return;
-      try {
-        await db.collection('volunteers').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const app = applications.find(a => a.id === id);
-        if (app) app.archived = false;
+        await db.collection('volunteers').doc(id).delete();
+        applications = applications.filter(a => a.id !== id);
         renderApplications();
         renderOpportunities();
         showSuccess('volunteers');
@@ -6370,7 +6047,7 @@
               <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                 ${p.email ? `<a href="mailto:${p.email}" class="btn-edit">📧 Email</a>` : ''}
                 ${p.phone ? `<a href="tel:${p.phone}" class="btn-edit">📞 Call</a>` : ''}
-                <button class="btn-archive" onclick="archiveProvider('${p.id}')">📦</button>
+                <button class="btn-delete" onclick="deleteProvider('${p.id}')">🗑️</button>
               </div>
             </div>
           </div>
@@ -6391,30 +6068,11 @@
       } catch (error) { console.error('Error:', error); }
     }
     
-    async function archiveProvider(id) {
-      if (!confirm('Archive this request? It will be hidden but preserved for reporting.')) return;
+    async function deleteProvider(id) {
+      if (!confirm('Delete this request?')) return;
       try {
-        await db.collection('providers').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const p = providers.find(p => p.id === id);
-        if (p) p.archived = true;
-        renderProviders();
-        showSuccess('data');
-      } catch (error) { console.error('Error:', error); }
-    }
-    
-    async function restoreProvider(id) {
-      if (!confirm('Restore this request?')) return;
-      try {
-        await db.collection('providers').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const p = providers.find(p => p.id === id);
-        if (p) p.archived = false;
+        await db.collection('providers').doc(id).delete();
+        providers = providers.filter(p => p.id !== id);
         renderProviders();
         showSuccess('data');
       } catch (error) { console.error('Error:', error); }
@@ -6520,7 +6178,7 @@
               </div>
               <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                 ${p.email ? `<a href="mailto:${p.email}" class="btn-edit">📧 Email</a>` : ''}
-                <button class="btn-archive" onclick="archivePledge('${p.id}')">📦</button>
+                <button class="btn-delete" onclick="deletePledge('${p.id}')">🗑️</button>
               </div>
             </div>
           </div>
@@ -6557,30 +6215,11 @@
       } catch (error) { console.error('Error:', error); }
     }
     
-    async function archivePledge(id) {
-      if (!confirm('Archive this pledge? It will be hidden but preserved for reporting.')) return;
+    async function deletePledge(id) {
+      if (!confirm('Delete this pledge?')) return;
       try {
-        await db.collection('pledges').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const p = pledges.find(p => p.id === id);
-        if (p) p.archived = true;
-        renderPledges();
-        showSuccess('data');
-      } catch (error) { console.error('Error:', error); }
-    }
-    
-    async function restorePledge(id) {
-      if (!confirm('Restore this pledge?')) return;
-      try {
-        await db.collection('pledges').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const p = pledges.find(p => p.id === id);
-        if (p) p.archived = false;
+        await db.collection('pledges').doc(id).delete();
+        pledges = pledges.filter(p => p.id !== id);
         renderPledges();
         showSuccess('data');
       } catch (error) { console.error('Error:', error); }
@@ -6679,7 +6318,7 @@
               </div>
               <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                 <a href="mailto:${r.email}" class="btn-edit">📧 Email</a>
-                <button class="btn-archive" onclick="archiveEventRequest('${r.id}')">📦</button>
+                <button class="btn-delete" onclick="deleteEventRequest('${r.id}')">🗑️</button>
               </div>
             </div>
           </div>
@@ -6700,30 +6339,11 @@
       } catch (error) { console.error('Error:', error); }
     }
     
-    async function archiveEventRequest(id) {
-      if (!confirm('Archive this event request? It will be hidden but preserved for reporting.')) return;
+    async function deleteEventRequest(id) {
+      if (!confirm('Delete this event request?')) return;
       try {
-        await db.collection('eventRequests').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const r = eventRequests.find(r => r.id === id);
-        if (r) r.archived = true;
-        renderEventRequests();
-        showSuccess('data');
-      } catch (error) { console.error('Error:', error); }
-    }
-    
-    async function restoreEventRequest(id) {
-      if (!confirm('Restore this event request?')) return;
-      try {
-        await db.collection('eventRequests').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const r = eventRequests.find(r => r.id === id);
-        if (r) r.archived = false;
+        await db.collection('eventRequests').doc(id).delete();
+        eventRequests = eventRequests.filter(r => r.id !== id);
         renderEventRequests();
         showSuccess('data');
       } catch (error) { console.error('Error:', error); }
@@ -6819,7 +6439,7 @@
               </div>
               <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                 <a href="mailto:${c.email}" class="btn-edit">📧 Reply</a>
-                <button class="btn-archive" onclick="archiveContact('${c.id}')">📦</button>
+                <button class="btn-delete" onclick="deleteContact('${c.id}')">🗑️</button>
               </div>
             </div>
           </div>
@@ -6840,30 +6460,11 @@
       } catch (error) { console.error('Error:', error); }
     }
     
-    async function archiveContact(id) {
-      if (!confirm('Archive this message? It will be hidden but preserved for reporting.')) return;
+    async function deleteContact(id) {
+      if (!confirm('Delete this message?')) return;
       try {
-        await db.collection('contactSubmissions').doc(id).update({
-          archived: true,
-          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const c = contacts.find(c => c.id === id);
-        if (c) c.archived = true;
-        renderContacts();
-        showSuccess('data');
-      } catch (error) { console.error('Error:', error); }
-    }
-    
-    async function restoreContact(id) {
-      if (!confirm('Restore this message?')) return;
-      try {
-        await db.collection('contactSubmissions').doc(id).update({
-          archived: false,
-          archivedAt: firebase.firestore.FieldValue.delete(),
-          restoredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        const c = contacts.find(c => c.id === id);
-        if (c) c.archived = false;
+        await db.collection('contactSubmissions').doc(id).delete();
+        contacts = contacts.filter(c => c.id !== id);
         renderContacts();
         showSuccess('data');
       } catch (error) { console.error('Error:', error); }
